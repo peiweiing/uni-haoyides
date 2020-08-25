@@ -1,0 +1,40 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "好得益健康商城"
+			}
+		}
+	    ,{
+            "path" : "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+        }
+        ,{
+            "path" : "pages/buy/tradeCenter",
+            "style" : {
+				"navigationBarTitleText": "交易大厅"
+			}
+        }
+        ,{
+            "path" : "pages/list/distGoodsDetail",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
+        }
+    ],
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"tui-(.*)": "@/components/thorui/tui-$1/tui-$1.vue"
+		}
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	}
+}
