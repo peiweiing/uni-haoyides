@@ -35,7 +35,7 @@
 			</view>
 			<tui-grid>
 				<block v-for="(item,index) in dataList" :key="index">
-					<tui-grid-item :cell="2" @click="details">
+					<tui-grid-item :cell="2" @click="detail(item.url)">
 						<view class="tui-grid-icon">
 							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
 						</view>
@@ -51,7 +51,7 @@
 			</view>
 			<tui-grid>
 				<block v-for="(item,index) in dataLists" :key="index">
-					<tui-grid-item :cell="3" @click="details">
+					<tui-grid-item :cell="3" @click="detail(item.url)">
 						<view class="tui-grid-icon">
 							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
 						</view>
@@ -71,25 +71,27 @@
 				current: 0,
 				banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				dataList: [
-					{name: "refresh",size: 30,title:'现货买入'},
-					{name: "search",size: 30,title:'批发买入'},
+					{name: "refresh",size: 30,title:'现货买入',url:'distGoodsList'},
+					{name: "search",size: 30,title:'批发买入',url:'wholesaleList'},
 				],
 				dataLists: [
-					{name: "refresh",size: 30,title:'委托买入'},
-					{name: "search",size: 30,title:'委托卖出'},
-					{name: "close-fill",size: 30,title:'我的委托'},
-					{name: "shut",size: 30,title:'摘牌买入'},
-					{name: "plus",size: 30,title:'摘牌卖出'},
+					{name: "refresh",size: 30,title:'委托买入',url:''},
+					{name: "search",size: 30,title:'委托卖出',url:''},
+					{name: "close-fill",size: 30,title:'我的委托',url:''},
+					{name: "shut",size: 30,title:'摘牌买入',url:'EntrusBuyList'},
+					{name: "plus",size: 30,title:'摘牌卖出',url:'entrusSellList'},
 				],
 			}
 		},
 		methods: {		
 			change: function(e) {
 				this.current = e.detail.current;
+				console.log(this.current)
 			},
-			detail: function() {
+			detail: function(e) {
+				console.log(e)
 				uni.navigateTo({
-					url: '/pages/template/mall/productDetail/productDetail'
+					url: '/pages/buy/'+e
 				});
 			},
 			details: function(e) {
@@ -105,7 +107,7 @@
 	box-sizing: border-box;
 	background-color: #EDEDED;
 	.bgcImg{
-		height: 420rpx;
+		height: 360rpx;
 	}
 	.divcs{
 		background-color: #fff;

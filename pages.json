@@ -24,6 +24,36 @@
 				"navigationBarTitleText": "商品详情"
 			}
         }
+        ,{
+            "path" : "pages/list/market",
+			"style": {
+				"navigationBarTitleText": "行情"
+			}
+        }
+        ,{
+            "path" : "pages/user/userCenter",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/wholesaleList",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/distGoodsList",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/distGoodsList",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/EntrusBuyList",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/entrusSellList",
+            "style" : {}
+        }
     ],
 	"easycom": {
 		"autoscan": true,
@@ -34,7 +64,38 @@
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
+		"navigationBarBackgroundColor": "#9E2036",
+		"navigationBarTextStyle":"#fff",
+		"backgroundColor": "#9E2036"
+	},
+	"tabBar": {
+		"color": "#666666",
+		"selectedColor": "#5677FC",
+		"backgroundColor": "#FFFFFF",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "static/images/tabbar/code_gray.png",
+				"selectedIconPath": "static/images/tabbar/code_active.png"
+			},
+			{
+				"pagePath": "pages/buy/tradeCenter",
+				"text": "交易大厅",
+				"iconPath": "static/images/tabbar/extend_gray.png",
+				"selectedIconPath": "static/images/tabbar/extend_active.png"
+			},
+			{
+				"pagePath": "pages/list/market",
+				"text": "行情",
+				"iconPath": "static/images/tabbar/extend_gray.png",
+				"selectedIconPath": "static/images/tabbar/extend_active.png"
+			},
+			{
+				"pagePath": "pages/user/userCenter",
+				"text": "我的",
+				"iconPath": "static/images/tabbar/thor_gray.png",
+				"selectedIconPath": "static/images/tabbar/thor_active.png"
+			}
+		]
 	}
 }

@@ -258,6 +258,40 @@ export default {
 	background: #d9d9d9 !important;
 }
 
+
+.tui-btn-bronze {
+	background: #9D1F35 !important;
+	color: #fff;
+}
+.tui-shadow-bronze {
+	box-shadow: 0 10rpx 14rpx 0 #9D1F35;
+}
+.tui-btn-gray-bronze {
+	background: #9D1F35 !important;
+	color: #fff !important;
+}
+
+.tui-gray-bronze-hover {
+	background: #9D1F35 !important;
+}
+
+.tui-bronze-hover {
+	background: #9D1F35 !important;
+	color: #fff !important;
+}
+
+.tui-bronze-outline {
+	color: #fff !important;
+	background: transparent;
+}
+
+.tui-bronze-outline::after {
+	border: 1px solid #9D1F35 !important;
+}
+
+
+
+
 .tui-btn-tomato {
 	background: #FF6461 !important;
 	color: #FF6461;

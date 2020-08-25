@@ -145,8 +145,7 @@
 				],
 				newProduct: [
 					{name: '时尚舒适公主裙高街修身长裙',present: 198,original: 298,pic: '1.jpg',type: 1,isLabel: true},
-					{name: '高街修身雪纺衫',present: 398,original: 598,pic: '2.jpg',type: 2,isLabel: true},
-					{name: '轻奢商务上衣',present: 99,original: 199,pic: '3.jpg',type: 1,isLabel: true}
+					{name: '高街修身雪纺衫',present: 398,original: 598,pic: '2.jpg',type: 2,isLabel: true}
 				],
 				productList: [
 					{img: 1,name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）',sale: 599,factory: 899,payNum: 2342},
@@ -297,7 +296,7 @@
 	.tui-rolling-news {
 		width: 100%;
 		margin: 6% 0;
-		padding: 12rpx 30rpx;
+		padding: 4% 2%;
 		background-color: #fff;
 		box-sizing: border-box;
 		display: flex;
