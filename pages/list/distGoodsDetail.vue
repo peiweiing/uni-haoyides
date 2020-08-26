@@ -44,7 +44,7 @@
 					<view class="tui-pro-price">
 						<view>
 							<text>￥</text>
-							<text class="tui-price">49</text>
+							<text class="tui-price">68</text>
 							<text>.00</text>
 						</view>
 						<tui-tag padding="10rpx 20rpx" size="24rpx" plain type="high-green" shape="circle" :scaleMultiple="0.8">新品</tui-tag>
@@ -55,7 +55,7 @@
 					<text class="">1688856546</text>
 				</view>
 				<view class="tui-padding">
-					<view class="tui-sub-title tui-size tui-gray">谈判官明星同款耳坠韩国气质简约显脸瘦的耳环女百搭个性长款耳钉 个性水滴耳环【A2】此商品将于2019-06-28,10点结束闪购特卖，时尚美饰联合专场</view>
+					<view class="tui-sub-title tui-size tui-gray"> 丽醒海带精萃饮 植物饮品 喝酒应酬 </view>
 					<view class="tui-sale-info tui-size tui-gray">
 						<view></view>
 						<view></view>
@@ -69,8 +69,9 @@
 				<tui-nomore text="宝贝详情" backgroundColor="#f7f7f7"></tui-nomore>
 			</view>
 			<view class="tui-product-img tui-radius-all">
-				<image :src="'https://www.thorui.cn/img/detail/' + (index + 1) + '.jpg'" v-for="(img, index) in 20" :key="index"
-				 mode="widthFix"></image>
+				<!-- <image :src="'https://www.thorui.cn/img/detail/' + (index + 1) + '.jpg'" v-for="(img, index) in 20" :key="index"
+				 mode="widthFix"></image> -->
+				 <image src="../../static/img/detail.jpg" mode="widthFix"></image>
 			</view>
 			<tui-nomore text="已经到最底了" backgroundColor="#f7f7f7"></tui-nomore>
 			<view class="tui-safearea-bottom"></view>
@@ -187,14 +188,11 @@
 				opcity: 0,
 				iconOpcity: 0.5,
 				banner: [
-					'https://www.thorui.cn/img/product/11.jpg',
-					'https://www.thorui.cn/img/product/2.png',
-					'https://www.thorui.cn/img/product/33.jpg',
-					'https://www.thorui.cn/img/product/4.png',
-					'https://www.thorui.cn/img/product/55.jpg',
-					'https://www.thorui.cn/img/product/6.png',
-					'https://www.thorui.cn/img/product/7.jpg',
-					'https://www.thorui.cn/img/product/8.jpg'
+					'../../static/img/01.jpg',
+					'../../static/img/02.jpg',
+					'../../static/img/03.jpg',
+					'../../static/img/04.jpg',
+					'../../static/img/05.jpg',
 				],
 				bannerIndex: 0,
 				topMenu: [

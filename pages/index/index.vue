@@ -17,8 +17,16 @@
 				@change="change"
 			>
 				<swiper-item v-for="(item, index) in banner" :key="index" class="tui-banner-item">
-					<image
+					<!-- <image
 						:src="'https://thorui.cn/images/mall/banner/' + item"
+						class="tui-slide-image"
+						:class="[current != index ? 'tui-banner-scale' : '']"
+						mode="scaleToFill"
+						lazy-load
+						@tap="detail"
+					/> -->
+					<image
+						:src="item"
 						class="tui-slide-image"
 						:class="[current != index ? 'tui-banner-scale' : '']"
 						mode="scaleToFill"
@@ -53,7 +61,7 @@
 				</view>
 				<view class="tui-new-box">
 					<view class="tui-new-item" :class="[index != 0 && index != 1 ? 'tui-new-mtop' : '']" v-for="(item, index) in newProduct"
-					 :key="index" @tap="details">
+					 :key="index" @tap="details(item.url)">
 						<image :src="'/static/images/mall/new/' + (item.type == 1 ? 'new' : 'discount') + '.png'" class="tui-new-label"
 						 v-if="item.isLabel"></image>
 						<view class="tui-title-box">
@@ -63,7 +71,8 @@
 								<text class="tui-new-original">￥{{ item.original }}</text>
 							</view>
 						</view>
-						<image :src="'/static/images/mall/new/' + item.pic" class="tui-new-img"></image>
+						<!-- <image :src="'/static/images/mall/new/' + item.pic" class="tui-new-img"></image> -->
+						<image :src="item.img" class="tui-new-img"></image>
 					</view>
 				</view>
 			</view>
@@ -77,8 +86,8 @@
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 != 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="details">
-							<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail1">
+							<image :src="item.img" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{ item.name }}</view>
 								<view>
@@ -100,8 +109,8 @@
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 == 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="details">
-							<image :src="'/static/images/mall/product/' + item.img + '.jpg'" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail2">
+							<image :src="item.img" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{ item.name }}</view>
 								<view>
@@ -137,22 +146,20 @@
 		data() {
 			return {
 				current: 0,
-				banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
+				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
+				banner: ['../../static/img/swiper01.jpg', '../../static/img/swiper02.jpg'],
 				newsList: [
 					"致力发展负责任的人工智能 中国发布八大治理原则",
 					"格兰仕暗示拜访拼多多后遭天猫打压，拼多多高层赞其有勇气",
 					"阿里计划将每股普通股拆为8股，增加筹资灵活性"
 				],
 				newProduct: [
-					{name: '时尚舒适公主裙高街修身长裙',present: 198,original: 298,pic: '1.jpg',type: 1,isLabel: true},
-					{name: '高街修身雪纺衫',present: 398,original: 598,pic: '2.jpg',type: 2,isLabel: true}
+					{url:'../list/distGoodsDetail',name: '丽醒海带精萃饮植物饮品',present: 68.00,original: 98,pic: '1.jpg',type: 1,isLabel: true,img:'../../static/img/s001.png'},
+					{url:'../list/distGoodsDetails',name: '大佑生宝小分子海参饮品',present: 598.00,original: 899,pic: '2.jpg',type: 2,isLabel: true,img:'../../static/img/s002.png'}
 				],
 				productList: [
-					{img: 1,name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）',sale: 599,factory: 899,payNum: 2342},
-					{img: 2,name: '德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒',sale: 29,factory: 69,payNum: 999},
-					{img: 3,name: '【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红',sale: 299,factory: 699,payNum: 666},
-					{img: 4,name: '百雀羚套装女补水保湿护肤品',sale: 1599,factory: 2899,payNum: 236},
-					{img: 5,name: '百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋',sale: 599,factory: 899,payNum: 2399}
+					{img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
+					{img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
 				],
 			}
 		},
@@ -168,6 +175,16 @@
 					url: '/pages/template/mall/productDetail/productDetail'
 				});
 			},
+			detail1: function() {
+				uni.navigateTo({
+					url: '/pages/list/distGoodsDetails'
+				});
+			},
+			detail2: function() {
+				uni.navigateTo({
+					url: '/pages/list/distGoodsDetail'
+				});
+			},
 			newdetail(e) {
 				this.tui.toast('详情功能尚未完善~')
 			},
@@ -177,9 +194,10 @@
 					url: '../productList/productList?searchKey=' + key
 				});
 			},
-			details: function() {
+			details: function(e) {
+				console.log(e)
 				uni.navigateTo({
-					url: '../list/distGoodsDetail'
+					url: e
 				});
 			},
 		}

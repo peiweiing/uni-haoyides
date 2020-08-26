@@ -3,7 +3,8 @@
 		<view class="product-list">
 			<!--商品列表-->
 			<view class="pro-item" @tap="detail" v-for="(item,index) in productList" :key="index">
-				<image :src="'/static/images/product/'+item.img+'.jpg'" class="pro-img" mode="widthFix" />
+				<!-- <image :src="'/static/images/product/'+item.img+'.jpg'" class="pro-img" mode="widthFix" /> -->
+				<image :src="item.img" class="pro-img" mode="widthFix" />
 				<view class="pro-content">
 					<view class="pro-tit">{{item.name}}</view>
 					<view>
@@ -54,19 +55,16 @@
 		data() {
 			return {
 				pageIndex: 1,
-				bottomPopup: false,
 				productList: [
-					{img: 1,name: "利物浦官方 独家出品纪念版沙发",sale: 599,factory: 899,payNum: 2342},
-					{img: 2,name: "好看好养活的绿色养眼小盆栽，超级实惠",sale: 29,factory: 69,payNum: 999},
-					{img: 3,name: "利物浦官方 独家出品大红床上用品三件套",sale: 299,factory: 699,payNum: 666},
-					{img: 4,name: "利物浦官方 独家出品花花碎花床上用品三件套",sale: 1599,factory: 2899,payNum: 236},
-					{img: 5,name: "利物浦官方 独家出品纪念版书柜，便宜又省空间，超级划算",sale: 599,factory: 899,payNum: 2399},
+					{img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 299.00,factory: 598,payNum: 2342},
+					{img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 34.00,factory: 68,payNum: 999},
 				],
 				regionArr: [
-					'陆羽经云南茶叶','编码:16888802','批发价:¥130.00','批发资格:2份','买入数量：2份','合计:¥260.00',
+					'丽醒海带精萃饮','编码:16888802','批发价:¥34.00','批发资格:2份','买入数量：2份','合计:¥68.00',
 					
 				],
 				regionTxt: '粤',
+				bottomPopup: false,
 				tabIndex: 26,
 				loadding: false,
 				pullUpOn: true
@@ -225,7 +223,6 @@
 .region-box {
 	width: 100%;
 	padding: 10%;
-	margin-bottom: 8%;
 	box-sizing: border-box;
 	overflow: hidden;
 	background-color: #fff;

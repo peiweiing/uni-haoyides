@@ -17,8 +17,15 @@
 				@change="change"
 			>
 				<swiper-item v-for="(item, index) in banner" :key="index" class="tui-banner-item">
-					<image
+					<!-- <image
 						:src="'https://thorui.cn/images/mall/banner/' + item"
+						class="tui-slide-image"
+						:class="[current != index ? 'tui-banner-scale' : '']"
+						mode="scaleToFill"
+						lazy-load
+						@tap="detail"
+					/> --><image
+						:src="item"
 						class="tui-slide-image"
 						:class="[current != index ? 'tui-banner-scale' : '']"
 						mode="scaleToFill"
@@ -69,17 +76,18 @@
 		data() {
 			return {
 				current: 0,
-				banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
+				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
+				banner: ['../../static/img/swiper01.jpg', '../../static/img/swiper02.jpg'],
 				dataList: [
-					{name: "refresh",size: 30,title:'现货买入',url:'distGoodsList'},
-					{name: "search",size: 30,title:'批发买入',url:'wholesaleList'},
+					{name: "unreceive",size: 30,title:'现货买入',color: "#9E2036",url:'distGoodsList'},
+					{name: "cart",size: 30,title:'批发买入',color: "#9E2036",url:'wholesaleList'},
 				],
 				dataLists: [
-					{name: "refresh",size: 30,title:'委托买入',url:''},
-					{name: "search",size: 30,title:'委托卖出',url:''},
-					{name: "close-fill",size: 30,title:'我的委托',url:''},
-					{name: "shut",size: 30,title:'摘牌买入',url:'EntrusBuyList'},
-					{name: "plus",size: 30,title:'摘牌卖出',url:'entrusSellList'},
+					{name: "member",size: 30,title:'委托买入',color: "#9E2036",url:''},
+					{name: "wealth",size: 30,title:'委托卖出',color: "#9E2036",url:''},
+					{name: "share",size: 30,title:'我的委托',color: "#9E2036",url:'entrust'},
+					{name: "bankcard",size: 30,title:'摘牌买入',color: "#9E2036",url:'EntrusBuyList'},
+					{name: "redpacket",size: 30,title:'摘牌卖出',color: "#9E2036",url:'entrusSellList'},
 				],
 			}
 		},
@@ -107,7 +115,7 @@
 	box-sizing: border-box;
 	background-color: #EDEDED;
 	.bgcImg{
-		height: 360rpx;
+		height: 300rpx;
 	}
 	.divcs{
 		background-color: #fff;

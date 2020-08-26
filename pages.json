@@ -32,27 +32,51 @@
         }
         ,{
             "path" : "pages/user/userCenter",
-            "style" : {}
+			"style": {
+				"navigationBarTitleText": "个人中心"
+			}
+        }
+        ,{
+            "path" : "pages/user/pickupProgress",
+			"style": {
+				"navigationBarTitleText": "我的库存"
+			}
         }
         ,{
             "path" : "pages/buy/wholesaleList",
-            "style" : {}
+			"style": {
+				"navigationBarTitleText": "批发买入"
+			}
         }
         ,{
             "path" : "pages/buy/distGoodsList",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/buy/distGoodsList",
-            "style" : {}
+			"style": {
+				"navigationBarTitleText": "现货买入"
+			}
         }
         ,{
             "path" : "pages/buy/EntrusBuyList",
-            "style" : {}
+			"style": {
+				"navigationBarTitleText": "摘牌买入"
+			}
         }
         ,{
             "path" : "pages/buy/entrusSellList",
-            "style" : {}
+			"style": {
+				"navigationBarTitleText": "摘牌卖出"
+			}
+        }
+        ,{
+            "path" : "pages/list/distGoodsDetails",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
+        }
+        ,{
+            "path" : "pages/buy/entrust",
+			"style": {
+				"navigationBarTitleText": "我的委托"
+			}
         }
     ],
 	"easycom": {
@@ -69,32 +93,32 @@
 		"backgroundColor": "#9E2036"
 	},
 	"tabBar": {
-		"color": "#666666",
-		"selectedColor": "#5677FC",
+		"color": "#ccc",
+		"selectedColor": "#9E2036",
 		"backgroundColor": "#FFFFFF",
 		"list": [{
 				"pagePath": "pages/index/index",
 				"text": "首页",
-				"iconPath": "static/images/tabbar/code_gray.png",
-				"selectedIconPath": "static/images/tabbar/code_active.png"
+				"iconPath": "static/img/index.png",
+				"selectedIconPath": "static/img/indexs.png"
 			},
 			{
 				"pagePath": "pages/buy/tradeCenter",
 				"text": "交易大厅",
-				"iconPath": "static/images/tabbar/extend_gray.png",
-				"selectedIconPath": "static/images/tabbar/extend_active.png"
+				"iconPath": "static/img/two.png",
+				"selectedIconPath": "static/img/twos.png"
 			},
 			{
 				"pagePath": "pages/list/market",
 				"text": "行情",
-				"iconPath": "static/images/tabbar/extend_gray.png",
-				"selectedIconPath": "static/images/tabbar/extend_active.png"
+				"iconPath": "static/img/three.png",
+				"selectedIconPath": "static/img/threes.png"
 			},
 			{
 				"pagePath": "pages/user/userCenter",
 				"text": "我的",
-				"iconPath": "static/images/tabbar/thor_gray.png",
-				"selectedIconPath": "static/images/tabbar/thor_active.png"
+				"iconPath": "static/img/user.png",
+				"selectedIconPath": "static/img/users.png"
 			}
 		]
 	}

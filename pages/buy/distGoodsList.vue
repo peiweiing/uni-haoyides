@@ -2,22 +2,20 @@
 	<view class="container">
 		<view class="product-list">
 			<!--商品列表-->
-			<view class="pro-item" @tap="detail" v-for="(item,index) in productList" :key="index">
-				<image :src="'/static/images/product/'+item.img+'.jpg'" class="pro-img" mode="widthFix" />
+			<view class="pro-item" @tap="detail(item.url)" v-for="(item,index) in productList" :key="index">
+				<image :src="item.img" class="pro-img" mode="widthFix" />
 				<view class="pro-content">
 					<view class="pro-tit">{{item.name}}</view>
-					<view>
-						<view class="pro-price">
-							<text class="sale-price">￥{{item.sale}}</text>
-							<text class="factory-price">￥{{item.factory}}</text>
-						</view>
-						<view class="btn-box FX-fe">
-							<tui-button type="tomato" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="showModal">买入</tui-button>
-						</view>
-						<!-- <view class="btn-box">
-							<tui-button shape="circle" shadow @click="showModal">从底部弹出</tui-button>
-						</view> -->
+					<view class="pro-price">
+						<text class="sale-price">￥{{item.sale}}</text>
+						<text class="factory-price">￥{{item.factory}}</text>
 					</view>
+					<!-- <view class="btn-box FX-fe">
+						<tui-button type="tomato" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="showModal">买入</tui-button>
+					</view> -->
+					<!-- <view class="btn-box">
+						<tui-button shape="circle" shadow @click="showModal">从底部弹出</tui-button>
+					</view> -->
 				</view>
 			</view>
 			<!--商品列表-->
@@ -28,7 +26,7 @@
 		<!--加载loadding-->
 		
 		<!--底部抽屉-->
-		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
+		<!-- <tui-bottom-popup :show="bottomPopup" @close="hideModal">
 			<view class="region-box">
 				<view
 					class="region-txt"
@@ -44,7 +42,7 @@
 					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm">确定</tui-button>
 				</view>
 			</view>
-		</tui-bottom-popup>
+		</tui-bottom-popup> -->
 		
 	</view>
 </template>
@@ -56,14 +54,11 @@
 				pageIndex: 1,
 				bottomPopup: false,
 				productList: [
-					{img: 5,name: '欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）',sale: 599,factory: 899,payNum: 2342},
-					{img: 4,name: '德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒',sale: 29,factory: 69,payNum: 999},
-					{img: 3,name: '【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红',sale: 299,factory: 699,payNum: 666},
-					{img: 2,name: '百雀羚套装女补水保湿护肤品',sale: 1599,factory: 2899,payNum: 236},
-					{img: 1,name: '百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋',sale: 599,factory: 899,payNum: 2399}
+					{url:"../list/distGoodsDetails",img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
+					{url:"../list/distGoodsDetail",img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
 				],
 				regionArr: [
-					'陆羽经云南茶叶','编码:16888802','批发价:¥130.00','批发资格:2份','买入数量：2份','合计:¥260.00',
+					'大佑生宝小分子','编码:16888802','批发价:¥598.00','批发资格:2份','买入数量：2份','合计:¥260.00',
 				],
 				regionTxt: '粤',
 				tabIndex: 26,
@@ -72,11 +67,11 @@
 			}
 		},
 		methods: {
-			// detail(e) {
-			// 	uni.navigateTo({
-			// 		url: '/pages/template/mall/productDetail/productDetail'
-			// 	})
-			// },
+			detail(e) {
+				uni.navigateTo({
+					url: e
+				})
+			},
 			showModal: function() {
 				this.bottomPopup = true;
 			},
@@ -169,7 +164,7 @@
 		justify-content: space-between;
 		box-sizing: border-box;
 		padding: 20rpx;
-		height: 230rpx;
+		/* height: 230rpx; */
 	}
 
 	.pro-tit {
@@ -224,7 +219,6 @@
 .region-box {
 	width: 100%;
 	padding: 10%;
-	margin-bottom: 8%;
 	box-sizing: border-box;
 	overflow: hidden;
 	background-color: #fff;

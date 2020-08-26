@@ -1,12 +1,12 @@
 <template>
 	<view class="qiun-columns container">
 		<view class="divtop">
-			<tui-card :image="card[0].img" :title="card[0].title" :tag="card[0].tag">
+			<tui-card :image="card[0].img" :title="card[0].title" :tag="card[0].tag" @click="showModal">
 				<template v-slot:body>
 					<view class="tui-default FX-sb" style="font-size: 12px;color: #C8C7CC;">
-						<text>价格:￥260.00</text>
-						<text>交易量:2560</text>
-						<text>交易金额:￥260.00</text>
+								<text>价格:￥598.00</text>
+								<text>交易量:666</text>
+								<text>交易金额:￥398268.00</text>
 					</view>
 				</template>
 			</tui-card>
@@ -40,14 +40,14 @@
 		</view>
 		
 		<view class="divend FX-sa FY-c">
-			<tui-button margin="0 20rpx 26rpx 0" type="green" width="280rpx" height="90rpx" :size="32" @click="showModal">买入</tui-button>
-			<tui-button margin="0 20rpx 26rpx 0" type="bronze" width="280rpx" height="90rpx" :size="32" @click="showModal">卖出</tui-button>
+			<tui-button margin="0 20rpx 26rpx 0" type="green" width="280rpx" height="90rpx" :size="32" @click="detail">买入</tui-button>
+			<tui-button margin="0 20rpx 26rpx 0" type="bronze" width="280rpx" height="90rpx" :size="32" @click="detail">卖出</tui-button>
 		</view>
 		
 		<!--底部抽屉-->
 		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
-			<view class="region-box">
-				<view
+			<view class="region-box-end">
+				<!-- <view
 					class="region-txt"
 					:class="[index == regionArr.length - 3 || index == regionArr.length - 2 || index == regionArr.length - 1 ? 'grow' : '', tabIndex == index ? 'active' : '']"
 					v-for="(item, index) in regionArr"
@@ -55,10 +55,23 @@
 					:data-index="index"
 				>
 					<text class="w40">{{ item }}</text>
+				</view> -->
+				<view class="region-end" v-for="(v,i) in cardend">
+					<tui-card :image="v.img" :title="v.title" :tag="v.tag">
+						<template v-slot:body>
+							<view class="tui-default FX-sb" style="font-size: 12px;color: #C8C7CC;">
+								<!-- <text>价格:￥398.00</text>
+								<text>交易量:2560</text>
+								<text>交易金额:￥1011200.00</text> -->
+								<text>价格:￥{{v.price}}</text>
+								<text>交易量:{{v.num}}</text>
+								<text>交易金额:￥{{v.heji}}</text>
+							</view>
+						</template>
+					</tui-card>
 				</view>
-				<view class="FX-sb w100">
-					<tui-button type="green" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
-					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm">确定</tui-button>
+				<view class="FX-c w100">
+					<tui-button type="gray" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
 				</view>
 			</view>
 		</tui-bottom-popup>
@@ -85,13 +98,29 @@
 				sliderMax: 50,
 				bottomPopup: false,
 				regionArr: [
-					'陆羽经云南茶叶','编码:16888802','批发价:¥130.00','批发资格:2份','买入数量：2份','合计:¥260.00',
+					'大佑生宝小分子海参饮品','编码:16888802','批发价:¥299.00','批发资格:2份','买入数量：2份','合计:¥598.00',
 					
+				],
+				cardend:[
+					{
+						img: {url: "/static/img/s01.jpg",circle: true},
+						title: {text: "大佑生宝小分子"},
+						tag: {text:"编码：168888202"},
+						price:"598",num:"666",heji:"398268",
+						header: {line: true,bgcolor: "#F7F7F7"}
+					},
+					{
+						img: {url: "/static/img/s02.jpg",circle: true},
+						title: {text: " 丽醒海带精萃饮"},
+						tag: {text: "编码：168888202"},
+						price:"68",num:"999",heji:"67932",
+						header: {line: true,bgcolor: "#F7F7F7"}
+					},
 				],
 				card: [
 					{
-						img: {url: "/static/images/news/avatar_1.jpg"},
-						title: {text: "陆羽经云南茶叶"},
+						img: {url: "/static/img/s02.jpg"},
+						title: {text: "大佑生宝小分子海参饮品"},
 						tag: {text: "编码：168888202"},
 						header: {bgcolor: "#F7F7F7",line: true}
 					},
@@ -1163,7 +1192,23 @@
 	align-items: center;
 	justify-content: space-between;
 }
-
+.region-box-end {
+	width: 100%;
+	padding: 10% 5%;
+	box-sizing: border-box;
+	overflow: hidden;
+	background-color: #fff;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 10%;
+}
+.region-end{
+	width: 100%;
+	margin-bottom: 5%;
+}
 .region-txt {
 	width: 45%;
 	height: 82rpx;
