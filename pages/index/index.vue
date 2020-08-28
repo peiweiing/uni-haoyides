@@ -42,7 +42,7 @@
 			<tui-icon name="news-fill" :size='28' color='#5677fc'></tui-icon>
 			<swiper vertical autoplay circular interval="3000" class="tui-swiper">
 				<swiper-item v-for="(item,index) in newsList" :key="index" class="tui-swiper-item">
-					<view class="tui-news-item" @tap='newdetail'>{{item}}</view>
+					<view class="tui-news-item" @tap='newdetail'>{{item.ch_content}}</view>
 				</swiper-item>
 			</swiper>
 		</view>
@@ -61,18 +61,17 @@
 				</view>
 				<view class="tui-new-box">
 					<view class="tui-new-item" :class="[index != 0 && index != 1 ? 'tui-new-mtop' : '']" v-for="(item, index) in newProduct"
-					 :key="index" @tap="details(item.url)">
-						<image :src="'/static/images/mall/new/' + (item.type == 1 ? 'new' : 'discount') + '.png'" class="tui-new-label"
-						 v-if="item.isLabel"></image>
+					 :key="index" @tap="detail(item.g_id)">
+						<image :src="'/static/images/mall/new/' + (item.type == 1 ? 'new' : 'discount') + '.png'" class="tui-new-label"></image>
 						<view class="tui-title-box">
-							<view class="tui-new-title">{{ item.name }}</view>
+							<view class="tui-new-title">{{ item.g_title }}</view>
 							<view class="tui-new-price FY-c">
-								<text class="tui-new-present">￥{{ item.present }}</text>
-								<text class="tui-new-original">￥{{ item.original }}</text>
+								<text class="tui-new-present">￥{{ item.g_price }}</text>
+								<!-- <text class="tui-new-original">￥{{ item.original }}</text> -->
 							</view>
 						</view>
 						<!-- <image :src="'/static/images/mall/new/' + item.pic" class="tui-new-img"></image> -->
-						<image :src="item.img" class="tui-new-img"></image>
+						<image :src="item.g_pic" class="tui-new-img"></image>
 					</view>
 				</view>
 			</view>
@@ -86,19 +85,19 @@
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 != 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail1">
-							<image :src="item.img" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail(item.g_id)">
+							<image :src="item.g_pic" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
-								<view class="tui-pro-tit">{{ item.name }}</view>
+								<view class="tui-pro-tit">{{ item.g_title }}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{ item.sale }}</text>
-										<text class="tui-factory-price">￥{{ item.factory }}</text>
+										<text class="tui-sale-price">￥{{ item.g_price }}</text>
+										<!-- <text class="tui-factory-price">￥{{ item.g_price }}</text> -->
 									</view>
-									<view class="tui-pro-pay FX-sa">
+									<!-- <view class="tui-pro-pay FX-sa">
 										<tui-button type="green" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="detail">买入</tui-button>
 										<tui-button type="tomato" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="detail">卖出</tui-button>
-									</view>
+									</view> -->
 								</view>
 							</view>
 						</view>
@@ -109,19 +108,19 @@
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 == 0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail2">
-							<image :src="item.img" class="tui-pro-img" mode="widthFix" />
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail(item.g_id)">
+							<image :src="item.g_pic" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
-								<view class="tui-pro-tit">{{ item.name }}</view>
+								<view class="tui-pro-tit">{{ item.g_title }}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{ item.sale }}</text>
-										<text class="tui-factory-price">￥{{ item.factory }}</text>
+										<text class="tui-sale-price">￥{{ item.g_price }}</text>
+										<!-- <text class="tui-factory-price">￥{{ item.g_price }}</text> -->
 									</view>
-									<view class="tui-pro-pay FX-sa">
+									<!-- <view class="tui-pro-pay FX-sa">
 										<tui-button type="green" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="detail">买入</tui-button>
 										<tui-button type="tomato" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="detail">卖出</tui-button>
-									</view>
+									</view> -->
 								</view>
 							</view>
 						</view>
@@ -164,25 +163,49 @@
 			}
 		},
 		onLoad() {
-
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.getchannel,
+						method: 'POST',
+						header: {'Authorization':getres},
+						data:{'type':2},
+						success: (res) => {
+							console.log(res.data);
+							that.newsList=res.data.data;
+						}
+					});
+					uni.request({
+						url: App.sortgoods,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res.data);
+							that.newProduct=res.data.data;
+						}
+					});
+					uni.request({
+						url: App.list,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res.data);
+							that.productList=res.data.data;
+						}
+					});
+				}
+			})
 		},
 		methods: {	
 			change: function(e) {
 				this.current = e.detail.current;
 			},
-			detail: function() {
+			detail: function(e) {
 				uni.navigateTo({
-					url: '/pages/template/mall/productDetail/productDetail'
-				});
-			},
-			detail1: function() {
-				uni.navigateTo({
-					url: '/pages/list/distGoodsDetails'
-				});
-			},
-			detail2: function() {
-				uni.navigateTo({
-					url: '/pages/list/distGoodsDetail'
+					url: '/pages/list/distGoodsDetail?id='+e,
 				});
 			},
 			newdetail(e) {
@@ -192,12 +215,6 @@
 				let key = e.currentTarget.dataset.key || '';
 				uni.navigateTo({
 					url: '../productList/productList?searchKey=' + key
-				});
-			},
-			details: function(e) {
-				console.log(e)
-				uni.navigateTo({
-					url: e
 				});
 			},
 		}
@@ -211,7 +228,7 @@
 	box-sizing: border-box;
 	background-color: #EDEDED;
 	.bgcImg{
-		height: 320rpx;
+		height: 280rpx;
 	}
 	.divcs{
 		background-color: #fff;

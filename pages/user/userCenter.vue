@@ -137,7 +137,7 @@
 	}
 	.tui-mybg-box {
 		width: 100%;
-		height: 400rpx;
+		height: 280rpx;
 		position: relative;
 		background-color: #9E2036;
 	}
@@ -147,7 +147,7 @@
 		width: 100%;
 		height: 128rpx;
 		left: 0;
-		top: 120rpx;
+		top: 40rpx;
 		padding: 0 30rpx;
 		box-sizing: border-box;
 		display: flex;

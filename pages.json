@@ -1,17 +1,20 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	    {
+            "path" : "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+                "app-plus": {
+                    "titleNView": false //禁用原生导航栏
+                }
+			}
+        },
 		{
 			"path": "pages/index/index",
 			"style": {
 				"navigationBarTitleText": "好得益健康商城"
 			}
 		}
-	    ,{
-            "path" : "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录"
-			}
-        }
         ,{
             "path" : "pages/buy/tradeCenter",
             "style" : {
@@ -21,7 +24,10 @@
         ,{
             "path" : "pages/list/distGoodsDetail",
 			"style": {
-				"navigationBarTitleText": "商品详情"
+				"navigationBarTitleText": "商品详情",
+                "app-plus": {
+                    "titleNView": false //禁用原生导航栏
+                }
 			}
         }
         ,{
@@ -69,7 +75,10 @@
         ,{
             "path" : "pages/list/distGoodsDetails",
 			"style": {
-				"navigationBarTitleText": "商品详情"
+				"navigationBarTitleText": "商品详情",
+                "app-plus": {
+                    "titleNView": false //禁用原生导航栏
+                }
 			}
         }
         ,{
@@ -77,6 +86,22 @@
 			"style": {
 				"navigationBarTitleText": "我的委托"
 			}
+        }
+        ,{
+            "path" : "pages/user/recharge",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/consignmentSale",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/buy/entrustedPurchase",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/user/realName",
+            "style" : {}
         }
     ],
 	"easycom": {

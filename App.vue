@@ -1,8 +1,10 @@
 <script>
 // 账号登录
 	const login = "http://api.lovehou.com/api/login";
-//验证码登录
-	// const login = "http://api.lovehou.com/api/login";
+//验证码
+	const verifyCode = "http://api.lovehou.com/api/verifyCode";
+//账号注册
+	const register = "http://api.lovehou.com/api/register";
 //修改密码
 	// const updatepwd = "http://api.lovehou.com/api/updatepwd";
 //我的挂单列表
@@ -11,27 +13,36 @@
 	const list = "http://api.lovehou.com/api/goods/list";
 //商品详情
 	const detail = "http://api.lovehou.com/api/goods/detail";
+//系统公告
+	const getchannel = "http://api.lovehou.com/api/getchannel";
+//排行榜
+	const sortgoods = "http://api.lovehou.com/api/goods/sortgoods";
 //新品列表
 	const newgoods = "http://api.lovehou.com/api/goods/newgoods";
-//挂牌买入列表
+//摘牌买入
+	const entrusBuy = "http://api.lovehou.com/api/goods/entrusBuy";
+//摘牌列表
 	const getEntrusBuyList = "http://api.lovehou.com/api/goods/getEntrusBuyList";
-//挂牌卖出列表
-	const getEntrusSellList = "http://api.lovehou.com/api/goods/getEntrusSellList";
-//挂牌买入页面
+//摘牌页面详情
 	const entrusBuyList = "http://api.lovehou.com/api/goods/entrusBuyList";
-//挂牌卖出页面
+//摘牌卖出列表
+	const getEntrusSellList = "http://api.lovehou.com/api/goods/getEntrusSellList";
+//摘牌数据呈现
 	const checkEntrusCanSell = "http://api.lovehou.com/api/goods/checkEntrusCanSell";
+//摘牌卖出流程
+	const listsellBuy = "http://api.lovehou.com/api/goods/listsellBuy";
+//委托买入需求发布
+	const entrustpurchase = "http://api.lovehou.com/api/goods/entrustpurchase";
+//委托卖出需求发布
+	const consignmentSale = "http://api.lovehou.com/api/goods/consignmentSale";
 export default {
-		login,
+		login,verifyCode,register,
 		// updatepwd,
-		getEntrusList,
-		list,
-		detail,
-		newgoods,
-		getEntrusBuyList,
-		getEntrusSellList,
-		entrusBuyList,
-		checkEntrusCanSell,
+		getEntrusList,list,detail,
+		getchannel,sortgoods,newgoods,
+		entrusBuy,getEntrusBuyList,entrusBuyList,
+		getEntrusSellList,checkEntrusCanSell,listsellBuy,
+		entrustpurchase,consignmentSale,
 		
 	onLaunch: function() {
 		let that = this;

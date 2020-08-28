@@ -1,7 +1,7 @@
 {
-    "name" : "ThorUI组件库",
-    "appid" : "",
-    "description" : "ThorUI跨端项目，uni-app版本，v3编译，支持nvue uni-app编译模式（原weex编译模式），easycom组件模式（无需手动引入，开发工具自带智能感知）",
+    "name" : "好益得健康商城",
+    "appid" : "__UNI__EC60E76",
+    "description" : "好益得健康商城",
     "versionName" : "1.5.5",
     "versionCode" : 120,
     "transformPx" : false,
@@ -58,10 +58,64 @@
             "ios" : {},
             /* SDK配置 */
             "sdkConfigs" : {
-                "maps" : {
-                    "amap" : {
-                        "appkey_ios" : "",
-                        "appkey_android" : ""
+                "maps" : {},
+                "ad" : {}
+            },
+            "icons" : {
+                "android" : {
+                    "hdpi" : "unpackage/res/icons/72x72.png",
+                    "xhdpi" : "unpackage/res/icons/96x96.png",
+                    "xxhdpi" : "unpackage/res/icons/144x144.png",
+                    "xxxhdpi" : "unpackage/res/icons/192x192.png"
+                },
+                "ios" : {
+                    "appstore" : "unpackage/res/icons/1024x1024.png",
+                    "ipad" : {
+                        "app" : "unpackage/res/icons/76x76.png",
+                        "app@2x" : "unpackage/res/icons/152x152.png",
+                        "notification" : "unpackage/res/icons/20x20.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "proapp@2x" : "unpackage/res/icons/167x167.png",
+                        "settings" : "unpackage/res/icons/29x29.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "spotlight" : "unpackage/res/icons/40x40.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png"
+                    },
+                    "iphone" : {
+                        "app@2x" : "unpackage/res/icons/120x120.png",
+                        "app@3x" : "unpackage/res/icons/180x180.png",
+                        "notification@2x" : "unpackage/res/icons/40x40.png",
+                        "notification@3x" : "unpackage/res/icons/60x60.png",
+                        "settings@2x" : "unpackage/res/icons/58x58.png",
+                        "settings@3x" : "unpackage/res/icons/87x87.png",
+                        "spotlight@2x" : "unpackage/res/icons/80x80.png",
+                        "spotlight@3x" : "unpackage/res/icons/120x120.png"
+                    }
+                }
+            },
+            "splashscreen" : {
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "D:/files/drawable-hdpi/splash.png",
+                    "xhdpi" : "D:/files/drawable-xhdpi/splash.png",
+                    "xxhdpi" : "D:/files/drawable/splash.png"
+                },
+                "iosStyle" : "default",
+                "ios" : {
+                    "iphone" : {
+                        "portrait-896h@3x" : "D:/files/drawable-xhdpi/splash.png",
+                        "landscape-896h@3x" : "D:/files/drawable/splash.png",
+                        "portrait-896h@2x" : "D:/files/drawable-hdpi/splash.png",
+                        "retina47l" : "D:/files/drawable-hdpi/splash.png",
+                        "retina47" : "D:/files/drawable/splash.png",
+                        "retina55l" : "D:/files/drawable/splash.png",
+                        "retina55" : "D:/files/drawable/splash.png",
+                        "iphonexl" : "D:/files/drawable/splash.png",
+                        "iphonex" : "D:/files/drawable/splash.png",
+                        "landscape-896h@2x" : "D:/files/drawable/splash.png",
+                        "retina35" : "D:/files/drawable-hdpi/splash.png",
+                        "retina40l" : "D:/files/drawable-hdpi/splash.png",
+                        "retina40" : "D:/files/drawable-hdpi/splash.png"
                     }
                 }
             }

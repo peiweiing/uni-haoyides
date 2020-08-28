@@ -83,8 +83,8 @@
 					{name: "cart",size: 30,title:'批发买入',color: "#9E2036",url:'wholesaleList'},
 				],
 				dataLists: [
-					{name: "member",size: 30,title:'委托买入',color: "#9E2036",url:''},
-					{name: "wealth",size: 30,title:'委托卖出',color: "#9E2036",url:''},
+					{name: "member",size: 30,title:'委托买入',color: "#9E2036",url:'entrustedPurchase'},
+					{name: "wealth",size: 30,title:'委托卖出',color: "#9E2036",url:'consignmentSale'},
 					{name: "share",size: 30,title:'我的委托',color: "#9E2036",url:'entrust'},
 					{name: "bankcard",size: 30,title:'摘牌买入',color: "#9E2036",url:'EntrusBuyList'},
 					{name: "redpacket",size: 30,title:'摘牌卖出',color: "#9E2036",url:'entrusSellList'},
@@ -111,11 +111,11 @@
 
 <style lang="scss" scoped>
 .container {
-	padding-bottom: 100rpx;
+	padding-bottom: 40rpx;
 	box-sizing: border-box;
 	background-color: #EDEDED;
 	.bgcImg{
-		height: 300rpx;
+		height: 280rpx;
 	}
 	.divcs{
 		background-color: #fff;
@@ -131,7 +131,7 @@
 
 .tui-banner-box {
 	width: 100%;
-	margin-top: -30%;
+	margin-top: -25%;
 	box-sizing: border-box;
 	/* background: #fff; */
 }

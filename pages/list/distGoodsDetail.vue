@@ -8,10 +8,10 @@
 					<tui-icon name="arrowleft" :size="30" :color="opcity >= 1 ? '#000' : '#fff'"></tui-icon>
 				</view>
 
-				<view class="tui-icon-box tui-icon-ml" :style="{backgroundColor: 'rgba(0, 0, 0,' + iconOpcity + ')'}" @tap.stop="openMenu">
+				<!-- <view class="tui-icon-box tui-icon-ml" :style="{backgroundColor: 'rgba(0, 0, 0,' + iconOpcity + ')'}" @tap.stop="openMenu">
 					<tui-icon name="more-fill" :size="20" :color="opcity >= 1 ? '#000' : '#fff'"></tui-icon>
 					<tui-badge type="red" :scaleRatio="0.8" absolute top="0" right="-4rpx">5</tui-badge>
-				</view>
+				</view> -->
 
 			</view>
 		</view>
@@ -21,9 +21,9 @@
 		<view class="tui-banner-swiper">
 			<swiper :autoplay="true" :interval="5000" :duration="150" :circular="true" :style="{ height: scrollH + 'px' }"
 			 @change="bannerChange">
-				<block v-for="(item, index) in banner" :key="index">
+				<block v-for="(item, index) in module" :key="index">
 					<swiper-item :data-index="index" @tap.stop="previewImage">
-						<image :src="item" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
+						<image :src="module.g_slider_pic" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
 					</swiper-item>
 				</block>
 			</swiper>
@@ -31,9 +31,9 @@
 				<image src="https://www.thorui.cn/images/mall/img_video_3x.png" mode="widthFix"></image>
 				<view>00′30″</view>
 			</view> -->
-			<view class="tui-banner-tag">
-				<tui-tag padding="12rpx 18rpx" type="translucent" shape="circleLeft" :scaleMultiple="0.82" originRight>{{ bannerIndex + 1 }}/{{ banner.length }}</tui-tag>
-			</view>
+			<!-- <view class="tui-banner-tag">
+				<tui-tag padding="12rpx 18rpx" type="translucent" shape="circleLeft" :scaleMultiple="0.82" originRight>{{ bannerIndex }}/{{ module.g_slider_pic.length }}</tui-tag>
+			</view> -->
 		</view>
 
 		<!--banner-->
@@ -44,22 +44,21 @@
 					<view class="tui-pro-price">
 						<view>
 							<text>￥</text>
-							<text class="tui-price">68</text>
-							<text>.00</text>
+							<text class="tui-price">{{module.g_price}}</text>
 						</view>
 						<tui-tag padding="10rpx 20rpx" size="24rpx" plain type="high-green" shape="circle" :scaleMultiple="0.8">新品</tui-tag>
 					</view>
 				</view>
 				<view class="tui-original-price tui-gray">
 					编码：
-					<text class="">1688856546</text>
+					<text class="">{{module.g_code}}</text>
 				</view>
 				<view class="tui-padding">
-					<view class="tui-sub-title tui-size tui-gray"> 丽醒海带精萃饮 植物饮品 喝酒应酬 </view>
+					<view class="tui-sub-title tui-size tui-gray"> {{module.g_title}} </view>
 					<view class="tui-sale-info tui-size tui-gray">
 						<view></view>
 						<view></view>
-						<view>月销2000</view>
+						<view>月销量{{module.g_salevol}}</view>
 					</view>
 				</view>
 			</view>
@@ -68,10 +67,10 @@
 			<view class="tui-nomore-box">
 				<tui-nomore text="宝贝详情" backgroundColor="#f7f7f7"></tui-nomore>
 			</view>
-			<view class="tui-product-img tui-radius-all">
-				<!-- <image :src="'https://www.thorui.cn/img/detail/' + (index + 1) + '.jpg'" v-for="(img, index) in 20" :key="index"
-				 mode="widthFix"></image> -->
-				 <image src="../../static/img/detail.jpg" mode="widthFix"></image>
+			<view class="tui-product-img tui-radius-all detailimg" v-html="module.g_detail">
+				<!-- <image :src="'https://www.thorui.cn/img/detail/' + (index + 1) + '.jpg'" v-for="(img, index) in 20" :key="index" mode="widthFix"></image> -->
+				 <!-- <image src="../../static/img/detail.jpg" mode="widthFix"></image> -->
+				 
 			</view>
 			<tui-nomore text="已经到最底了" backgroundColor="#f7f7f7"></tui-nomore>
 			<view class="tui-safearea-bottom"></view>
@@ -179,6 +178,7 @@
 </template>
 
 <script>
+import App from '../../App.vue'
 	export default {
 		data() {
 			return {
@@ -194,7 +194,7 @@
 					'../../static/img/04.jpg',
 					'../../static/img/05.jpg',
 				],
-				bannerIndex: 0,
+				bannerIndex: 1,
 				topMenu: [
 					{icon: 'message',text: '消息',size: 26,badge: 3},
 					{icon: 'home',text: '首页',size: 23,badge: 0},
@@ -204,6 +204,7 @@
 					{icon: 'feedback',text: '我要反馈',size: 23,badge: 0},
 					{icon: 'share',text: '分享',size: 26,badge: 0}
 				],
+				module:"",
 				menuShow: false,
 				popupShow: false,
 				value: 1,
@@ -211,6 +212,8 @@
 			};
 		},
 		onLoad: function(options) {
+			let that =this;
+			var detailid =options.id;
 			let obj = {};
 			// #ifdef MP-WEIXIN
 			obj = wx.getMenuButtonBoundingClientRect();
@@ -221,7 +224,7 @@
 			// #ifdef MP-ALIPAY
 			my.hideAddToDesktopMenu();
 			// #endif
-
+			console.log(detailid)
 			setTimeout(() => {
 				uni.getSystemInfo({
 					success: res => {
@@ -232,6 +235,25 @@
 					}
 				});
 			}, 0);
+			
+			uni.getStorage({
+			    key: 'token',
+			    success: function (res) {
+			        console.log(res.data);
+					uni.request({
+					    url: App.detail,
+						method: 'POST',
+					    header: {'Authorization':res.data},
+						data: {"g_id":detailid},
+					    success: (res) => {
+					        console.log(res);
+							that.module=res.data.data;
+					        console.log(that.module);
+					    }
+					});
+			    }
+			});
+			
 		},
 		methods: {
 			bannerChange: function(e) {
@@ -525,7 +547,10 @@
 	/*顶部菜单*/
 
 	/*内容 部分*/
-
+ 
+	/* .detailimg>p>img,.detailimg>p>image{
+		width: 100%!important;
+	} */
 	.tui-padding {
 		padding: 0 30rpx;
 		box-sizing: border-box;

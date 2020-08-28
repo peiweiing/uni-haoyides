@@ -2,24 +2,20 @@
 	<view class="entrusbuylist">
 		<view class="entrusbuylist_left">
 			<view class="entrusbuylist_left_img">
-				<image :src="buyinlist.imgUrl"></image>
+				<image :src="imgUrl"></image>
 			</view>
-			<view class="entrusbuylist_left_text">
-				{{buyinlist.code}}
-			</view>
+			<view class="entrusbuylist_left_text">{{code}}</view>
 		</view>
 		<view class="entrusbuylist_center" style="flex: 1;">
-			<view class="entrusbuylist_right_title">{{buyinlist.title}}</view>
+			<view class="entrusbuylist_right_title">{{title}}</view>
 			<view class="entrusbuylist_right_price">
-				<text>挂牌价:￥{{buyinlist.price > 999999 ? "999999.00+" : buyinlist.price.toFixed(2)}}</text>
-				<text>数量:{{buyinlist.num > 999 ? '999+' : buyinlist.num}}份</text>
+				<view class=""><text>{{g_price}}</text><text>{{price}}</text></view>
+				<view class=""><text>{{g_num}}</text><text>{{num}}</text></view>
 			</view>
 		</view>
 		<view class="entrusbuylist_right">
 			<view class="tui-btn-box">
-				<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton">
-					{{buyinlist.button}}
-				</tui-button>
+				<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton">{{button}}</tui-button>
 			</view>
 		</view>
 	</view>
@@ -27,7 +23,16 @@
 
 <script>
 	export default {
-		props: ["buyinlist"],
+		props: {
+			imgUrl:String,
+			code:String,
+			title:String,
+			price:String,
+			num:String,
+			button:String,
+			g_price:String,
+			g_num:String
+		},
 		methods: {
 			clickButton() {
 				this.$emit("click")

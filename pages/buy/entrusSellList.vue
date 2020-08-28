@@ -1,22 +1,55 @@
 <template>
 	<view id="entrusbuylist">
-		<buyinlist v-for="item in data" :buyinlist="item" :key="item.id" @click="showModal"></buyinlist>
+		<view class="" v-for="(v,i) in detail">
+			<buylist :imgUrl="v.g_pic" :code="v.g_code" :title="v.g_title" :price="v.ut_price" :num="v.stock_num" g_price="卖出价" g_num="数量" button="卖出" @click="showModal(v.g_id,v.ut_id)"></buylist>
+		</view>
 		
 		<!--底部抽屉-->
 		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
 			<view class="region-box">
-				<view
-					class="region-txt"
-					:class="[index == regionArr.length - 3 || index == regionArr.length - 2 || index == regionArr.length - 1 ? 'grow' : '', tabIndex == index ? 'active' : '']"
-					v-for="(item, index) in regionArr"
-					:key="index"
-					:data-index="index"
-				>
-					<text class="w40">{{ item }}</text>
+				<tui-list-cell :hover="false" unlined>
+				    <view class="tui-line-cell">
+						<view class="tui-title">商品名称：</view>
+						<text>{{details.g_title}}</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">商品编码：</view>
+						<text>{{details.g_code}}</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">挂牌价格：</view>
+						<text>{{details.ut_price}}元</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">挂牌数量：</view>
+						<text>{{details.stock_num}}</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">卖出数量：</view>
+						<view class="valnum FX">
+							<button class='F-xy' type="primary" @click="valnumes">-</button>
+							<input class="t-center" type="text" v-model="valnums" @input="inputChanges"/>
+							<button class='F-xy' type="primary" @click="valnumas">+</button>
+						</view>
+				    </view>
+				   </tui-list-cell>
+			   <tui-list-cell :hover="false">
+				<view class="tui-line-cell">
+				 <view class="tui-title">合计：</view>
+					<text>{{heji}}.00元</text>
 				</view>
+			   </tui-list-cell>
 				<view class="FX-sb w100">
 					<tui-button type="green" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
-					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm">确定</tui-button>
+					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm(details.g_id,details.ut_id)">确定</tui-button>
 				</view>
 			</view>
 		</tui-bottom-popup>
@@ -24,10 +57,11 @@
 </template>
 
 <script>
-	import buyinlist from "../../components/buyinlist.vue"
+import App from "../../App.vue"
+import buylist from "../../components/buylist.vue"
 	export default {
 		components: {
-			buyinlist
+			buylist
 		},
 		data() {
 			return {
@@ -37,6 +71,10 @@
 				regionTxt: '粤',
 				bottomPopup: false,
 				tabIndex: 26,
+				detail:'',
+				details:'',
+				valnums:1,
+				heji:'',
 				data: [
 					{id: 1,imgUrl: "../../static/img/s02.jpg",title: "大佑生宝小分子海参饮品",price: 598,num: 10,code: 123456789,button: "卖出"},
 					{id: 2,imgUrl: "../../static/img/s02.jpg",title: "大佑生宝小分子海参饮品",price: 598,num: 10,code: 123456789,button: "卖出"},
@@ -50,16 +88,110 @@
 				]
 			}
 		},
+		onLoad() {
+			var that = this;
+			uni.getStorage({
+			    key: 'token',
+			    success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.getEntrusSellList,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res.data);
+							that.detail=res.data.data;
+						}
+					});
+			    }
+			});
+		},
 		methods: {
-			showModal: function() {
+			showModal: function(e,i) {
+				console.log(e,i)
+				var that = this;
+				var datas ={"g_id":e,"ut_id":i};
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							url: App.checkEntrusCanSell,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:datas,
+							success: (res) => {
+								console.log(res.data);
+								that.details=res.data.data;
+								that.heji=that.valnums*that.details.ut_price;
+							}
+						});
+					}
+				});
 				this.bottomPopup = true;
-				console.log("买入", Math.random())
+				console.log("卖出", Math.random())
 			},
 			hideModal: function() {
 				this.bottomPopup = false;
 			},
 			cancel: function() {
 				this.bottomPopup = false;
+			},
+			confirm: function(a,b) {
+				console.log(a,b)
+				var that = this;
+				var datas ={"g_id":a,"ut_id":b,"sell_num":that.valnums};
+				console.log(that.valnums)
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							url: App.listsellBuy,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:datas,
+							success: (res) => {
+								console.log(res);
+								// that.details=res.data.data;
+								this.bottomPopup = false;
+								uni.showToast({
+									icon: 'none',
+									title: res.data.msg
+								});
+								setTimeout(function(){
+									uni.redirectTo({
+										url:'entrusSellList'
+									})
+								},1000)
+							}
+						});
+					}
+				});
+				this.bottomPopup = false;
+			},
+			inputChanges(e){
+				var that = this;
+				that.valnums = e.detail.value
+				console.log(e.detail.value)
+			},
+			valnumes(){
+				var that = this;
+				if(that.valnums>1){
+					that.valnums--;
+				}else{
+					that.valnums=1
+				}
+				that.heji=that.valnums*that.details.ut_price;
+			},
+			valnumas(){
+				var that = this;
+				if(that.valnums<that.details.stock_num){
+					that.valnums++;
+				}else{
+					that.valnums=that.details.stock_num
+				}
+				that.heji=that.valnums*that.details.ut_price;
 			},
 		},
 		onPullDownRefresh() {
@@ -91,7 +223,43 @@
 		width: 400rpx;
 		padding: 80rpx 30rpx;
 	}
+.tui-line-cell {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+ }
 
+ .tui-title {
+  width: 240rpx;
+  text-align: right;
+  font-size: 32rpx;
+  min-width: 120rpx;
+  flex-shrink: 0;
+ }
+
+ .tui-input {
+  font-size: 32rpx;
+  color: #333;
+  padding-left: 20rpx;
+  flex: 1;
+  overflow: visible;
+ }
+	.valnum{
+		border:1px solid #999;
+	}
+	.valnum button{
+		width: 1.2rem;height: 1.2rem;
+		color: #000;line-height: 1.2rem;
+		border-radius: 0px;text-align: center;
+		background-color: rgb(248,248,248);  
+	}
+	.valnum button:after{
+		border-radius: 0px;border: none;
+	}
+	.valnum input{
+		width: 2rem;
+	}
 /*底部抽屉样式 start*/
 
 .region-box {
