@@ -1,6 +1,5 @@
 <template>
 	<view class="pickupProgress">
-
 		<!-- tab标签 -->
 		<tui-tabs 
 		class="pickuplist_tabs"
@@ -9,7 +8,6 @@
 		@change="changeTab"
 		itemWidth="50%"
 		></tui-tabs>
-		
 		<!-- 我的库存 -->
 		<view v-if="currentTab==0">
 			<view class="entrusbuylist" v-for="(item, index) in dataList_1" :key="index">
@@ -43,7 +41,16 @@
 				:class="item.id === bool ? (isactiveMiddle ? 'activeMiddle' : 'closeMiddle') : 'closeMiddle'"
 				@click="pickupdetail(item.id)"
 				>
-					提货进度详情
+					<view class="middle_title">
+						<text>商品名称</text>
+						<text>提货数量</text>
+						<text>提货时间</text>
+					</view>
+					<view class="middle_info" v-for="data in item.pickUp">
+						<text>{{data.pickUpName}}</text>
+						<text>{{data.pickUpNum}}</text>
+						<text>{{data.pickUpTime}}</text>
+					</view>
 				</scroll-view>
 				<view class="entrusbuylist_secondary" @click="pickupdetail(item.id)">
 					<tui-icon
@@ -56,54 +63,8 @@
 				</view>
 			</view>
 		</view>
-		
 		<!-- 提货进度 -->
-		<view v-if="currentTab==1">
-			<view class="entrusbuylist" v-for="(item, index) in dataList_2" :key="index">
-				<view class="entrusbuylist_main">
-					<view class="entrusbuylist_left">
-						<view class="entrusbuylist_left_img">
-							<image :src="item.imgUrl"></image>
-						</view>
-						<view class="entrusbuylist_left_text">
-							{{item.code}}
-						</view>
-					</view>
-					<view class="entrusbuylist_center" style="flex: 1;" @click="pickupdetail(item.id)">
-						<view class="entrusbuylist_right_title">{{item.title}}</view>
-						<view class="entrusbuylist_right_price">
-							<text>挂牌价:￥{{item.price > 999999 ? "999999.00+" : item.price.toFixed(2)}}</text>
-							<text>数量:{{item.num > 999 ? '999+' : item.num}}份</text>
-						</view>
-					</view>
-					<view class="entrusbuylist_right">
-						<view class="tui-btn-box">
-							<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton()">
-								{{item.button}}
-							</tui-button>
-						</view>
-					</view>
-				</view>
-				<scroll-view
-				scroll-y
-				class="entrusbuylist_middle"
-				:class="item.id === bool ? (isactiveMiddle ? 'activeMiddle' : 'closeMiddle') : 'closeMiddle'"
-				@click="pickupdetail(item.id)"
-				>
-					提货进度详情
-				</scroll-view>
-				<view class="entrusbuylist_secondary" @click="pickupdetail(item.id)">
-					<tui-icon
-					class="pickupdetail_button"
-					name="arrowdown"
-					:size="20"
-					:color="'#999'"
-					:class="item.id === bool ? (isbuttonRotate ? '' : 'activeButton') : ''"
-					></tui-icon>
-				</view>
-			</view>
-		</view>
-
+		<view v-if="currentTab==1"></view>
 	</view>
 </template>
 
@@ -124,7 +85,54 @@
 						price: 2800,
 						num: 10,
 						code: 123456789,
-						button: "库存累计中"
+						button: "库存累计中",
+						pickUp: [
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 56,
+								pickUpTime: "2020-08-29"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 46,
+								pickUpTime: "2020-08-28"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 36,
+								pickUpTime: "2020-08-27"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 26,
+								pickUpTime: "2020-08-26"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							}
+						]
 					},
 					{
 						id: 456,
@@ -133,45 +141,54 @@
 						price: 220,
 						num: 100,
 						code: 123456789,
-						button: "库存累计中"
-					}
-				],
-				dataList_2: [
-					{
-						id: 52652,
-						imgUrl: "",
-						title: "陆羽经云南茶叶",
-						price: 2800,
-						num: 10,
-						code: 12345678988,
-						button: "库存累计中"
-					},
-					{
-						id: 4545,
-						imgUrl: "",
-						title: "陆羽经云南茶叶",
-						price: 220,
-						num: 130,
-						code: 12378945,
-						button: "库存累计中"
-					},
-					{
-						id: 457845,
-						imgUrl: "",
-						title: "陆羽经云南茶叶",
-						price: 2270,
-						num: 180,
-						code: 1236789,
-						button: "库存累计中"
-					},
-					{
-						id: 45455,
-						imgUrl: "",
-						title: "陆羽经云南茶叶",
-						price: 2260,
-						num: 10,
-						code: 456423146,
-						button: "库存累计中"
+						button: "库存累计中",
+						pickUp: [
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 56,
+								pickUpTime: "2020-08-29"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 46,
+								pickUpTime: "2020-08-28"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 36,
+								pickUpTime: "2020-08-27"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 26,
+								pickUpTime: "2020-08-26"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							},
+							{
+								pickUpName: "乌龙茶",
+								pickUpNum: 16,
+								pickUpTime: "2020-08-25"
+							}
+						]
 					}
 				],
 				isactiveMiddle: false,
@@ -272,9 +289,29 @@
 			transition: 0.3s all linear;
 			margin-bottom: 10rpx;
 			font-size: 32rpx;
-			text-align: center;
-			line-height: 400rpx;
 			color:rgba(51,51,51,1);
+			box-sizing: border-box;
+			.middle_title{
+				display: flex;
+				justify-content: space-between;
+				border-bottom: 2rpx solid #EEEEEE;
+				text{
+					flex: 1;
+					text-align: center;
+					line-height: 80rpx;
+				}
+			}
+			.middle_info{
+				display: flex;
+				justify-content: space-between;
+				border-bottom: 2rpx solid #EEEEEE;
+				text{
+					flex: 1;
+					text-align: center;
+					line-height: 80rpx;
+					color: #999;
+				}
+			}
 		}
 		.entrusbuylist_secondary{
 			display: flex;

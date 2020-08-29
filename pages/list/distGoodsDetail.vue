@@ -58,7 +58,7 @@
 					<view class="tui-sale-info tui-size tui-gray">
 						<view></view>
 						<view></view>
-						<view>月销量{{module.g_salevol}}</view>
+						<view>销量{{module.g_salevol}}</view>
 					</view>
 				</view>
 			</view>
@@ -85,7 +85,7 @@
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
 				<view class="tui-flex-1">
-					<tui-button height="68rpx" :size="26" type="warning" shape="circle" @click="submit">立即购买</tui-button>
+					<tui-button height="68rpx" :size="26" type="warning" shape="circle" @click="submit(module.g_id)">立即购买</tui-button>
 				</view>
 			</view>
 		</view>
@@ -248,7 +248,6 @@ import App from '../../App.vue'
 					    success: (res) => {
 					        console.log(res);
 							that.module=res.data.data;
-					        console.log(that.module);
 					    }
 					});
 			    }
@@ -318,11 +317,52 @@ import App from '../../App.vue'
 					url && this.tui.href(url)
 				}
 			},
-			submit() {
-				this.popupShow = false;
-				uni.navigateTo({
-					url: '../submitOrder/submitOrder'
+			submit(e) {
+				var that =this;
+				uni.getStorage({
+				    key: 'token',
+				    success: function (res) {
+				        console.log(res.data);
+						uni.request({
+						    url: App.spotpay,
+							method: 'POST',
+						    header: {'Authorization':res.data},
+							data: {"g_id":e},
+						    success: (res) => {
+						        console.log(res);
+								uni.showToast({
+									icon: 'none',
+									title: res.data.msg
+								});
+								setTimeout(function(){
+									// uni.startPullDownRefresh();
+									// console.log("跳转")
+									// uni.navigateBack({
+									//     delta: 1
+									// });
+									// console.log("跳转")
+									that.module.g_salevol=res.data.data.g_salevol
+								},1000)
+								// if(res.data.status!=200){
+									// uni.showModal({
+									//     title: '提示',
+									//     content: '购买已超过今日限额',
+									//     success: function (res) {
+									//         if (res.confirm) {
+									//             console.log('用户点击确定');
+									//         } else if (res.cancel) {
+									//             console.log('用户点击取消');
+									//         }
+									//     }
+									// });
+								// }
+								// that.module=res.data.data;
+						        // console.log(that.module);
+						    }
+						});
+				    }
 				});
+				this.popupShow = false;
 			},
 			coupon() {
 				uni.navigateTo({

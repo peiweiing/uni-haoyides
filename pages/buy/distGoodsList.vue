@@ -2,13 +2,13 @@
 	<view class="container">
 		<view class="product-list">
 			<!--商品列表-->
-			<view class="pro-item" @tap="detail(item.url)" v-for="(item,index) in productList" :key="index">
-				<image :src="item.img" class="pro-img" mode="widthFix" />
+			<view class="pro-item" @tap="detail(item.g_id)" v-for="(item,index) in productList" :key="index">
+				<image :src="item.g_pic" class="pro-img" mode="widthFix" />
 				<view class="pro-content">
-					<view class="pro-tit">{{item.name}}</view>
+					<view class="pro-tit">{{item.g_title}}</view>
 					<view class="pro-price">
-						<text class="sale-price">￥{{item.sale}}</text>
-						<text class="factory-price">￥{{item.factory}}</text>
+						<text class="sale-price">￥{{item.g_price}}</text>
+						<!-- <text class="factory-price">￥{{item.factory}}</text> -->
 					</view>
 					<!-- <view class="btn-box FX-fe">
 						<tui-button type="tomato" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="showModal">买入</tui-button>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+	import App from "../../App.vue"
 	export default {
 		data() {
 			return {
@@ -66,10 +67,38 @@
 				pullUpOn: true
 			}
 		},
+		onLoad() {
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.getchannel,
+						method: 'POST',
+						header: {'Authorization':getres},
+						data: {'type':2},
+						success: (res) => {
+							console.log(res.data);
+							that.newsList=res.data.data;
+						}
+					});
+					uni.request({
+						url: App.list,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res.data);
+							that.productList=res.data.data;
+						}
+					});
+				}
+			})
+		},
 		methods: {
 			detail(e) {
 				uni.navigateTo({
-					url: e
+					url: '../list/distGoodsDetail?id='+e
 				})
 			},
 			showModal: function() {

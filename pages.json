@@ -89,18 +89,30 @@
         }
         ,{
             "path" : "pages/user/recharge",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "充值"
+			}
         }
         ,{
             "path" : "pages/buy/consignmentSale",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "委托卖出"
+			}
         }
         ,{
             "path" : "pages/buy/entrustedPurchase",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "委托买入"
+			}
         }
         ,{
             "path" : "pages/user/realName",
+            "style" : {
+				"navigationBarTitleText": "实名认证"
+			}
+        }
+        ,{
+            "path" : "pages/user/deliveryScheduleDetails",
             "style" : {}
         }
     ],

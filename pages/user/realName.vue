@@ -1,26 +1,64 @@
 <template>
 	<view class="realName">
-		<form @submit="formSubmit" @reset="formReset">
+		<form
+		@submit="formSubmit"
+		@reset="formReset"
+		>
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
-					<view class="tui-title">姓<text style="opacity: 0;">一</text>名</view>
-					<input :focus="isInputFocus_1" placeholder-class="tui-phcolor" class="tui-input" name="name" placeholder="请输入姓名" maxlength="50" type="text" />
+					<view class="tui-title">
+						姓<text style="opacity: 0;">一</text>名
+					</view>
+					<input
+					:focus="isInputFocus_1"
+					placeholder-class="tui-phcolor"
+					class="tui-input"
+					name="name"
+					placeholder="请输入姓名"
+					maxlength="50"
+					type="text"
+					v-model="realname"
+					/>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
 					<view class="tui-title">身份证</view>
-					<input :focus="isInputFocus_2" placeholder-class="tui-phcolor" class="tui-input" name="idcard" placeholder="请输入身份证号码" maxlength="50" type="text" />
+					<input
+					:focus="isInputFocus_2"
+					placeholder-class="tui-phcolor"
+					class="tui-input"
+					name="idcard"
+					placeholder="请输入身份证号码"
+					maxlength="50"
+					type="text"
+					v-model="idcard"
+					/>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
 					<view class="tui-title">手机号</view>
-					<input :focus="isInputFocus_3" placeholder-class="tui-phcolor" class="tui-input" name="mobile" placeholder="请输入手机号" maxlength="50" type="text" />
+					<input
+					:focus="isInputFocus_3"
+					placeholder-class="tui-phcolor"
+					class="tui-input"
+					name="mobile"
+					placeholder="请输入手机号"
+					maxlength="50"
+					type="text"
+					v-model="mobile"
+					/>
 				</view>
 			</tui-list-cell>
 			<view class="tui-box-upload">
-				<tui-upload class="upload-button" :value="value" :serverUrl="serverUrl" @complete="result" @remove="remove"></tui-upload>
+				<tui-upload
+				class="upload-button"
+				:value="value"
+				:serverUrl="serverUrl"
+				@complete="result"
+				@remove="remove"
+				></tui-upload>
 				<view class="tui-box-upload_text1">
 					身份证人像面
 				</view>
@@ -29,40 +67,35 @@
 				</view>
 			</view>
 			<view class="tui-btn-box">
-				<button class="confirm-btn" hover-class="tui-button-hover" formType="submit" type="primary">开始验证</button>
+				<button
+				class="confirm-btn"
+				hover-class="tui-button-hover"
+				formType="submit"
+				type="primary"
+				>开始验证</button>
 			</view>
 		</form>
 	</view>
 </template>
 
 <script>
+	import App from "../../App.vue"
 	const form = require("@/components/common/tui-validation/tui-validation.js")
 	export default {
 		data() {
 			return {
+				realname: "",
+				idcard: "",
+				mobile: "",
 				isInputFocus_1: false,
 				isInputFocus_2: false,
 				isInputFocus_3: false,
 				imageData: [],
-				serverUrl: "https://api.thorui.cn/", //上传地址
+				serverUrl: App.uploadEditor, //上传地址
 				value:[] //初始化图片
 			}
 		},
 		methods: {
-			changeAvatar(){
-				uni.chooseImage({
-					count: 1,
-					sizeType: ['original', 'compressed'],
-					sourceType: ['album', 'camera'],
-					success: res => {
-						const tempFilePaths = res.tempFilePaths[0];
-						this.tui.href('/pages/extend/cropper-default/cropper-default?src=' + tempFilePaths);
-					}
-				});
-			},
-			nickname(){
-				this.tui.href("../nickname/nickname")
-			},
 			formSubmit: function(e) {
 				if (e.detail.value.name === "") {
 					this.isInputFocus_1 = true
@@ -72,33 +105,59 @@
 					this.isInputFocus_3 = true
 				}
 				//表单规则
-				let rules = [{
-					name: "name",
-					rule: ["required", "isChinese", "minLength:2", "maxLength:6"], //可使用区间，此处主要测试功能
-					msg: ["请输入姓名!", "姓名必须全部为中文!", "姓名必须2个或以上字符!", "姓名不能超过6个字符!"]
-				},{
-					name: "idcard",
-					rule: ["required", "isIdCard"],
-					msg: ["请输入身份证号码!", "请输入正确的身份证号码!"]
-				},{
-					name: "mobile",
-					rule: ["required", "isMobile"],
-					msg: ["请输入手机号!", "请输入正确的手机号!"]
-				}];
+				let rules = [
+					{
+						name: "name",
+						rule: ["required", "isChinese", "minLength:2", "maxLength:4"], //可使用区间，此处主要测试功能
+						msg: ["请输入姓名!", "姓名必须全部为中文!", "姓名必须2个或以上字符!", "姓名不能超过4个字符!"]
+					},{
+						name: "idcard",
+						rule: ["required", "isIdCard"],
+						msg: ["请输入身份证号码!", "请输入正确的身份证号码!"]
+					},{
+						name: "mobile",
+						rule: ["required", "isMobile"],
+						msg: ["请输入手机号!", "请输入正确的手机号!"]
+					}
+				];
 				//进行表单检查
 				let formData = e.detail.value;
 				let checkRes = form.validation(formData, rules);
 				if (!checkRes) {
-					if (this.value.length !== 2) {
+					if (this.imageData.length !== 2) {
 						uni.showToast({
 							title: "请上传身份证件照片!",
 							icon: "none"
 						});
 					} else {
-						uni.showToast({
-							title: "验证通过!",
-							icon: "none"
-						});
+						if (this.imageData[0].indexOf("blob:") === -1 && this.imageData[1].indexOf("blob:") === -1) {
+							uni.showToast({
+								title: "验证通过!",
+								icon: "none"
+							});
+							uni.request({
+								method: "POST",
+								url: App.Idcardreal,
+								data: {
+									realname: this.realname,
+									idcard: this.idcard,
+									mobile: this.mobile,
+									idcardf: this.imageData[0],
+									idcardb: this.imageData[1]
+								},
+								// header: {
+								// 	"Authorization": "CCE7398F976214F932B340326B7A9C82"
+								// },
+								success: (res) => {
+									console.log(res);
+								}
+							});
+						} else {
+							uni.showToast({
+								title: "请重新上传照片!",
+								icon: "none"
+							});
+						}
 					}
 				} else {
 					uni.showToast({
@@ -108,7 +167,6 @@
 				}
 			},
 			result: function(e) {
-				console.log(e)
 				this.imageData = e.imgArr;
 			},
 			remove: function(e) {

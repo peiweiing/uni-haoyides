@@ -4,7 +4,7 @@
 		<view class="title_2">
 			请选择商品
 		</view>
-		<tui-card class="tui-card" :image="card[0].img" :title="card[0].title" :tag="card[0].tag" @click="popup(0)">
+		<tui-card class="tui-card" :image="bottomLists[0].img[0].img" :title="bottomLists[0].img[0].title" :tag="bottomLists[0].img[0].tag" @click="popup(0)">
 			<template v-slot:footer>
 				<view class="tui-default">
 					<view class="">
@@ -25,21 +25,27 @@
 		</view>
 		<view class="form_information">
 			<form @submit="formSubmit">
+				<tui-list-cell :hover="false" unlined>
+					<view class="tui-line-cell">
+						<view class="tui-title">价格区间：</view>
+						<input placeholder-class="tui-phcolor" disabled class="tui-input" placeholder="99.00 ~ 999.00" maxlength="50" type="digit" />
+					</view>
+				</tui-list-cell>
 				<tui-list-cell :hover="false">
 					<view class="tui-line-cell">
 						<view class="tui-title">买入价格：</view>
-						<input placeholder-class="tui-phcolor" class="tui-input" name="amount" placeholder="请输入买入价格" maxlength="50" type="text" />
+						<input v-model="price" placeholder-class="tui-phcolor" class="tui-input" name="amount" placeholder="请输入买入价格" maxlength="50" type="text" />
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false">
 					<view class="tui-line-cell">
 						<view class="tui-title">买入数量：</view>
-						<input placeholder-class="tui-phcolor" class="tui-input" name="amount2" placeholder="请输入买入数量" maxlength="50" type="text" />
+						<input v-model="num" placeholder-class="tui-phcolor" class="tui-input" name="amount2" placeholder="请输入买入数量" maxlength="50" type="text" />
 					</view>
 				</tui-list-cell>
 			
 				<view class="confirm_box">
-					<button class="tui-button-primary" hover-class="tui-button-hover" formType="submit" type="primary">确 认 委 托 买 入</button>
+					<button class="tui-button-primary" hover-class="tui-button-hover" formType="submit" type="primary" @click="affirm(bottomList.g_id)">确 认 委 托 买 入</button>
 				</view>
 			</form>
 		</view>
@@ -49,18 +55,18 @@
 			<view class="tui-share">
 				<radio-group @change="radioChange">
 					<scroll-view class="tui-share-content">
-						<view class="share-content-list" v-for="(item, index) in bottomList" :key="item.value" @click="clickBottomList(index)">
-							<tui-card class="tui-card-share" :image="item.card[0].img" :title="item.card[0].title" :tag="item.card[0].tag" @click="popup(item)">
+						<view class="share-content-list" v-for="(item, index) in bottomLists" :key="index" @click="clickBottomList(index)">
+							<tui-card class="tui-card-share" :image="item.img[0].img" :title="item.img[0].title" :tag="item.img[0].tag" @click="popup(item)">
 								<template v-slot:footer>
 									<view class="tui-default">
 										<view class="">
-											价格:￥{{(item.price).toFixed(2)}}
+											价格:￥{{item.g_price}}
 										</view>
 										<view class="">
-											交易量:{{item.num}}
+											交易量:{{item.g_salevol}}
 										</view>
 										<view class="">
-											交易金额:￥{{(item.price * item.num).toFixed(2)}}
+											交易金额:￥{{item.totalpay}}
 										</view>
 									</view>
 								</template>
@@ -82,10 +88,13 @@
 </template>
 
 <script>
+	import App from "../../App.vue"
 	const form = require("@/components/common/tui-validation/tui-validation.js")
 	export default {
 		data() {
 			return {
+				price:'',
+				num:'',
 				cardInfo: {
 					price: 260,
 					num: 45
@@ -99,22 +108,14 @@
 					}
 				],
 				popupShow: false,
+				bottomLists:'',
 				bottomList: [
 					{
 						card: [{
-							img: {
-								url: "/static/images/news/avatar_1.jpg"
-							},
-							title: {
-								text: "陆羽经云南茶叶"
-							},
-							tag: {
-								text: "编码：789456123"
-							},
-							header: {
-								bgcolor: "#F7F7F7",
-								line: true
-							}
+							img: {	url: "/static/images/news/avatar_1.jpg"},
+							title: {	text: "陆羽经云南茶叶"},
+							tag: {	text: "编码：789456123"},
+							header: {	bgcolor: "#F7F7F7",	line: true}
 						}],
 						price: 260,
 						num: 20,
@@ -122,19 +123,10 @@
 					},
 					{
 						card: [{
-							img: {
-								url: "/static/images/news/avatar_1.jpg"
-							},
-							title: {
-								text: "陆羽经云南茶叶"
-							},
-							tag: {
-								text: "编码：963852741"
-							},
-							header: {
-								bgcolor: "#F7F7F7",
-								line: true
-							}
+							img: {url: "/static/images/news/avatar_1.jpg"},
+							title: {text: "陆羽经云南茶叶"},
+							tag: {text: "编码：963852741"},
+							header: {bgcolor: "#F7F7F7",line: true}
 						}],
 						price: 280,
 						num: 10,
@@ -142,19 +134,10 @@
 					},
 					{
 						card: [{
-							img: {
-								url: "/static/images/news/avatar_1.jpg"
-							},
-							title: {
-								text: "陆羽经云南茶叶"
-							},
-							tag: {
-								text: "编码：1597538624"
-							},
-							header: {
-								bgcolor: "#F7F7F7",
-								line: true
-							}
+							img: {url: "/static/images/news/avatar_1.jpg"},
+							title: {text: "陆羽经云南茶叶"},
+							tag: {text: "编码：1597538624"},
+							header: {bgcolor: "#F7F7F7",line: true}
 						}],
 						price: 240,
 						num: 30,
@@ -163,6 +146,25 @@
 				],
 				current: 0
 			}
+		},
+		onLoad() {
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.entrustlst,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res.data);
+							that.bottomLists = res.data.data;
+							console.log(that.bottomLists)
+						}
+					});
+				}
+			})
 		},
 		methods: {
 			formSubmit: function(e) {
@@ -190,6 +192,26 @@
 						icon: "none"
 					});
 				}
+			},
+			affirm(e){
+				var that =this;
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						var datas={'g_id':e,'num':that.num,'price':that.price,}
+						uni.request({
+							url: App.entrustpurchase,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:datas,
+							success: (res) => {
+								console.log(res.data);
+								that.productList=res.data.data;
+							}
+						});
+					}
+				})
 			},
 			popup: function(data) {
 				this.popupShow = !this.popupShow

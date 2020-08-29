@@ -406,8 +406,10 @@ export default {
 		clearInput(type) {
 			if (type == 1) {
 				this.mobile = '';
+				this.mobiles = '';
 			} else {
 				this.password = '';
+				this.passwords = '';
 			}
 		},
 		href(type) {

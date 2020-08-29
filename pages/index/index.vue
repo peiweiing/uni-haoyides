@@ -14,7 +14,6 @@
 				:circular="true"
 				previous-margin="60rpx"
 				next-margin="60rpx"
-				@change="change"
 			>
 				<swiper-item v-for="(item, index) in banner" :key="index" class="tui-banner-item">
 					<!-- <image
@@ -200,9 +199,9 @@
 			})
 		},
 		methods: {	
-			change: function(e) {
-				this.current = e.detail.current;
-			},
+			// change: function(e) {
+			// 	this.current = e.detail.current;
+			// },
 			detail: function(e) {
 				uni.navigateTo({
 					url: '/pages/list/distGoodsDetail?id='+e,

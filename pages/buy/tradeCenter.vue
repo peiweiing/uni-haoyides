@@ -14,7 +14,6 @@
 				:circular="true"
 				previous-margin="60rpx"
 				next-margin="60rpx"
-				@change="change"
 			>
 				<swiper-item v-for="(item, index) in banner" :key="index" class="tui-banner-item">
 					<!-- <image
@@ -41,8 +40,8 @@
 				现货
 			</view>
 			<tui-grid>
-				<block v-for="(item,index) in dataList" :key="index">
-					<tui-grid-item :cell="2" @click="detail(item.url)">
+				<block v-for="(item,index) in dataList1" :key="index">
+					<tui-grid-item :cell="3" @click="detail(item.url)">
 						<view class="tui-grid-icon">
 							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
 						</view>
@@ -68,6 +67,21 @@
 			</tui-grid>
 		</view>
 			
+		<view class="divcs">
+			<view class="tui-title">
+				批发
+			</view>
+			<tui-grid>
+				<block v-for="(item,index) in dataList2" :key="index">
+					<tui-grid-item :cell="3" @click="detail(item.url)">
+						<view class="tui-grid-icon">
+							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
+						</view>
+						<text class="tui-grid-label">{{item.title}}</text>
+					</tui-grid-item>
+				</block>
+			</tui-grid>
+		</view>
 	</view>
 </template>
 
@@ -78,8 +92,10 @@
 				current: 0,
 				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				banner: ['../../static/img/swiper01.jpg', '../../static/img/swiper02.jpg'],
-				dataList: [
+				dataList1: [
 					{name: "unreceive",size: 30,title:'现货买入',color: "#9E2036",url:'distGoodsList'},
+				],
+				dataList2: [
 					{name: "cart",size: 30,title:'批发买入',color: "#9E2036",url:'wholesaleList'},
 				],
 				dataLists: [
@@ -92,10 +108,10 @@
 			}
 		},
 		methods: {		
-			change: function(e) {
-				this.current = e.detail.current;
-				console.log(this.current)
-			},
+			// change: function(e) {
+			// 	this.current = e.detail.current;
+			// 	console.log(this.current)
+			// },
 			detail: function(e) {
 				console.log(e)
 				uni.navigateTo({
@@ -112,15 +128,19 @@
 <style lang="scss" scoped>
 .container {
 	padding-bottom: 40rpx;
+	padding-bottom: 2%;
 	box-sizing: border-box;
 	background-color: #EDEDED;
 	.bgcImg{
-		height: 280rpx;
+		height: 200rpx;
 	}
 	.divcs{
 		background-color: #fff;
 		margin: 5%;
 		border-radius: 20rpx;
+		.tui-grid{
+			padding: 2%;
+		}
 		.tui-grids{
 			border-radius: 20rpx;
 		}
@@ -215,7 +235,8 @@
 /*banner*/
 
 	.tui-title {
-		padding: 50rpx 30rpx 30rpx 30rpx;
+		// padding: 50rpx 30rpx 30rpx 30rpx;
+		padding: 2%;
 		font-size: 32rpx;
 		color: #333;
 		box-sizing: border-box;

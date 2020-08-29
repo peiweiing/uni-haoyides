@@ -240,10 +240,10 @@
 								//返回结果 此处需要按接口实际返回进行修改
 								let d = JSON.parse(res.data.replace(/\ufeff/g, "") || "{}")
 								//判断code，以实际接口规范判断
-								if (d.code % 100 === 0) {
+								if (d.status  === 200) {
 									// 上传成功 d.url 为上传后图片地址，以实际接口返回为准
-									d.url && (_this.imageList[index] = d.url)
-									_this.$set(_this.statusArr, index, d.url ? "1" : "3")
+									d.msg && (_this.imageList[index] = d.msg)
+									_this.$set(_this.statusArr, index, d.msg ? "1" : "3")
 								} else {
 									// 上传失败
 									_this.$set(_this.statusArr, index, "3")
