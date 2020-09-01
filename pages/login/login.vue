@@ -16,6 +16,7 @@
 							:adjust-position="false"
 							v-model="mobile"
 							placeholder="请输入手机号"
+							:mobile="true"
 							placeholder-class="tui-phcolor"
 							type="number"
 							maxlength="11"
@@ -48,7 +49,7 @@
 					<text class="tui-color-primary" @tap="href(2)">注册</text>
 				</view>
 			</view> -->
-			<view class="tui-btn-box"><tui-button :disabledGray="true" :disabled="disabled" :shadow="true" shape="circle" @click="onlogin">登录</tui-button></view>
+			<view class="tui-btn-box"><tui-button style="margin-top: 50rpx;" type="bronze" :disabledGray="true" :disabled="disabled" :shadow="true" shape="circle" @click="onlogin">登录</tui-button></view>
 		</view>
 		
 		<view class="tui-form" v-if="currentTab==1">
@@ -56,22 +57,34 @@
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
 						<tui-icon name="mobile" color="#9E2036" :size="20"></tui-icon>
-						<input v-model="mobiles" placeholder="请输入手机号" placeholder-class="tui-phcolor" type="number" maxlength="11" @blur="inputMobiles" />
-						<view class="tui-icon-close" v-show="mobile" @tap="clearInput(1)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
+						<input v-model="mobiles" placeholder="请输入手机号" :mobiles="true" placeholder-class="tui-phcolor" type="number" maxlength="11" @input="inputMobiles" />
+						<view class="tui-icon-close" v-show="mobiles" @tap="clearInput(1)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
 						<tui-icon name="shield" color="#9E2036" :size="20"></tui-icon>
 						<input v-model="code" placeholder="请输入验证码" placeholder-class="tui-phcolor" type="text" maxlength="6" @blur="inputCodes" />
-						<button :class="cls ? 'sub':'subs'" type="primary" @click="messages">{{word}}</button>
+						
+						<button v-if="but1" :class="cls ? 'sub':'subs'" type="primary" @click="messages">{{word}}</button>
+						<view class="example-body subs FY-c" v-if="but2">
+							<uni-countdown style="margin: 0;" :second="testSecond" color="#FFFFFF" background-color="#ccc"/>
+							<text>{{btnSendText}}</text>
+						</view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
 						<tui-icon name="pwd" color="#9E2036" :size="20"></tui-icon>
-						<input v-model="passwords" placeholder="请输入密码" :password="true" placeholder-class="tui-phcolor" type="text" maxlength="40" @blur="inputPwds" />
-						<view class="tui-icon-close" v-show="password" @tap="clearInput(2)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
+						<input v-model="passwords" placeholder="请输入密码" :passwords="true" placeholder-class="tui-phcolor" type="password" maxlength="40" @blur="inputPwds" />
+						<view class="tui-icon-close" v-show="passwords" @tap="clearInput(2)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
+					</view>
+				</tui-list-cell>
+				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
+					<view class="tui-cell-input">
+						<tui-icon name="pwd" color="#9E2036" :size="20"></tui-icon>
+						<input v-model="passwordss" placeholder="请确认密码" :passwordss="true" placeholder-class="tui-phcolor" type="password" maxlength="40" @blur="inputPwdss" />
+						<view class="tui-icon-close" v-show="passwordss"><tui-icon :size="16" color="#bfbfbf"></tui-icon></view>
 					</view>
 				</tui-list-cell>
 			</view>
@@ -80,7 +93,7 @@
 				<view class="FX FY-c">
 					<checkbox-group name="ai">
 						<label>
-							<checkbox v-model="check" checked="checked" @click="checked"/>
+							<checkbox :checked="check" @click="checked"/>
 						</label>
 					</checkbox-group>
 					注册代表同意
@@ -95,7 +108,7 @@
 				</view>
 			</view>
 			
-			<view class="tui-btn-box"><tui-button :disabledGray="true" :disabled="disabled" :shadow="true" shape="circle" @click="onregister">注册</tui-button></view>
+			<view class="tui-btn-box"><tui-button type="bronze" :disabledGray="true" :disabled="disableds" :shadow="true" shape="circle" @click="onregister">注册</tui-button></view>
 		</view>
 			
 			<!--底部抽屉-->
@@ -129,8 +142,17 @@ import { mapMutations } from 'vuex';
 export default {
 	computed: {
 		disabled: function() {
+			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
 			let bool = true;
-			if (this.mobile && this.password||this.mobiles && this.passwords) {
+			if (this.mobile && regs.test(this.mobile) && this.password) {
+				bool = false;
+			}
+			return bool;
+		},
+		disableds: function() {
+			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
+			let bool = true;
+			if (this.mobiles && regs.test(this.mobiles) && this.code && this.passwords && this.passwordss && this.check==true) {
 				bool = false;
 			}
 			return bool;
@@ -150,11 +172,13 @@ export default {
 					txt:'../../static/img/login1.jpg',
 				},
 			],
+			but1:true,but2:false,
+			testSecond: 60,
 			currentTab: 0,
 			mobile: '',password: '',
-			mobiles: '',passwords: '',code: '',
+			mobiles: '',passwords: '',passwordss: '',code: '',
 			word: '获取验证码',
-			check:'',
+			check:true,
 			cls:'',isOvertime:false,
 			boola:true,boolb:true,
 			boolas:true,boolbs:true,boolcs:true,
@@ -162,13 +186,17 @@ export default {
 			bottomPopup: false,
 			popupShow: false,
 			isSend: false,
-			btnSendText: '获取验证码' //倒计时格式：(60秒)
+			btnSendText: 'S后重试' //倒计时格式：(60秒)
 		};
+	},
+	onLaunch() {
+		
 	},
 	onLoad(options) {
 		setTimeout(() => {
 			this.logout();
 		}, 0);
+		console.log(this.check)
 	},
 	methods: {	
 		...mapMutations(['login', 'logout']),
@@ -213,18 +241,25 @@ export default {
 		inputMobiles: function(e) {
 			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
 			console.log(this.mobiles)
-			if(!this.mobiles){this.boolas=false;    
+			if(this.mobiles.length==11&&regs.test(this.mobiles)){
+				this.cls=true;this.boolas=true;
+			}else if(this.mobiles.length!=11||!regs.test(this.mobiles)){
+				this.cls=false;
+			}else if(!this.mobiles){
+				this.boolas=false;this.cls=false;
 				uni.showToast({
 					icon: 'none',
 					title: '手机号不可为空'
 				});
-			}else if(!regs.test(this.mobiles)){this.boolas=false;  
+			}else if(!regs.test(this.mobiles)&&this.mobiles.length==11){
+				this.boolas=false;this.cls=false;
 				uni.showToast({
 					icon: 'none',
 					title: '请确认手机号是否正确'
-				});}else{this.boolas=true;this.cls=true;}
+				});
+			}
 			this.mobiles = e.detail.value;
-		},inputCode(e) {
+		},inputCodes(e) {
 			if(!this.code){this.boolb=false;
 				uni.showToast({
 					icon: 'none',
@@ -232,10 +267,27 @@ export default {
 				});}else{this.boolb=true;}
 			this.code = e.detail.value;
 		},inputPwds: function(e) {
-			if(!this.password){this.boolbs=false;
+			if(this.passwords!=this.passwordss&&this.passwordss!=''){
+				uni.showToast({
+					icon: 'none',
+					title: '请确认两次密码是否相同'
+				});
+			}else if(!this.passwords){this.boolbs=false;
 				uni.showToast({
 					icon: 'none',
 					title: '密码不可为空'
+				});}else{this.boolbs=true;}
+			this.password = e.detail.value;
+		},inputPwdss: function(e) {
+			if(!this.passwordss){this.boolbs=false;
+				uni.showToast({
+					icon: 'none',
+					title: '确认密码不可为空'
+				})
+			}else if(this.passwords!=this.passwordss){this.boolbs=false;
+				uni.showToast({
+					icon: 'none',
+					title: '请确认两次密码是否相同'
 				});}else{this.boolbs=true;}
 			this.password = e.detail.value;
 		},messages(){
@@ -244,26 +296,24 @@ export default {
 			let that = this,time = 60;
 			if(that.mobiles!=''&&regs.test(that.mobiles)){
 				console.log('执行')
-				var sendTimer = setInterval(function(){
-					var sub=document.getElementsByClassName('sub')[0];
-					that.isOvertime = true;time--;
-					that.word = time+'S后重试';
-					sub.style.backgroundColor='#ccc';
-					if(time < 0){
-						that.isOvertime = false;
-						clearInterval(sendTimer);
-						that.word = "获取验证码";
-						sub.style.backgroundColor='#9E2036';
-						sub.style.color='#fff';
-					}
-				},1000);
 				var phone ={'mobile':this.mobiles}
 				uni.request({
 					url:App.verifyCode,method: 'POST',data: phone,
 					success: (res)=>{
 						console.log("请求成功")
 						console.log(res)
-						if(res.data.msg=="登录成功"){
+						if(res.data.status!=200){
+							uni.showToast({
+								icon: 'none',
+								title: res.data.msg
+							})
+						}else if(res.data.status==200){
+							that.but2=true;that.but1=false;
+							that.testSecond=60;
+							setTimeout(function(){
+								that.but1=true;that.but2=false;
+								that.testSecond=0;
+							},60000)
 							uni.setStorage({
 								key:'token',
 								data:res.data.data.token,
@@ -274,27 +324,17 @@ export default {
 									})
 								}
 							})
-							// that.tankuang=true;that.tishi = '登录成功!'
-							// setTimeout(function(){
-							// 	that.tankuang=false;
-							// 	uni.switchTab({
-							// 		url: '/pages/index'
-							// 	});
-							// },1500);
-						}else{
-							// that.tankuang=true;that.tishi = '登录失败，请重新登录!'
-							// setTimeout(function(){
-							// 	that.tankuang=false;
-							// },1000)
 						}
 					},
 					fail: (err)=>{
 						console.log("请求失败")
 						console.log(err)
-						that.tankuang=true;
-						that.tishi = '登录失败，请重新登录!'
+							uni.showToast({
+								icon: 'none',
+								title: '请求失败，请检查网络是否正常'
+							})
 						setTimeout(function(){
-							that.tankuang=false;
+							// that.tankuang=false;
 						},1000)
 					}
 				})
@@ -308,13 +348,14 @@ export default {
 				success: (res)=>{
 					console.log("请求成功")
 					console.log(res)
-					if(res.data.msg=="注册成功"){
+					if(res.data.status==200){
+						that.mobiles='';that.code='';that.password='';
 						uni.showToast({
 							icon: 'none',
 							title: '注册成功'
 						})
 						setTimeout(function(){
-							that.currentTab=0
+							that.currentTab=0;
 						},1500);
 						setTimeout(function(){
 							uni.showToast({
@@ -325,7 +366,7 @@ export default {
 					}else{
 						uni.showToast({
 							icon: 'none',
-							title: '注册失败'
+							title: res.data.msg
 						})
 					}
 				},
@@ -379,10 +420,10 @@ export default {
 				fail: (err)=>{
 					console.log("请求失败")
 					console.log(err)
-					that.tankuang=true;
-					that.tishi = '登录失败，请重新登录!'
+					// that.tankuang=true;
+					// that.tishi = '登录失败，请重新登录!'
 					setTimeout(function(){
-						that.tankuang=false;
+						// that.tankuang=false;
 					},1000)
 				}
 			})
@@ -391,7 +432,13 @@ export default {
 			this.tui.href("/pages/doc/protocol/protocol")
 		},
 		change(e) {
+			var that =this;
 			this.currentTab = e.index
+			if(that.currentTab==0){
+				that.mobile='';that.password='';
+			}else if(that.currentTab==1){
+				that.mobiles='';that.code='';that.passwords='';that.passwordss='';that.cls=false;
+			}
 		},
 		goNavBar() {
 			uni.navigateTo({
@@ -399,9 +446,13 @@ export default {
 			})
 		},
 		checked(e){
+			var the =this;
 			console.log(e)
-			console.log(this.check)
-			
+			if(this.check==true){
+				this.check = false;
+			}else if(this.check==false){
+				this.check = true;
+			}
 		},
 		clearInput(type) {
 			if (type == 1) {
@@ -430,7 +481,7 @@ export default {
 <style lang="scss" scoped>
 .container {
 	.loginImg{
-		height: 420rpx;
+		height: 320rpx;
 		margin-bottom: 100rpx;
 		.logo{
 			width: 160rpx;
@@ -508,6 +559,19 @@ export default {
 		}
 	}
 }
+
+	.example-body {
+		/* #ifndef APP-NVUE */
+		display: flex;
+		/* #endif */
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: center;
+		padding: 0;
+		font-size: 14px;
+		background-color: #ffffff;
+	}
+
 .region-box{
 	// height: 26rem;
 	// overflow-y: auto;
@@ -530,21 +594,21 @@ export default {
 }
 
 	.sub{
-		font-size: 24rpx;
+		font-size: 28rpx;
 		padding: 0;
 		width: 30%;
-		height: 1.4rem;
-		line-height: 1.4rem;
+		// height: 1.4rem;
+		// line-height: 1.4rem;
 		// border-radius: 2rem;
 		color: #FFFFFF;
 		background-color:#9E2036;
 	}
 	.subs{
-		font-size: 24rpx;
+		font-size: 28rpx;
 		padding: 0;
 		width: 30%;
-		height: 1.4rem;
-		line-height: 1.4rem;
+		// height: 1.4rem;
+		// line-height: 1.4rem;
 		// border-radius: 2rem;
 		color: #FFFFFF;
 		background-color:#ccc;

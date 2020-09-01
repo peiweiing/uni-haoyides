@@ -4,9 +4,9 @@
 			<tui-card :image="card[0].img" :title="card[0].title" :tag="card[0].tag" @click="showModal">
 				<template v-slot:body>
 					<view class="tui-default FX-sb" style="font-size: 12px;color: #C8C7CC;">
-								<text>价格:￥598.00</text>
-								<text>交易量:666</text>
-								<text>交易金额:￥398268.00</text>
+						<text>价格:￥{{card[0].price}}</text>
+						<text>交易量:{{card[0].num}}</text>
+						<text>交易金额:￥{{card[0].heji}}</text>
 					</view>
 				</template>
 			</tui-card>
@@ -46,36 +46,29 @@
 		
 		<!--底部抽屉-->
 		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
-			<view class="region-box-end">
-				<!-- <view
-					class="region-txt"
-					:class="[index == regionArr.length - 3 || index == regionArr.length - 2 || index == regionArr.length - 1 ? 'grow' : '', tabIndex == index ? 'active' : '']"
-					v-for="(item, index) in regionArr"
-					:key="index"
-					:data-index="index"
-				>
-					<text class="w40">{{ item }}</text>
-				</view> -->
-				<view class="region-end" v-for="(v,i) in cardend">
-					<tui-card :image="v.img" :title="v.title" :tag="v.tag">
-						<template v-slot:body>
-							<view class="tui-default FX-sb" style="font-size: 12px;color: #C8C7CC;">
-								<!-- <text>价格:￥398.00</text>
-								<text>交易量:2560</text>
-								<text>交易金额:￥1011200.00</text> -->
-								<text>价格:￥{{v.price}}</text>
-								<text>交易量:{{v.num}}</text>
-								<text>交易金额:￥{{v.heji}}</text>
-							</view>
-						</template>
-					</tui-card>
+			
+			<view class="region-box">
+				<view class="region-box-end">
+					<view class="region-end" v-for="(v,i) in cardend" :key="i" @tap="popup(i)">
+						<tui-card :image="v.img" :title="v.title" :tag="v.tag">
+							<template v-slot:body>
+								<view class="tui-default FX-sb" style="font-size: 12px;color: #C8C7CC;">
+									<text>价格:￥{{v.price}}</text>
+									<text>交易量:{{v.num}}</text>
+									<text>交易金额:￥{{v.heji}}</text>
+								</view>
+							</template>
+						</tui-card>
+					</view>
 				</view>
 				<view class="FX-c w100">
 					<tui-button type="gray" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
 				</view>
 			</view>
+			
 		</tui-bottom-popup>
 		
+			
 	</view>
 </template>
 
@@ -97,47 +90,39 @@
 				itemCount: 30, //x轴单屏数据密度
 				sliderMax: 50,
 				bottomPopup: false,
+				allnum:0,
+				newcardend:'',
 				regionArr: [
 					'大佑生宝小分子海参饮品','编码:16888802','批发价:¥299.00','批发资格:2份','买入数量：2份','合计:¥598.00',
-					
 				],
 				cardend:[
 					{
-						img: {url: "/static/img/s01.jpg",circle: true},
-						title: {text: "大佑生宝小分子"},
-						tag: {text:"编码：168888202"},
+						g_id:'0',
+						img: {url: "/static/img/s01.jpg",circle: true},title: {text: "大佑生宝小分子"},tag: {text:"编码：168888202"},
 						price:"598",num:"666",heji:"398268",
 						header: {line: true,bgcolor: "#F7F7F7"}
 					},
 					{
-						img: {url: "/static/img/s02.jpg",circle: true},
-						title: {text: " 丽醒海带精萃饮"},
-						tag: {text: "编码：168888202"},
+						g_id:'1',
+						img: {url: "/static/img/s02.jpg",circle: true},title: {text: " 丽醒海带精萃饮"},tag: {text: "编码：168888202"},
 						price:"68",num:"999",heji:"67932",
 						header: {line: true,bgcolor: "#F7F7F7"}
 					},
 				],
-				card: [
+				card:[
 					{
-						img: {url: "/static/img/s02.jpg"},
-						title: {text: "大佑生宝小分子海参饮品"},
-						tag: {text: "编码：168888202"},
-						header: {bgcolor: "#F7F7F7",line: true}
-					},
-					{						img: {url: "/static/images/news/avatar_2.jpg",width: 80,height: 80,circle: true},
-						title: {text: "CSDN云计算",color: "#ed3f14",size: 34},
-						tag: {text: "1小时前",color: "#ed3f14",size: 28}
+						g_id:'0',
+						img: {url: "/static/img/s01.jpg",circle: true},title: {text: "大佑生宝小分子"},tag: {text:"编码：168888202"},
+						price:"598",num:"666",heji:"398268",
+						header: {line: true,bgcolor: "#F7F7F7"},
 					},
 					{
-						img: {url: "/static/images/news/avatar_1.jpg",circle: true},
-						title: {text: "JavaScript"},
-						tag: {text: "昨天"},
+						g_id:'1',
+						img: {url: "/static/img/s02.jpg",circle: true},title: {text: " 丽醒海带精萃饮"},tag: {text: "编码：168888202"},
+						price:"68",num:"999",heji:"67932",
 						header: {line: true,bgcolor: "#F7F7F7"}
 					},
-					{
-						header: {line: true}
-					}
-				]
+				],
 			}
 		},
 		onLoad() {
@@ -159,6 +144,12 @@
 			this.gaugeWidth = uni.upx2px(30);
 
 			//this.fillData(Data);
+			
+			// var newcardend=this.cardend.filter((v,i)=>{
+			// 	if(v.g_id==i){
+			// 		return v;
+			// 	}
+			// })
 		},
 		onReady() {
 			this.getServerData();
@@ -175,6 +166,19 @@
 			},
 			cancel: function() {
 				this.bottomPopup = false;
+			},
+			popup: function(e) {
+				var that =this;
+				console.log(e)
+				// var newcardend=that.cardend.filter((v,i)=>{
+				// 	if(e==i){
+				// 		return v;
+				// 	}
+				// 	return newcardend;
+				// })
+				// console.log(newcardend)
+				// console.log(that.cardend[e])
+				// that.card = that.cardend[e]
 			},
 			getServerData() {
 				uni.showLoading({
@@ -1065,6 +1069,7 @@
 		padding-bottom: env(safe-area-inset-bottom);
 	}
 
+
 	.tui-title {
 		width: 100%;
 		padding: 70rpx 30rpx 30rpx 30rpx;
@@ -1181,7 +1186,7 @@
 /*底部抽屉样式 start*/
 
 .region-box {
-	width: 100%;
+	/* width: 100%;
 	padding: 10%;
 	box-sizing: border-box;
 	overflow: hidden;
@@ -1190,11 +1195,11 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: space-between; */
+	padding: 10% 5%;box-sizing: border-box;margin-bottom: 10%;
 }
 .region-box-end {
 	width: 100%;
-	padding: 10% 5%;
 	box-sizing: border-box;
 	overflow: hidden;
 	background-color: #fff;
@@ -1203,7 +1208,8 @@
 	flex-wrap: wrap;
 	align-items: center;
 	justify-content: center;
-	margin-bottom: 10%;
+	/* padding: 10% 5%; */
+	/* margin-bottom: 10%; */
 }
 .region-end{
 	width: 100%;

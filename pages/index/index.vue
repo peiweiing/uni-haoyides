@@ -22,7 +22,7 @@
 						:class="[current != index ? 'tui-banner-scale' : '']"
 						mode="scaleToFill"
 						lazy-load
-						@tap="detail"
+						@tap="swiper"
 					/> -->
 					<image
 						:src="item"
@@ -30,7 +30,7 @@
 						:class="[current != index ? 'tui-banner-scale' : '']"
 						mode="scaleToFill"
 						lazy-load
-						@tap="detail"
+						@tap="swiper"
 					/>
 				</swiper-item>
 			</swiper>
@@ -129,11 +129,7 @@
 			</view>
 		</view>
 		
-		<!--加载loadding-->
-		<tui-loadmore v-if="loadding" :index="3" type="red"></tui-loadmore>
-		<!-- <tui-nomore v-if="!pullUpOn"></tui-nomore> -->
-		<!--加载loadding-->
-		<view class="tui-safearea-bottom"></view>
+		
 	</view>
 </template>
 
@@ -202,6 +198,9 @@
 			// change: function(e) {
 			// 	this.current = e.detail.current;
 			// },
+			swiper(e){
+				console.log(e)
+			},
 			detail: function(e) {
 				uni.navigateTo({
 					url: '/pages/list/distGoodsDetail?id='+e,
@@ -227,7 +226,7 @@
 	box-sizing: border-box;
 	background-color: #EDEDED;
 	.bgcImg{
-		height: 280rpx;
+		height: 200rpx;
 	}
 	.divcs{
 		background-color: #fff;

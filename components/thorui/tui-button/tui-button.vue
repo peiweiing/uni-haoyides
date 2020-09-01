@@ -176,7 +176,7 @@ export default {
 
 <style scoped>
 .tui-btn-primary {
-	background: #9E2036 !important;
+	background: #5677fc !important;
 	color: #fff;
 }
 
@@ -260,33 +260,33 @@ export default {
 
 
 .tui-btn-bronze {
-	background: #9D1F35 !important;
+	background: #9E2036 !important;
 	color: #fff;
 }
 .tui-shadow-bronze {
-	box-shadow: 0 10rpx 14rpx 0 #9D1F35;
+	box-shadow: 0 10rpx 14rpx 0 #9E2036;
 }
 .tui-btn-gray-bronze {
-	background: #9D1F35 !important;
+	background: #9E2036 !important;
 	color: #fff !important;
 }
 
 .tui-gray-bronze-hover {
-	background: #9D1F35 !important;
+	background: #9E2036 !important;
 }
 
 .tui-bronze-hover {
-	background: #9D1F35 !important;
+	background: #9E2036 !important;
 	color: #fff !important;
 }
 
 .tui-bronze-outline {
-	color: #fff !important;
+	color: #9E2036 !important;
 	background: transparent;
 }
 
 .tui-bronze-outline::after {
-	border: 1px solid #9D1F35 !important;
+	border: 1px solid #9E2036 !important;
 }
 
 
@@ -294,7 +294,7 @@ export default {
 
 .tui-btn-tomato {
 	background: #FF6461 !important;
-	color: #FF6461;
+	color: #fff;
 }
 
 .tui-shadow-tomato {

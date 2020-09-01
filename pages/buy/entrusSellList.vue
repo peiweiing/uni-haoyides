@@ -1,7 +1,10 @@
 <template>
 	<view id="entrusbuylist">
-		<view class="" v-for="(v,i) in detail">
+		<view class="" v-for="(v,i) in detail" v-if="debool==true">
 			<buylist :imgUrl="v.g_pic" :code="v.g_code" :title="v.g_title" :price="v.ut_price" :num="v.stock_num" g_price="卖出价" g_num="数量" button="卖出" @click="showModal(v.g_id,v.ut_id)"></buylist>
+		</view>
+		<view class="F-xy" v-if="debool==false" style="font-size: 16px;height: calc(80vh);">
+			暂无内容
 		</view>
 		
 		<!--底部抽屉-->
@@ -47,7 +50,7 @@
 					<text>{{heji}}.00元</text>
 				</view>
 			   </tui-list-cell>
-				<view class="FX-sb w100">
+				<view class="FX-sb w100" style="margin-top: 5%;">
 					<tui-button type="green" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
 					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm(details.g_id,details.ut_id)">确定</tui-button>
 				</view>
@@ -70,6 +73,7 @@ import buylist from "../../components/buylist.vue"
 				],
 				regionTxt: '粤',
 				bottomPopup: false,
+				debool:false,
 				tabIndex: 26,
 				detail:'',
 				details:'',
@@ -99,6 +103,7 @@ import buylist from "../../components/buylist.vue"
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
+							that.debool=true;
 							console.log(res.data);
 							that.detail=res.data.data;
 						}
@@ -121,6 +126,7 @@ import buylist from "../../components/buylist.vue"
 							header: {'Authorization':getres},
 							data:datas,
 							success: (res) => {
+								// that.debool=true;
 								console.log(res.data);
 								that.details=res.data.data;
 								that.heji=that.valnums*that.details.ut_price;
@@ -171,6 +177,7 @@ import buylist from "../../components/buylist.vue"
 				this.bottomPopup = false;
 			},
 			inputChanges(e){
+				console.log(e)
 				var that = this;
 				that.valnums = e.detail.value
 				console.log(e.detail.value)
@@ -246,13 +253,14 @@ import buylist from "../../components/buylist.vue"
   overflow: visible;
  }
 	.valnum{
-		border:1px solid #999;
+		/* border:1px solid #999; */
 	}
 	.valnum button{
-		width: 1.2rem;height: 1.2rem;
+		width: 1.2rem;height: 1.2rem;font-size: 56rpx;
 		color: #000;line-height: 1.2rem;
 		border-radius: 0px;text-align: center;
-		background-color: rgb(248,248,248);  
+		background-color: #fff;
+		/* background-color: rgb(248,248,248); */
 	}
 	.valnum button:after{
 		border-radius: 0px;border: none;

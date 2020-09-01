@@ -1,6 +1,6 @@
 <script>
 // 域名
-	const hostname= "http://api.gdyingshi.cn/api/"
+	const hostname= "http://api.lovehou.com/api/"
 // 账号登录
 	const login = hostname+"login";
 //验证码
@@ -33,12 +33,23 @@
 	const checkEntrusCanSell = hostname+"goods/checkEntrusCanSell";
 //摘牌卖出流程
 	const listsellBuy = hostname+"goods/listsellBuy";
+//委托商品列表
+	const mygetEntrusList = hostname+"goods/mygetEntrusList";
 //委托买入商品列表
 	const entrustlst = hostname+"goods/entrustlst";
+//委托卖出商品列表
+	const entrustlstsell = hostname+"tradeHall/entrustlstsell";
 //委托买入需求发布
 	const entrustpurchase = hostname+"goods/entrustpurchase";
 //委托卖出需求发布
 	const consignmentSale = hostname+"goods/consignmentSale";
+//批发买入商品
+	const wholegoodslist = hostname+"order/wholegoodslist";
+//批发买入购买详情
+	const getgoodsDetail = hostname+"order/getgoodsDetail";
+//批发买入提交
+	const Wholesale = hostname+"order/Wholesale";
+	
 //现货购买流程
 	const spotpay = hostname+"order/spotpay";
 //图片提交
@@ -47,48 +58,46 @@
 	const uploadEditor = hostname+"uploadEditor";
 //个人中心
 	const index = hostname+"user/index";
+//实名信息获取
+	const Idrealuserinfo = hostname+"user/Idrealuserinfo";
+//我的库存
+	const myinv = hostname+"user/myinv";
 export default {
 		login,verifyCode,register,
 		// updatepwd,
 		getEntrusList,list,detail,
 		getchannel,sortgoods,newgoods,
 		entrusBuy,getEntrusBuyList,entrusBuyList,
-		getEntrusSellList,checkEntrusCanSell,listsellBuy,
-		entrustlst,entrustpurchase,consignmentSale,
-		spotpay,Idcardreal,uploadEditor,index,
+		getEntrusSellList,checkEntrusCanSell,listsellBuy,mygetEntrusList,
+		entrustlst,entrustlstsell,entrustpurchase,consignmentSale,
+		wholegoodslist,getgoodsDetail,Wholesale,
+		spotpay,Idcardreal,uploadEditor,index,Idrealuserinfo,myinv,
 		
 	onLaunch: function() {
-		let that = this;
-		// #ifdef APP-PLUS
-		/* 5+环境锁定屏幕方向 */
-		plus.screen.lockOrientation('portrait-primary'); //锁定
-		
-		/* 5+环境升级提示 */
-		//app检测更新
-		let platform = plus.os.name.toLocaleLowerCase()
-		plus.runtime.getProperty(plus.runtime.appid, (widgetInfo) => {
-			return false;
-			that.tui.request('/config/getNewestVersion', {
-				platform: platform,
-				version: widgetInfo.version //资源版本号
-			}, 'POST', false, true).then((res) => {
-				if (res.code === 200 && res.data && (res.data.updateUrl || res.data.partUpdateUrl)) {
-					let data = res.data
-					that.tui.modal('检测到新版本', data.updateLog ? data.updateLog : '请您先更新再进行操作，若不及时更新可能导致部分功能无法正常使用。', false, res => {
-						if (data.hasPartUpdate === 0) {
-							//应用市场更新
-							plus.runtime.openURL(data.updateUrl);
-							plus.runtime.restart();
-						} else if (data.hasPartUpdate === 1) {
-							//资源更新（服务器端更新）
-							that.tui.href(`/pages/common/update/update?url=${data.partUpdateUrl}`)
-						}
-					});
-				}
-			}).catch((e) => {})
-		});
-		
-		// #endif
+		//#ifdef APP-PLUS  
+		    var server = "https://www.example.com/update"; //检查更新地址  
+		    var req = { //升级检测数据  
+		        "appid": plus.runtime.appid,  
+		        "version": plus.runtime.version  
+		    };  
+		    uni.request({  
+		        url: server,  
+		        data: req,  
+		        success: (res) =&gt; {  
+		            if (res.statusCode == 200 &amp;&amp; res.data.status === 1) {  
+		                uni.showModal({ //提醒用户更新  
+		                    title: "更新提示",  
+		                    content: res.data.note,  
+		                    success: (res) =&gt; {  
+		                        if (res.confirm) {  
+		                            plus.runtime.openURL(res.data.url);  
+		                        }  
+		                    }  
+		                })  
+		            }  
+		        }  
+		    })  
+		    //#endif  
 		
 		// #ifdef MP-WEIXIN
 		if (wx.canIUse('getUpdateManager')) {

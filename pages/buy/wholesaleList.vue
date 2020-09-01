@@ -2,18 +2,18 @@
 	<view class="container">
 		<view class="product-list">
 			<!--商品列表-->
-			<view class="pro-item" @tap="detail" v-for="(item,index) in productList" :key="index">
+			<view class="pro-item" v-for="(item,index) in productList" :key="index">
 				<!-- <image :src="'/static/images/product/'+item.img+'.jpg'" class="pro-img" mode="widthFix" /> -->
-				<image :src="item.img" class="pro-img" mode="widthFix" />
+				<image :src="item.g_pic" class="pro-img" mode="widthFix"></image>
 				<view class="pro-content">
-					<view class="pro-tit">{{item.name}}</view>
+					<view class="pro-tit">{{item.g_title}}</view>
 					<view>
 						<view class="pro-price">
-							<text class="sale-price">￥{{item.sale}}</text>
-							<text class="factory-price">￥{{item.factory}}</text>
+							<text class="sale-price">￥{{item.g_pfprice}}</text>
+							<text class="factory-price">￥{{item.g_price}}</text>
 						</view>
-						<view class="btn-box FX-fe">
-							<tui-button type="tomato" plain shape="rightAngle" width="100rpx" height="50rpx" :size="24" @click="showModal">买入</tui-button>
+						<view class="btn-box FX-c">
+							<tui-button type="bronze" width="150rpx" height="60rpx" :size="28" @click="showModal(item.g_id)">买入</tui-button>
 						</view>
 						<!-- <view class="btn-box">
 							<tui-button shape="circle" shadow @click="showModal">从底部弹出</tui-button>
@@ -23,13 +23,9 @@
 			</view>
 			<!--商品列表-->
 		</view>
-		<!--加载loadding-->
-		<tui-loadmore v-if="loadding" :index="3" type="primary"></tui-loadmore>
-		<tui-nomore v-if="!pullUpOn"></tui-nomore>
-		<!--加载loadding-->
 		
 		<!--底部抽屉-->
-		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
+		<!-- <tui-bottom-popup :show="bottomPopup" @close="hideModal">
 			<view class="region-box">
 				<view
 					class="region-txt"
@@ -45,12 +41,63 @@
 					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm">确定</tui-button>
 				</view>
 			</view>
+		</tui-bottom-popup> -->
+		
+		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
+			<view class="region-box">
+				<tui-list-cell :hover="false" unlined>
+				    <view class="tui-line-cell">
+						<view class="tui-title">商品名称：</view>
+						<text>{{productLists.g_title}}</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">商品编码：</view>
+						<text>{{productLists.g_code}}</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">批发价格：</view>
+						<text>{{productLists.g_pfprice}}元</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">批发数量：</view>
+						<text>{{productLists.g_salevol}}</text>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">买入数量：</view>
+						<view class="valnum FX">
+							<button class='F-xy' type="primary" @click="valnumes">-</button>
+							<input class="t-center" type="text" v-model="valnums" @input="inputChanges"/>
+							<button class='F-xy' type="primary" @click="valnumas">+</button>
+						</view>
+				    </view>
+				   </tui-list-cell>
+				   <tui-list-cell :hover="false">
+				    <view class="tui-line-cell">
+				     <view class="tui-title">合计：</view>
+						<text>{{heji}}.00元</text>
+				    </view>
+				   </tui-list-cell>
+				<view class="FX-sb w100" style="margin-top: 5%;">
+					<tui-button type="green" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
+					<tui-button type="bronze" width="280rpx" height="90rpx" :size="32" @click="confirm(productLists.g_id)">确定</tui-button>
+				</view>
+			</view>
 		</tui-bottom-popup>
 		
 	</view>
 </template>
 
 <script>
+	import App from '../../App.vue'
+
 	export default {
 		data() {
 			return {
@@ -66,23 +113,118 @@
 				bottomPopup: false,
 				tabIndex: 26,
 				loadding: false,
-				pullUpOn: true
+				pullUpOn: true,
+				productLists:'',
+				valnums:1,
+				heji:'',
 			}
 		},
+		onLoad() {
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.wholegoodslist,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res.data);
+							that.productList=res.data.data;
+						}
+					});
+				}
+			})
+		},
 		methods: {
-			// detail(e) {
-			// 	uni.navigateTo({
-			// 		url: '/pages/template/mall/productDetail/productDetail'
-			// 	})
-			// },
-			showModal: function() {
-				this.bottomPopup = true;
+			showModal: function(e) {
+				console.log(e)
+				var that = this;
+				var datas ={"g_id":e};
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+						url: App.getgoodsDetail,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:datas,
+							success: (res) => {
+								// that.debool=true;
+								console.log(res.data);
+								that.productLists=res.data.data[0];
+								that.heji=that.valnums*that.productLists.g_pfprice;
+							}
+						});
+					}
+				});
+				that.bottomPopup = true;
+				console.log("卖出", Math.random())
 			},
 			hideModal: function() {
 				this.bottomPopup = false;
 			},
 			cancel: function() {
 				this.bottomPopup = false;
+			},
+			confirm: function(a) {
+				console.log(a)
+				var that = this;
+				var datas ={"g_id":a,"num":that.valnums};
+				console.log(that.valnums)
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							url: App.Wholesale,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:datas,
+							success: (res) => {
+								console.log(res);
+								// that.details=res.data.data;
+								that.bottomPopup = false;
+								uni.showToast({
+									icon: 'none',
+									title: res.data.msg
+								});
+								// setTimeout(function(){
+								// 	// uni.redirectTo({
+								// 	// 	url:'entrusSellList'
+								// 	// })
+								// },1000)
+							}
+						});
+					}
+				});
+				// this.bottomPopup = false;
+			},
+			inputChanges(e){
+				console.log(e)
+				var that = this;
+				that.valnums = e.productList.value
+				console.log(e.productLists.value)
+			},
+			valnumes(){
+				var that = this;
+				if(that.valnums>1){
+					that.valnums--;
+				}else{
+					that.valnums=1
+				}
+				that.heji=that.valnums*that.productLists.g_pfprice;
+			},
+			valnumas(){
+				var that = this;
+				if(that.valnums<that.productLists.g_salevol){
+					that.valnums++;
+				}else{
+					that.valnums=that.productLists.g_salevol
+				}
+				that.heji=that.valnums*that.productLists.g_pfprice;
 			},
 			// getRegion: function(e) {
 			// 	const index = e.currentTarget.dataset.index;
@@ -103,18 +245,18 @@
 				this.tui.toast("刷新成功")
 			}, 200)
 		},
-		onReachBottom: function() {
-			if (!this.pullUpOn) return;
-			this.loadding = true;
-			if (this.pageIndex == 3) {
-				this.loadding = false;
-				this.pullUpOn = false
-			} else {
-				this.productList = this.productList.concat(this.loadData);
-				this.pageIndex = this.pageIndex + 1;
-				this.loadding = false
-			}
-		}
+		// onReachBottom: function() {
+		// 	if (!this.pullUpOn) return;
+		// 	this.loadding = true;
+		// 	if (this.pageIndex == 3) {
+		// 		this.loadding = false;
+		// 		this.pullUpOn = false
+		// 	} else {
+		// 		this.productList = this.productList.concat(this.loadData);
+		// 		this.pageIndex = this.pageIndex + 1;
+		// 		this.loadding = false
+		// 	}
+		// }
 	}
 </script>
 
@@ -172,7 +314,7 @@
 
 	.pro-tit {
 		color: #2e2e2e;
-		font-size: 26rpx;
+		font-size: 36rpx;
 		word-break: break-all;
 		overflow: hidden;
 		text-overflow: ellipsis;
@@ -217,6 +359,45 @@
 		padding: 80rpx 30rpx;
 	}
 
+.tui-line-cell {
+  width: 100%;
+  font-size: 32rpx;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+ }
+
+ .tui-title {
+  /* width: 240rpx; */
+  /* text-align: right; */
+  font-size: 32rpx;
+  min-width: 120rpx;
+  flex-shrink: 0;
+ }
+
+ .tui-input {
+  font-size: 32rpx;
+  color: #333;
+  padding-left: 20rpx;
+  flex: 1;
+  overflow: visible;
+ }
+	.valnum{
+		/* border:1px solid #999; */
+	}
+	.valnum button{
+		width: 1.2rem;height: 1.2rem;font-size: 56rpx;
+		color: #000;line-height: 1.2rem;
+		border-radius: 0px;text-align: center;
+		background-color: #fff;
+		/* background-color: rgb(248,248,248); */
+	}
+	.valnum button:after{
+		border-radius: 0px;border: none;
+	}
+	.valnum input{
+		width: 2rem;
+	}
 /*底部抽屉样式 start*/
 
 .region-box {

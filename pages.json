@@ -1,14 +1,5 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-	    {
-            "path" : "pages/login/login",
-			"style": {
-				"navigationBarTitleText": "登录",
-                "app-plus": {
-                    "titleNView": false //禁用原生导航栏
-                }
-			}
-        },
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -40,6 +31,15 @@
             "path" : "pages/user/userCenter",
 			"style": {
 				"navigationBarTitleText": "个人中心"
+			}
+        }
+		,{
+            "path" : "pages/login/login",
+			"style": {
+				"navigationBarTitleText": "登录",
+                "app-plus": {
+                    "titleNView": false //禁用原生导航栏
+                }
 			}
         }
         ,{
@@ -113,7 +113,21 @@
         }
         ,{
             "path" : "pages/user/deliveryScheduleDetails",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText": "选择提货明细"
+			}
+        }
+        ,{
+            "path" : "pages/user/changeAddress",
+          "style" : {
+          	"navigationBarTitleText": "修改收货地址"
+          }
+        }
+        ,{
+            "path" : "pages/user/newAddress",
+          "style" : {
+          	"navigationBarTitleText": "新增收货地址"
+          }
         }
     ],
 	"easycom": {

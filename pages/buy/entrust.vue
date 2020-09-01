@@ -11,23 +11,23 @@
 			<view class="entrusbuylist" v-for="item in dataList1">
 				<view class="entrusbuylist_left">
 					<view class="entrusbuylist_left_img">
-						<image :src="item.imgUrl"></image>
+						<image :src="item.g_pic"></image>
 					</view>
 					<view class="entrusbuylist_left_text">
-						{{item.code}}
+						{{item.g_code}}
 					</view>
 				</view>
 				<view class="entrusbuylist_center" style="flex: 1;">
-					<view class="entrusbuylist_right_title">{{item.title}}</view>
+					<view class="entrusbuylist_right_title">{{item.g_title}}</view>
 					<view class="entrusbuylist_right_price">
-						<text>委托价:￥{{item.price > 999999 ? "999999.00+" : item.price.toFixed(2)}}</text>
-						<text>数量:{{item.num > 999 ? '999+' : item.num}}份</text>
+						<text>委托价:￥{{item.ut_price > 999999 ? "999999.00+" : item.ut_price}}</text>
+						<text>数量:{{item.ut_num > 999 ? '999+' : item.ut_num}}份</text>
 					</view>
 				</view>
 				<view class="entrusbuylist_right">
 					<view class="tui-btn-box">
-						<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton">
-							{{item.button}}
+						<tui-button class="ntrusbuylist_right_button" type="bronze" plain @click="clickButton">
+							撤销
 						</tui-button>
 					</view>
 				</view>
@@ -37,23 +37,23 @@
 			<view class="entrusbuylist" v-for="item in dataList2">
 				<view class="entrusbuylist_left">
 					<view class="entrusbuylist_left_img">
-						<image :src="item.imgUrl"></image>
+						<image :src="item.g_pic"></image>
 					</view>
 					<view class="entrusbuylist_left_text">
-						{{item.code}}
+						{{item.g_code}}
 					</view>
 				</view>
 				<view class="entrusbuylist_center" style="flex: 1;">
-					<view class="entrusbuylist_right_title">{{item.title}}</view>
+					<view class="entrusbuylist_right_title">{{item.g_title}}</view>
 					<view class="entrusbuylist_right_price">
-						<text>委托价:￥{{item.price > 999999 ? "999999.00+" : item.price.toFixed(2)}}</text>
-						<text>数量:{{item.num > 999 ? '999+' : item.num}}份</text>
+						<text>委托价:￥{{item.ut_price > 999999 ? "999999.00+" : item.ut_price}}</text>
+						<text>数量:{{item.ut_num > 999 ? '999+' : item.ut_num}}份</text>
 					</view>
 				</view>
 				<view class="entrusbuylist_right">
 					<view class="tui-btn-box">
-						<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton">
-							{{item.button}}
+						<tui-button class="ntrusbuylist_right_button" type="bronze" plain @click="clickButton">
+							撤销
 						</tui-button>
 					</view>
 				</view>
@@ -63,6 +63,7 @@
 </template>
 
 <script>
+	import App from '../../App.vue'
 	export default {
 		data() {
 			return {
@@ -71,38 +72,44 @@
 					{name: "委托卖出"}
 				],
 				currentTab: 0,
+				dataList:'',
 				dataList1: [
-					{
-						id: 1,
-						imgUrl: "../../static/img/s02.jpg",
-						title: "大佑生宝小分子海参饮品",
-						price: 598,
-						num: 10,
-						code: 16888801,
-						button: "撤销"
-					},
-					{
-						id: 2,
-						imgUrl: "../../static/img/s01.jpg",
-						title: "丽醒海带精萃饮植物饮品",
-						price: 68,
-						num: 100,
-						code: 16888802,
-						button: "撤销"
-					}
+					{id: 1,imgUrl: "../../static/img/s02.jpg",title: "大佑生宝小分子海参饮品",price: 598,num: 10,code: 16888801,button: "撤销"},
+					{id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
 				],
 				dataList2: [
-					{
-						id: 2,
-						imgUrl: "../../static/img/s01.jpg",
-						title: "丽醒海带精萃饮植物饮品",
-						price: 68,
-						num: 100,
-						code: 16888802,
-						button: "撤销"
-					}
+					{id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
 				]
 			}
+		},
+		onLoad() {
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.mygetEntrusList,
+						method: 'POST',
+						header: {'Authorization':getres},
+						data:{'type':1},
+						success: (res) => {
+							console.log(res.data);
+							that.dataList1=res.data.data;
+						}
+					});
+					uni.request({
+						url: App.mygetEntrusList,
+						method: 'POST',
+						header: {'Authorization':getres},
+						data:{'type':2},
+						success: (res) => {
+							console.log(res.data);
+							that.dataList2=res.data.data;
+						}
+					});
+				}
+			})
 		},
 		methods: {
 			changeTab(e) {

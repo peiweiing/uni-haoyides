@@ -1,25 +1,30 @@
 <template>
 	<view class="container">
-
 		<view class="title_2">
 			请选择商品
 		</view>
-		<tui-card class="tui-card" :image="card[0].img" :title="card[0].title" :tag="card[0].tag" @click="popup(0)">
+		<tui-card
+		class="tui-card"
+		v-if="isShow"
+		:image="bottomList.img[0].img"
+		:title="bottomList.img[0].title"
+		:tag="bottomList.img[0].tag"
+		@click="popup"
+		>
 			<template v-slot:footer>
 				<view class="tui-default">
 					<view class="">
-						价格：￥{{(cardInfo.price).toFixed(2)}}
+						价格：￥{{bottomList.g_price}}
 					</view>
 					<view class="">
-						交易量：{{(cardInfo.num).toFixed(2)}}
+						交易量：{{(bottomList.g_salevol).toFixed(2)}}
 					</view>
 					<view class="">
-						交易金额：￥{{(cardInfo.price * cardInfo.num).toFixed(2)}}
+						交易金额：￥{{(bottomList.g_salevol).toFixed(2)}}
 					</view>
 				</view>
 			</template>
 		</tui-card>
-
 		<view class="title_2">
 			请填写购买信息
 		</view>
@@ -28,178 +33,230 @@
 				<tui-list-cell :hover="false" unlined>
 					<view class="tui-line-cell">
 						<view class="tui-title">价格区间：</view>
-						<input placeholder-class="tui-phcolor" disabled class="tui-input" placeholder="99.00 ~ 999.00" maxlength="50" type="digit" />
+						<input
+						placeholder-class="tui-phcolor"
+						disabled class="tui-input"
+						:placeholder="bottomList.g_minprice+' ~ '+bottomList.g_maxprice"
+						maxlength="50"
+						type="digit"
+						/>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false">
 					<view class="tui-line-cell">
 						<view class="tui-title">卖出价格：</view>
-						<input placeholder-class="tui-phcolor" class="tui-input" name="amount" placeholder="请输入卖出价格" maxlength="50" type="text" />
+						<input
+						v-model="price"
+						placeholder-class="tui-phcolor"
+						class="tui-input"
+						name="amount"
+						placeholder="请输入卖出价格"
+						maxlength="50"
+						type="text"
+						/>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false">
 					<view class="tui-line-cell">
 						<view class="tui-title">卖出数量：</view>
-						<input placeholder-class="tui-phcolor" class="tui-input" name="amount2" placeholder="请输入卖出数量" maxlength="50" type="text" />
+						<input
+						v-model="num"
+						placeholder-class="tui-phcolor"
+						class="tui-input"
+						name="amount2"
+						placeholder="请输入卖出数量"
+						maxlength="50"
+						type="text"
+						/>
 					</view>
 				</tui-list-cell>
-			
 				<view class="confirm_box">
-					<button class="tui-button-primary" hover-class="tui-button-hover" formType="submit" type="primary">确 认 委 托 卖 出</button>
+					<button
+					class="tui-button-primary"
+					hover-class="tui-button-hover"
+					formType="submit"
+					type="primary"
+					@click="affirm(bottomList.g_id)"
+					>
+						确 认 委 托 卖 出
+					</button>
 				</view>
 			</form>
 		</view>
-		
 		<!--底部分享弹窗-->
-		<tui-bottom-popup :show="popupShow" @close="popup(0)">
+		<tui-bottom-popup :show="popupShow" @close="popup">
 			<view class="tui-share">
 				<radio-group @change="radioChange">
-					<scroll-view class="tui-share-content">
-						<view class="share-content-list" v-for="(item, index) in bottomList" :key="item.value" @click="clickBottomList(index)">
-							<tui-card class="tui-card-share" :image="item.card[0].img" :title="item.card[0].title" :tag="item.card[0].tag" @click="popup(item)">
+					<scroll-view scroll-y class="tui-share-content">
+						<view
+						class="share-content-list"
+						v-for="(item, index) in bottomLists"
+						:key="index"
+						@click="clickBottomList(index)"
+						>
+							<tui-card
+							class="tui-card-share"
+							:image="item.img[0].img"
+							:title="item.img[0].title"
+							:tag="item.img[0].tag"
+							@click="popup"
+							>
 								<template v-slot:footer>
 									<view class="tui-default">
 										<view class="">
-											价格:￥{{(item.price).toFixed(2)}}
+											价格:￥{{item.g_price}}
 										</view>
 										<view class="">
-											交易量:{{item.num}}
+											交易量:{{item.g_salevol}}
 										</view>
 										<view class="">
-											交易金额:￥{{(item.price * item.num).toFixed(2)}}
+											交易金额:￥{{item.totalpay}}
 										</view>
 									</view>
 								</template>
 							</tui-card>
 							<label class="tui-checkbox">
-								<!-- <radio :value="item.value" :checked="index === current" @click="popup" style="display: none;"></radio> -->
-								<tui-icon name="circle" :size="30" :color="'#9E2036'" @click="popup(item)" v-if="index !== current"></tui-icon>
-								<tui-icon name="circle-fill" :size="30" :color="'#9E2036'" @click="popup(item)" v-if="index === current"></tui-icon>
+								<tui-icon
+								name="circle"
+								:size="30"
+								:color="'#9E2036'"
+								@click="popup"
+								v-if="index !== current"
+								></tui-icon>
+								<tui-icon
+								name="circle-fill"
+								:size="30"
+								:color="'#9E2036'"
+								@click="popup"
+								v-if="index === current"
+								></tui-icon>
 							</label>
 						</view>
 					</scroll-view>
 				</radio-group>
-				<view class="tui-btn-cancle" @tap="popup(0)">取消</view>
+				<view
+				class="tui-btn-cancle"
+				@tap="popup"
+				>
+					取消
+				</view>
 			</view>
 		</tui-bottom-popup>
 		<!--底部分享弹窗-->
-		
 	</view>
 </template>
 
 <script>
+	import App from "../../App.vue"
 	const form = require("@/components/common/tui-validation/tui-validation.js")
 	export default {
 		data() {
 			return {
-				cardInfo: {
-					price: 260,
-					num: 45
-				},
-				card: [
-					{
-						img: { url: "/static/images/news/avatar_1.jpg" },
-						title: { text: "陆羽经云南茶叶" },
-						tag: { text: "编码：789456123" },
-						header: { bgcolor: "#F7F7F7", line: true }
-					}
-				],
+				price:'',
+				num:'',
 				popupShow: false,
-				bottomList: [
-					{
-						card: [{
-							img: {
-								url: "/static/images/news/avatar_1.jpg"
-							},
-							title: {
-								text: "陆羽经云南茶叶"
-							},
-							tag: {
-								text: "编码：789456123"
-							},
-							header: {
-								bgcolor: "#F7F7F7",
-								line: true
-							}
-						}],
-						price: 260,
-						num: 20,
-						value: "01"
-					},
-					{
-						card: [{
-							img: {
-								url: "/static/images/news/avatar_1.jpg"
-							},
-							title: {
-								text: "陆羽经云南茶叶"
-							},
-							tag: {
-								text: "编码：963852741"
-							},
-							header: {
-								bgcolor: "#F7F7F7",
-								line: true
-							}
-						}],
-						price: 280,
-						num: 10,
-						value: "02"
-					},
-					{
-						card: [{
-							img: {
-								url: "/static/images/news/avatar_1.jpg"
-							},
-							title: {
-								text: "陆羽经云南茶叶"
-							},
-							tag: {
-								text: "编码：1597538624"
-							},
-							header: {
-								bgcolor: "#F7F7F7",
-								line: true
-							}
-						}],
-						price: 240,
-						num: 30,
-						value: "03"
-					}
-				],
-				current: 0
+				bottomLists: [],
+				bottomList: {},
+				current: 0,
+				isShow: false,
+				isConfirm: false
 			}
+		},
+		onLoad() {
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						url: App.entrustlstsell,
+						method: 'POST',
+						header: {'Authorization':getres},
+						success: (res) => {
+							console.log(res)
+							that.bottomLists = res.data.data;
+							that.bottomList = res.data.data[0];
+							that.isShow = true
+							// console.log(res.data)
+						}
+					});
+					// uni.request({
+					// 	url: App.entrustlstsell,
+					// 	method: 'POST',
+					// 	header: {'Authorization':getres},
+					// 	success: (res) => {
+					// 		console.log(res);
+					// 		that.bottomLists=res.data.data;
+					// 	}
+					// });
+				}
+			})
 		},
 		methods: {
 			formSubmit: function(e) {
+				// console.log(e)
 				//表单规则
 				let rules = [{
 					name: "amount",
 					rule: ["required", "isAmount"],
-					msg: ["请输入卖出价格", "请输入正确的卖出价格，允许保留两位小数"]
+					msg: ["请输入卖出价格!", "请输入正确的卖出价格，允许保留两位小数!"]
 				}, {
 					name: "amount2",
 					rule: ["required", "isAmount"],
-					msg: ["请输入卖出数量", "请输入正确的卖出数量"]
+					msg: ["请输入卖出数量!", "请输入正确的卖出数量!"]
 				}];
 				//进行表单检查
 				let formData = e.detail.value;
 				let checkRes = form.validation(formData, rules);
 				if (!checkRes) {
-					uni.showToast({
-						title: "验证通过!",
-						icon: "none"
-					});
+					if (Number(this.price) <= Number(this.bottomList.g_maxprice) && Number(this.price) >= Number(this.bottomList.g_minprice)) {
+						this.isConfirm = true
+					} else {
+						this.isConfirm = false
+						uni.showToast({
+							title: "请输入正确的价格区间!",
+							icon: "none"
+						});
+					}
 				} else {
+					this.isConfirm = false
 					uni.showToast({
 						title: checkRes,
 						icon: "none"
 					});
 				}
 			},
-			popup: function(data) {
+			affirm(e){
+				if (this.isConfirm) {
+					var that =this;
+					uni.getStorage({
+						key: 'token',
+						success: function (res) {
+							var getres = res.data;
+							var datas={'g_id':e,'num':that.num,'price':that.price,}
+							uni.request({
+								url: App.consignmentSale,
+								method: 'POST',
+								header: {'Authorization':getres},
+								data:datas,
+								success: (res) => {
+									console.log("确认委托卖出" ,res.data)
+									that.productList = res.data;
+									uni.showToast({
+										title: that.productList.msg+'!',
+										icon: "none"
+									});
+									that.price = ""
+									that.num = ""
+									this.isConfirm = false
+								}
+							});
+						}
+					})
+				}
+			},
+			popup: function() {
 				this.popupShow = !this.popupShow
-				data === 0 ? "" : console.log(data.value)
 			},
 			radioChange: function(evt) {
 				for (let i = 0; i < this.bottomList.length; i++) {
@@ -211,6 +268,7 @@
 			},
 			clickBottomList: function(index) {
 				this.current = index
+				this.bottomList = this.bottomLists[index]
 			}
 		},
 		onPullDownRefresh: function(){
@@ -278,24 +336,26 @@
 		overflow: hidden;
 	}
 	.tui-share {
-		height: 800rpx;
 		background: #e8e8e8;
 		position: relative;
 		padding: 20rpx;
 	}
 	.tui-share-content{
+		height: 800rpx;
 		display: flex;
 		flex-direction: column;
+		margin-bottom: 100rpx;
 		.share-content-list{
 			display: flex;
 			margin-top: 20rpx;
 			align-items: center;
 			background-color: #ffffff;
+			border-radius: 6rpx;
 			.tui-card-share{
 				flex: 1;
 			}
 			.tui-checkbox{
-				width: 20%;
+				width: 16%;
 				display: flex;
 				justify-content: center;
 				align-items: center;

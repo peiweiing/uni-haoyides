@@ -3,14 +3,14 @@
 		<view class="tui-mybg-box">
 			<view class="tui-header-center">
 				<view class="header_image">
-					<image :src="userInfo.u_avatar" class="tui-avatar"></image>
+					<!-- <image :src="userInfo.u_avatar" class="tui-avatar"></image> -->
 				</view>
 				<view class="tui-info">
 					<view class="tui-nickname">
-						{{userInfo.u_nickname}}
-						<image src="/static/images/mall/my/icon_vip_3x.png" class="tui-img-vip"></image>
+						{{this.mobile}}
+						<!-- <image src="/static/images/mall/my/icon_vip_3x.png" class="tui-img-vip"></image> -->
 					</view>
-					<view class="tui-explain">这家伙很懒…</view>
+					<!-- <view class="tui-explain">这家伙很懒…</view> -->
 				</view>
 				<view class="tui-btn-edit">
 					<tui-button
@@ -82,7 +82,7 @@
 				</block>
 			</tui-grid>
 				<image style="width: 100%;height: 200rpx;" src="../../static/img/userimg.png" mode=""></image>
-			<tui-list-cell @click="detail" :arrow="true">
+			<tui-list-cell @click="changeAddress" :arrow="true">
 				<view class="tui-item-box">
 					<tui-icon name="position" :size="24" color="#ff7900"></tui-icon>
 					<text class="tui-list-cell_name">修改地址</text>
@@ -103,13 +103,15 @@
 	export default {
 		data() {
 			return {
+				mobile: "",
+				token: "",
 				userInfo: {
 					bal_point: "00.00",
 					bal_trades: "00.00",
 					g_inv: 0,
 					g_lockinv: 0,
 					u_avatar: "../../static/img/headerImg.jpg",
-					u_nickname: "呼噜猪zzZ ",
+					u_nickname: " ",
 				},
 				dataList: [
 					{name: "wallet",title: "我的库存",color: "#9E2036",size: 30,url:"pickupProgress"},
@@ -121,19 +123,31 @@
 			}
 		},
 		onLoad: function() {
-			uni.request({
-				method: "POST",
-				url: App.index,
-				success: res => {
-					console.log(res.data.data)
-					const data = res.data.data[0]
-					// this.userInfo = res.data.data[0]
-					data.bal_point ? this.userInfo.bal_point = data.bal_point : ''
-					data.bal_trades ? this.userInfo.bal_trades = data.bal_trades : ''
-					data.g_inv ? this.userInfo.g_inv = data.g_inv : ''
-					data.g_lockinv ? this.userInfo.g_lockinv = data.g_lockinv : ''
-					data.u_avatar ? this.userInfo.u_avatar = data.u_avatar : ''
-					data.u_nickname ? this.userInfo.u_nickname = data.u_nickname : ''
+			this.mobile = uni.getStorageSync("mobile")
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					// console.log(res)
+					var getres = res.data;
+					uni.request({
+						method: "POST",
+						url: App.index,
+						header: {
+							"Authorization": getres
+							// "Authorization": "CCE7398F976214F932B340326B7A9C82"
+						},
+						success: res => {
+							console.log(res)
+							const data = res.data.data[0]
+							data.bal_point ? that.userInfo.bal_point = data.bal_point : ''
+							data.bal_trades ? that.userInfo.bal_trades = data.bal_trades : ''
+							data.g_inv ? that.userInfo.g_inv = data.g_inv : ''
+							data.g_lockinv ? that.userInfo.g_lockinv = data.g_lockinv : ''
+							data.u_avatar ? that.userInfo.u_avatar = data.u_avatar : ''
+							data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
+						}
+					})
 				}
 			})
 		},
@@ -150,6 +164,11 @@
 			goRealName: function() {
 				uni.navigateTo({
 					url: "./realName"
+				})
+			},
+			changeAddress: function() {
+				uni.navigateTo({
+					url: "./changeAddress"
 				})
 			}
 		}
@@ -195,6 +214,7 @@
 		display: block;
 		overflow: hidden;
 		border-radius: 50%;
+		// border: 2rpx solid #EEE;
 		.tui-avatar{
 			width: 100%;
 			height: 100%;

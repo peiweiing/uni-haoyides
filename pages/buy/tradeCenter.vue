@@ -29,7 +29,7 @@
 						:class="[current != index ? 'tui-banner-scale' : '']"
 						mode="scaleToFill"
 						lazy-load
-						@tap="detail"
+						@tap="swiper"
 					/>
 				</swiper-item>
 			</swiper>
@@ -112,6 +112,9 @@
 			// 	this.current = e.detail.current;
 			// 	console.log(this.current)
 			// },
+			swiper(e){
+				console.log(e)
+			},
 			detail: function(e) {
 				console.log(e)
 				uni.navigateTo({
@@ -127,7 +130,7 @@
 
 <style lang="scss" scoped>
 .container {
-	padding-bottom: 40rpx;
+	min-height: calc(100vh);
 	padding-bottom: 2%;
 	box-sizing: border-box;
 	background-color: #EDEDED;

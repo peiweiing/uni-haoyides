@@ -14,7 +14,8 @@
 					placeholder-class="tui-phcolor"
 					class="tui-input"
 					name="name"
-					placeholder="请输入姓名"
+					:disabled="isRealName"
+					:placeholder="isRealName ? u_info.u_name : '请输入姓名'"
 					maxlength="50"
 					type="text"
 					v-model="realname"
@@ -29,7 +30,8 @@
 					placeholder-class="tui-phcolor"
 					class="tui-input"
 					name="idcard"
-					placeholder="请输入身份证号码"
+					:disabled="isRealName"
+					:placeholder="isRealName ? u_info.u_id.toString() : '请输入身份证号码'"
 					maxlength="50"
 					type="text"
 					v-model="idcard"
@@ -44,7 +46,8 @@
 					placeholder-class="tui-phcolor"
 					class="tui-input"
 					name="mobile"
-					placeholder="请输入手机号"
+					:disabled="isRealName"
+					:placeholder="isRealName ? u_info.u_acc : '请输入手机号'"
 					maxlength="50"
 					type="text"
 					v-model="mobile"
@@ -59,6 +62,12 @@
 				@complete="result"
 				@remove="remove"
 				></tui-upload>
+				<view v-if="isRealName" class="tui-box-upload_img1">
+					<image :src="u_info.idcard_front_url"></image>
+				</view>
+				<view v-if="isRealName" class="tui-box-upload_img2">
+					<image :src="u_info.idcard_back_url"></image>
+				</view>
 				<view class="tui-box-upload_text1">
 					身份证人像面
 				</view>
@@ -72,7 +81,10 @@
 				hover-class="tui-button-hover"
 				formType="submit"
 				type="primary"
-				>开始验证</button>
+				:disabled="isRealName"
+				>
+				{{isRealName ? "您已经实名认证过了" : "开始验证"}}
+				</button>
 			</view>
 		</form>
 	</view>
@@ -92,8 +104,38 @@
 				isInputFocus_3: false,
 				imageData: [],
 				serverUrl: App.uploadEditor, //上传地址
-				value:[] //初始化图片
+				value:[], //初始化图片
+				token: "",
+				isRealName: false,
+				u_info: {}
 			}
+		},
+		onLoad: function() {
+			var that =this;
+			uni.getStorage({
+				key: 'token',
+				success: function (res) {
+					var getres = res.data;
+					uni.request({
+						method: "POST",
+						url: App.Idrealuserinfo,
+						header: {
+							"Authorization": getres
+						},
+						success: res => {
+							console.log("实名认证信息:", res.data.data)
+							if (res.data.data.length !== 0) {
+								that.isRealName = true
+								that.u_info = res.data.data[0]
+								uni.showToast({
+									title: "您已经实名认证过了!",
+									icon: "none"
+								});
+							}
+						}
+					})
+				}
+			})
 		},
 		methods: {
 			formSubmit: function(e) {
@@ -135,23 +177,33 @@
 								title: "验证通过!",
 								icon: "none"
 							});
-							uni.request({
-								method: "POST",
-								url: App.Idcardreal,
-								data: {
-									realname: this.realname,
-									idcard: this.idcard,
-									mobile: this.mobile,
-									idcardf: this.imageData[0],
-									idcardb: this.imageData[1]
-								},
-								// header: {
-								// 	"Authorization": "CCE7398F976214F932B340326B7A9C82"
-								// },
-								success: (res) => {
-									console.log(res);
+							var that =this;
+							uni.getStorage({
+								key: 'token',
+								success: function (res) {
+									var getres = res.data;
+									uni.request({
+										method: "POST",
+										url: App.Idcardreal,
+										data: {
+											realname: that.realname,
+											idcard: that.idcard,
+											mobile: that.mobile,
+											idcardf: that.imageData[0],
+											idcardb: that.imageData[1]
+										},
+										header: {
+											"Authorization": getres
+										},
+										success: (res) => {
+											console.log(res);
+										}
+									});
 								}
-							});
+							})
+							setTimeout(function() {
+								uni.navigateBack()
+							}, 1000)
 						} else {
 							uni.showToast({
 								title: "请重新上传照片!",
@@ -221,6 +273,22 @@
 		display: flex;
 		position: relative;
 		justify-content: center;
+		.tui-box-upload_img1, .tui-box-upload_img2{
+			width: 544rpx;
+			height: 306rpx;
+			position: absolute;
+			top: 40rpx;
+			border-radius: 20rpx;
+			background-color: #CDCDCD;
+			overflow: hidden;
+			image{
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.tui-box-upload_img2{
+			top: 386rpx;
+		}
 		.tui-box-upload_text1{
 			z-index: 999;
 			position: absolute;

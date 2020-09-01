@@ -85,7 +85,7 @@
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
 				<view class="tui-flex-1">
-					<tui-button height="68rpx" :size="26" type="warning" shape="circle" @click="submit(module.g_id)">立即购买</tui-button>
+					<tui-button :disabled="disabled" height="68rpx" :size="26" type="bronze" shape="circle" @click="submit(module.g_id)">立即购买</tui-button>
 				</view>
 			</view>
 		</view>
@@ -187,6 +187,7 @@ import App from '../../App.vue'
 				scrollH: 0, //滚动总高度
 				opcity: 0,
 				iconOpcity: 0.5,
+				disabled:false,
 				banner: [
 					'../../static/img/01.jpg',
 					'../../static/img/02.jpg',
@@ -319,6 +320,8 @@ import App from '../../App.vue'
 			},
 			submit(e) {
 				var that =this;
+				that.disabled=true;
+				console.log(that.disabled)
 				uni.getStorage({
 				    key: 'token',
 				    success: function (res) {
@@ -335,34 +338,17 @@ import App from '../../App.vue'
 									title: res.data.msg
 								});
 								setTimeout(function(){
-									// uni.startPullDownRefresh();
-									// console.log("跳转")
-									// uni.navigateBack({
-									//     delta: 1
-									// });
-									// console.log("跳转")
 									that.module.g_salevol=res.data.data.g_salevol
 								},1000)
-								// if(res.data.status!=200){
-									// uni.showModal({
-									//     title: '提示',
-									//     content: '购买已超过今日限额',
-									//     success: function (res) {
-									//         if (res.confirm) {
-									//             console.log('用户点击确定');
-									//         } else if (res.cancel) {
-									//             console.log('用户点击取消');
-									//         }
-									//     }
-									// });
-								// }
-								// that.module=res.data.data;
-						        // console.log(that.module);
-						    }
+						    },
+							complete: ()=> {
+								console.log('执行了')
+								that.disabled=false;
+							},
 						});
 				    }
 				});
-				this.popupShow = false;
+				// this.popupShow = false;
 			},
 			coupon() {
 				uni.navigateTo({
