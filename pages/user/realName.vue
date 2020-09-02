@@ -31,7 +31,7 @@
 					class="tui-input"
 					name="idcard"
 					:disabled="isRealName"
-					:placeholder="isRealName ? u_info.u_id.toString() : '请输入身份证号码'"
+					:placeholder="isRealName ? u_info.u_idcard.toString() : '请输入身份证号码'"
 					maxlength="50"
 					type="text"
 					v-model="idcard"
@@ -46,11 +46,10 @@
 					placeholder-class="tui-phcolor"
 					class="tui-input"
 					name="mobile"
-					:disabled="isRealName"
-					:placeholder="isRealName ? u_info.u_acc : '请输入手机号'"
+					disabled
+					:value="u_info.u_acc"
 					maxlength="50"
 					type="text"
-					v-model="mobile"
 					/>
 				</view>
 			</tui-list-cell>
@@ -123,10 +122,10 @@
 							"Authorization": getres
 						},
 						success: res => {
-							console.log("实名认证信息:", res.data.data)
-							if (res.data.data.length !== 0) {
+							console.log("实名认证信息:", res.data.data[0].u_auth)
+							that.u_info = res.data.data[0]
+							if (res.data.data[0].u_auth === 1) {
 								that.isRealName = true
-								that.u_info = res.data.data[0]
 								uni.showToast({
 									title: "您已经实名认证过了!",
 									icon: "none"
@@ -173,10 +172,7 @@
 						});
 					} else {
 						if (this.imageData[0].indexOf("blob:") === -1 && this.imageData[1].indexOf("blob:") === -1) {
-							uni.showToast({
-								title: "验证通过!",
-								icon: "none"
-							});
+							
 							var that =this;
 							uni.getStorage({
 								key: 'token',
@@ -197,13 +193,28 @@
 										},
 										success: (res) => {
 											console.log(res);
+											if(res.data.status!==200){
+												uni.showToast({
+													title: res.data.msg,
+													icon: "none"
+												});
+											}else{
+												uni.showToast({
+													title: res.data.msg,
+													icon: "none"
+												});
+												setTimeout(function() {
+													uni.navigateBack()
+												}, 1000)
+											}
+									
+											
+											
 										}
 									});
 								}
 							})
-							setTimeout(function() {
-								uni.navigateBack()
-							}, 1000)
+						
 						} else {
 							uni.showToast({
 								title: "请重新上传照片!",

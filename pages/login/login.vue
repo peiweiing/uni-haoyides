@@ -49,7 +49,7 @@
 					<text class="tui-color-primary" @tap="href(2)">注册</text>
 				</view>
 			</view> -->
-			<view class="tui-btn-box"><tui-button style="margin-top: 50rpx;" type="bronze" :disabledGray="true" :disabled="disabled" :shadow="true" shape="circle" @click="onlogin">登录</tui-button></view>
+			<view class="tui-btn-box"><tui-button style="margin-top: 50rpx;" type="bronze" :disabledGray="true" :disabled="disabled" shape="circle" @click="onlogin">登录</tui-button></view>
 		</view>
 		
 		<view class="tui-form" v-if="currentTab==1">
@@ -66,8 +66,8 @@
 						<tui-icon name="shield" color="#9E2036" :size="20"></tui-icon>
 						<input v-model="code" placeholder="请输入验证码" placeholder-class="tui-phcolor" type="text" maxlength="6" @blur="inputCodes" />
 						
-						<button v-if="but1" :class="cls ? 'sub':'subs'" type="primary" @click="messages">{{word}}</button>
-						<view class="example-body subs FY-c" v-if="but2">
+						<button v-if="butbool==true" :class="cls ? 'sub':'subs'" type="primary" @click="messages">{{word}}</button>
+						<view class="example-body subs FY-c" v-if="butbool==false">
 							<uni-countdown style="margin: 0;" :second="testSecond" color="#FFFFFF" background-color="#ccc"/>
 							<text>{{btnSendText}}</text>
 						</view>
@@ -108,7 +108,7 @@
 				</view>
 			</view>
 			
-			<view class="tui-btn-box"><tui-button type="bronze" :disabledGray="true" :disabled="disableds" :shadow="true" shape="circle" @click="onregister">注册</tui-button></view>
+			<view class="tui-btn-box"><tui-button type="bronze" :disabledGray="true" :disabled="disableds" shape="circle" @click="onregister">注册</tui-button></view>
 		</view>
 			
 			<!--底部抽屉-->
@@ -172,7 +172,7 @@ export default {
 					txt:'../../static/img/login1.jpg',
 				},
 			],
-			but1:true,but2:false,
+			butbool:true,
 			testSecond: 60,
 			currentTab: 0,
 			mobile: '',password: '',
@@ -298,7 +298,9 @@ export default {
 				console.log('执行')
 				var phone ={'mobile':this.mobiles}
 				uni.request({
-					url:App.verifyCode,method: 'POST',data: phone,
+					url:App.verifyCode,
+					method: 'POST',
+					data: phone,
 					success: (res)=>{
 						console.log("请求成功")
 						console.log(res)
@@ -308,10 +310,10 @@ export default {
 								title: res.data.msg
 							})
 						}else if(res.data.status==200){
-							that.but2=true;that.but1=false;
 							that.testSecond=60;
+							that.butbool=false;
 							setTimeout(function(){
-								that.but1=true;that.but2=false;
+								that.butbool=true;
 								that.testSecond=0;
 							},60000)
 							uni.setStorage({
@@ -342,20 +344,20 @@ export default {
 		},
 		onregister(){
 			var that =this;
-			var regist ={'mobile':this.mobiles,'phonecode':this.code,'pwd':this.password}
+			var regist ={'mobile':this.mobiles,'phonecode':this.code,'pwd':this.passwords}
 			uni.request({
 				url:App.register,method: 'POST',data: regist,
 				success: (res)=>{
 					console.log("请求成功")
 					console.log(res)
 					if(res.data.status==200){
-						that.mobiles='';that.code='';that.password='';
 						uni.showToast({
 							icon: 'none',
 							title: '注册成功'
 						})
 						setTimeout(function(){
 							that.currentTab=0;
+							that.mobiles='';that.code='';that.passwords='';that.passwordss='';
 						},1500);
 						setTimeout(function(){
 							uni.showToast({
@@ -394,11 +396,8 @@ export default {
 							uni.setStorage({
 								key:'token',
 								data:res.data.data.token,
-								success(){
-									uni.setStorage({
-										key:'user',
-										data:res.data.data.token
-									})
+								success(res){
+									console.log(res)
 								}
 							})
 						uni.showToast({

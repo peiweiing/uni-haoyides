@@ -107,6 +107,9 @@
 				],
 			}
 		},
+		onLoad() {
+			
+		},
 		methods: {		
 			// change: function(e) {
 			// 	this.current = e.detail.current;

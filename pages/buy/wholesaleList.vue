@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="product-list">
 			<!--商品列表-->
-			<view class="pro-item" v-for="(item,index) in productList" :key="index">
+			<view class="pro-item" v-for="(item,index) in productList" :key="index" v-if="isShow">
 				<!-- <image :src="'/static/images/product/'+item.img+'.jpg'" class="pro-img" mode="widthFix" /> -->
 				<image :src="item.g_pic" class="pro-img" mode="widthFix"></image>
 				<view class="pro-content">
@@ -22,6 +22,10 @@
 				</view>
 			</view>
 			<!--商品列表-->
+			<view class="FY FY-c FX-c" v-if="isShow==false" style="font-size: 16px;width: 100%;min-height: calc(80vh);">
+				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
 		</view>
 		
 		<!--底部抽屉-->
@@ -82,7 +86,7 @@
 				   <tui-list-cell :hover="false">
 				    <view class="tui-line-cell">
 				     <view class="tui-title">合计：</view>
-						<text>{{heji}}.00元</text>
+						<text>{{heji}}元</text>
 				    </view>
 				   </tui-list-cell>
 				<view class="FX-sb w100" style="margin-top: 5%;">
@@ -101,10 +105,11 @@
 	export default {
 		data() {
 			return {
+				isShow:true,
 				pageIndex: 1,
 				productList: [
-					{img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 299.00,factory: 598,payNum: 2342},
-					{img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 34.00,factory: 68,payNum: 999},
+					// {img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 299.00,factory: 598,payNum: 2342},
+					// {img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 34.00,factory: 68,payNum: 999},
 				],
 				regionArr: [
 					'丽醒海带精萃饮','编码:16888802','批发价:¥34.00','批发资格:2份','买入数量：2份','合计:¥68.00',
@@ -130,8 +135,16 @@
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
+							if(res.data.data.length){
+								that.isShow = true;
+							}else{
+								that.isShow = false;
+							}
 							console.log(res.data);
 							that.productList=res.data.data;
+						},
+						fail:(err)=>{
+							that.isShow=false;
 						}
 					});
 				}

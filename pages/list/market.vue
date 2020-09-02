@@ -12,7 +12,7 @@
 			</tui-card>
 		</view>
 		
-		<view class="qiun-bg-white qiun-title-bar qiun-common-mt" >
+		<view class="qiun-bg-white qiun-title-bar qiun-common-mt">
 			<view class="qiun-title-dot-light">交易笔数</view>
 			<!-- 使用图表拖拽功能时，建议给canvas增加disable-scroll=true属性，在拖拽时禁止屏幕滚动 -->
 		</view>
@@ -46,10 +46,9 @@
 		
 		<!--底部抽屉-->
 		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
-			
 			<view class="region-box">
 				<view class="region-box-end">
-					<view class="region-end" v-for="(v,i) in cardend" :key="i" @tap="popup(i)">
+					<view class="region-end" v-for="(v,i) in cardend" :key="i" @click="popup(i)">
 						<tui-card :image="v.img" :title="v.title" :tag="v.tag">
 							<template v-slot:body>
 								<view class="tui-default FX-sb" style="font-size: 12px;color: #C8C7CC;">
@@ -58,6 +57,7 @@
 									<text>交易金额:￥{{v.heji}}</text>
 								</view>
 							</template>
+						<text>../</text>
 						</tui-card>
 					</view>
 				</view>
@@ -65,8 +65,40 @@
 					<tui-button type="gray" width="280rpx" height="90rpx" :size="32" @click="cancel">取消</tui-button>
 				</view>
 			</view>
-			
 		</tui-bottom-popup>
+		<!-- <tui-bottom-popup :show="bottomPopup" @close="popup">
+			<view class="tui-share">
+				<radio-group @change="radioChange">
+					<scroll-view scroll-y class="tui-share-content">
+						<view class="share-content-list FX-sb" v-for="(v, i) in cardend" :key="i" @click="clickBottomList(i)">
+							<tui-card class="tui-card-share" :image="v.img" :title="v.title" :tag="v.tag" @click="popup">
+								<template v-slot:footer>
+									<view class="tui-default">
+										<text class="">价格:￥{{v.price}}</text>
+										<text class="">交易量:{{v.num}}</text>
+										<text class="">交易金额:￥{{v.heji}}</text>
+									</view>
+								</template>
+							</tui-card>
+							<label class="tui-checkbox">
+								<tui-icon name="circle" :size="30" :color="'#9E2036'" @click="popup" v-if="i !== current">
+									
+								</tui-icon>
+								<tui-icon name="circle-fill" :size="30" :color="'#9E2036'" @click="popup" v-if="i === current">
+									
+								</tui-icon>
+							</label>
+						</view>
+					</scroll-view>
+				</radio-group>
+				<view
+				class="tui-btn-cancle"
+				@tap="popup"
+				>
+					取消
+				</view>
+			</view>
+		</tui-bottom-popup> -->
 		
 			
 	</view>
@@ -167,18 +199,31 @@
 			cancel: function() {
 				this.bottomPopup = false;
 			},
+			// popup: function() {
+			// 	this.bottomPopup = !this.bottomPopup
+			// },
+			// radioChange: function(evt) {
+			// 	for (let i = 0; i < this.bottomList.length; i++) {
+			// 		if (this.bottomList[i].value === evt.target.value) {
+			// 			this.current = i;
+			// 			break;
+			// 		}
+			// 	}
+			// },
+			// clickBottomList: function(index) {
+			// 	this.current = index
+			// 	this.card = this.cardend[index]
+			// },
 			popup: function(e) {
 				var that =this;
-				console.log(e)
-				// var newcardend=that.cardend.filter((v,i)=>{
-				// 	if(e==i){
-				// 		return v;
-				// 	}
-				// 	return newcardend;
-				// })
-				// console.log(newcardend)
-				// console.log(that.cardend[e])
-				// that.card = that.cardend[e]
+				this.cardend.forEach(function(item, index) {//item 就是当日按循环到的对象//index是循环的索引，从0开始
+				   if(item.g_id == e){
+						return item;
+				   }
+					return that.card = that.cardend;
+				})
+				that.card[e] = that.cardend[e];
+				// this.bottomPopup = false;
 			},
 			getServerData() {
 				uni.showLoading({
@@ -1182,6 +1227,46 @@
 		color: #FFFFFF;
 	}
 	
+	.tui-share {
+		background: #e8e8e8;
+		position: relative;
+		padding: 20rpx;
+	}
+	.tui-share-content{
+		height: 800rpx;
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 100rpx;
+		.share-content-list{
+			display: flex;
+			margin-top: 20rpx;
+			align-items: center;
+			background-color: #ffffff;
+			border-radius: 6rpx;
+			.tui-card-share{
+				flex: 1;
+			}
+			.tui-checkbox{
+				width: 16%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+	}
+	.tui-btn-cancle {
+		height: 100rpx;
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: #f6f6f6;
+		font-size: 36rpx;
+		color: #3e3e3e;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	
 /*底部抽屉样式 start*/
 

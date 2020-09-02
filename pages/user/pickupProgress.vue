@@ -1,16 +1,29 @@
 <template>
 	<view class="pickupProgress">
 		<!-- tab标签 -->
-		<tui-tabs 
-		class="pickuplist_tabs"
-		:tabs="navbar"
-		:currentTab="currentTab>1?0:currentTab"
-		@change="changeTab"
-		itemWidth="50%"
-		></tui-tabs>
+		<view class="tabs">
+			<tui-tabs 
+			class="pickuplist_tabs"
+			:tabs="navbar"
+			:currentTab="currentTab>1?0:currentTab"
+			@change="changeTab"
+			itemWidth="50%"
+			></tui-tabs>
+		</view>
 		<!-- 提货进度 -->
-		<view v-if="currentTab==1">
-			<view class="entrusbuylist_2" v-for="(item, index) in dataList_1" :key="index">
+		<scroll-view scroll-y v-if="currentTab==1">
+			<view style="height: 80rpx;"></view>
+			<view class="error" v-if="dataList_1 !== []">
+				无数据
+				<tui-no-data imgUrl="/static/images/toast/img_nodata.png">
+					暂无数据
+				</tui-no-data>
+			</view>
+			<view
+			class="entrusbuylist_2"
+			v-for="(item, index) in dataList_1"
+			:key="index"
+			>
 				<view class="entrusbuylist_2_main">
 					<view class="entrusbuylist_2_left">
 						<view class="entrusbuylist_2_left_img">
@@ -20,8 +33,17 @@
 							{{item.g_code}}
 						</view>
 					</view>
-					<view class="entrusbuylist_2_center" style="flex: 1;" @click="pickupdetail(item.g_id, item.pa_id)">
-						<view class="entrusbuylist_2_right_title">{{item.g_title}}</view>
+					<view
+					class="entrusbuylist_2_center"
+					style="flex: 1;"
+					@click="pickupdetail(item.g_id, item.pa_id)"
+					>
+						<view
+						class="entrusbuylist_2_right_title"
+						:style="item.g_title === '000' ? 'opacity: 0;' : ''"
+						>
+							{{item.g_title}}
+						</view>
 						<view class="entrusbuylist_2_right_price">
 							<text>挂牌价:￥{{item.g_price}}</text>
 							<text>数量:{{item.pa_amount}}份</text>
@@ -29,7 +51,11 @@
 					</view>
 					<view class="entrusbuylist_2_right">
 						<view class="tui-btn-box">
-							<tui-button class="ntrusbuylist_2_right_button" type="green" @click="clickButton()">
+							<tui-button
+							class="ntrusbuylist_2_right_button"
+							type="green"
+							@click="clickButton()"
+							>
 								库存累计中
 							</tui-button>
 						</view>
@@ -38,33 +64,43 @@
 				<scroll-view
 				scroll-y
 				class="entrusbuylist_2_middle"
-				:class="item.g_id === bool ? (isactiveMiddle ? 'activeMiddle' : 'closeMiddle') : 'closeMiddle'"
+				:class="item.pa_id === bool ? (isactiveMiddle ? 'activeMiddle' : 'closeMiddle') : 'closeMiddle'"
 				@click="pickupdetail(item.g_id, item.pa_id)"
 				>
 					<view class="middle_title">
 						<text>商品名称</text>
-						<text>提货时间</text>
 						<text>提货数量</text>
+						<text>提货时间</text>
 					</view>
 					<view class="middle_info" v-for="data in dataList_1_detail">
 						<text>{{data.title}}</text>
-						<text>{{data.datetime}}</text>
 						<text>{{data.amount}}</text>
+						<text>{{getLockTime(data.datetime)}}</text>
 					</view>
 				</scroll-view>
-				<view class="entrusbuylist_2_secondary" @click="pickupdetail(item.g_id, item.pa_id)">
+				<view
+				class="entrusbuylist_2_secondary"
+				@click="pickupdetail(item.g_id, item.pa_id)"
+				>
 					<tui-icon
 					class="pickupdetail_button"
 					name="arrowdown"
 					:size="20"
 					:color="'#999'"
-					:class="item.g_id === bool ? (isbuttonRotate ? '' : 'activeButton') : ''"
+					:class="item.pa_id === bool ? (isbuttonRotate ? '' : 'activeButton') : ''"
 					></tui-icon>
 				</view>
 			</view>
-		</view>
+		</scroll-view>
 		<!-- 我的库存 -->
-		<view v-if="currentTab==0">
+		<scroll-view scroll-y v-if="currentTab==0">
+			<view style="height: 80rpx;"></view>
+			<view class="error" v-if="dataList_2 !== []">
+				无数据
+				<tui-no-data imgUrl="/static/images/toast/img_nodata.png">
+					暂无数据
+				</tui-no-data>
+			</view>
 			<view class="entrusbuylist_1" v-for="item in dataList_2">
 				<view class="entrusbuylist_1_left">
 					<view class="entrusbuylist_1_left_img">
@@ -75,11 +111,14 @@
 					</view>
 				</view>
 				<view class="entrusbuylist_1_center" style="flex: 1;">
-					<view class="entrusbuylist_1_right_title">
+					<view
+					class="entrusbuylist_1_right_title"
+					:style="item.g_title === '000' ? 'opacity: 0;' : ''"
+					>
 						{{item.g_title}}
 					</view>
 					<view class="entrusbuylist_1_right_price">
-						<text>价格:￥{{item.g_avgprice}}</text>
+						<text>价格:￥{{item.g_price}}</text>
 						<text>数量:{{item.g_inv}}份</text>
 					</view>
 				</view>
@@ -95,7 +134,7 @@
 					</view>
 				</view>
 			</view>
-		</view>
+		</scroll-view>
 	</view>
 </template>
 
@@ -109,62 +148,133 @@
 					{name: "提货进度"}
 				],
 				currentTab: 0,
-				dataList_1: [],
+				dataList_1: [
+					// {
+					// 	g_code: "0000000",
+					// 	g_pic: "",
+					// 	g_price: "00.00",
+					// 	g_title: "000",
+					// 	pa_amount: 0,
+					// 	pa_id: 1
+					// }
+				],
 				dataList_1_detail: [],
-				dataList_2: [],
+				dataList_2: [
+					// {
+					// 	g_code: "0000000",
+					// 	g_inv: 0,
+					// 	g_lockinv: 0,
+					// 	g_pic: "",
+					// 	g_price: "00.00",
+					// 	g_title: "000"
+					// }
+				],
 				isactiveMiddle: false,
 				isbuttonRotate: true,
 				bool: -1
 			}
 		},
 		onLoad: function() {
-			var that =this;
-			uni.getStorage({
-				key: 'token',
-				success: function (res) {
-					var getres = res.data;
-					uni.request({
-						method: "POST",
-						url: App.myinv,
-						header: {
-							"Authorization": getres
-							
-							// "Authorization": "CCE7398F976214F932B340326B7A9C82"
-						},
-						success: res => {
-							console.log(res.data.data)
-							that.dataList_2 = res.data.data
-						}
-					})
-					uni.request({
-						method: "POST",
-						url: "http://api.lovehou.com/api/user/deliverygoods",
-						header: {
-							"Authorization": getres
-						},
-						success: res => {
-							console.log(res.data.data)
-							that.dataList_1 = res.data.data
-						}
-					})
+			this.myInv()
+		},
+		computed:{
+			getLockTime() {
+				return function(data) {
+					let year = ""
+					let month = ""
+					let date = ""
+					year = new Date(data*1000).getFullYear()
+					month = new Date(data*1000).getMonth()+1
+					date = new Date(data*1000).getDate()
+					if (month <10) {
+						month = "0"+month
+					}	if (date <10) {
+						date = "0"+date
+					}
+					return year+"-"+month+"-"+date
 				}
-			})
+			}
 		},
 		methods: {
 			changeTab: function(e){
 				this.currentTab = e.index
+				if (e.index === 1) {
+					this.delivergoods()
+				} else if (e.index === 0) {
+					this.myInv()
+				}
+			},
+			myInv: function() {
+				var that =this;
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							method: "POST",
+							url: App.myinv,
+							header: {
+								"Authorization": getres
+							},
+							success: res => {
+								console.log(res)
+								if (res.data.status !== 200) {
+									uni.showToast({
+										title: res.data.msg,
+										icon: "none"
+									})
+									that.dataList_2 = []
+								} else {
+									that.dataList_2 = res.data.data
+								}
+							}
+						})
+					}
+				})
+			},
+			delivergoods: function() {
+				var that =this;
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							method: "POST",
+							url: App.deliverygoods,
+							header: {
+								"Authorization": getres
+							},
+							success: res => {
+								console.log(res)
+								if (res.data.status !== 200) {
+									uni.showToast({
+										title: res.data.msg,
+										icon: "none"
+									})
+									that.dataList_1 = []
+								} else {
+									that.dataList_1 = res.data.data
+								}
+							}
+						})
+					}
+				})
 			},
 			clickButton: function(id) {
-				uni.redirectTo({
-					url: "./deliveryScheduleDetails?id="+id
-				})
+				if (id) {
+					uni.navigateTo({
+						url: "./deliveryScheduleDetails?id="+id
+					})
+				}
 			},
 			pickupdetail: function(g_id, pa_id) {
 				if (this.isactiveMiddle) {
-					this.bool = g_id
+					this.bool = pa_id
 					this.isactiveMiddle = !this.isactiveMiddle
 					this.isbuttonRotate = !this.isbuttonRotate
-					this.dataList_1_detail = []
+					setTimeout(function() {
+						this.dataList_1_detail = []
+					}, 500)
 				} else {
 					var that =this;
 					uni.getStorage({
@@ -173,29 +283,32 @@
 							var getres = res.data;
 							uni.request({
 								method: "POST",
-								url: "http://api.lovehou.com/api/user/deliveryschedule",
+								url: App.deliveryschedule,
 								header: {
 									"Authorization": getres
-									// "Authorization": "CAF72D5815D64E7F6720BEA73A75D015"
 								},
 								data: {
 									"pa_id": pa_id
 								},
 								success: res => {
-									console.log(res.data.data)
+									console.log(res)
 									that.dataList_1_detail = res.data.data
-									console.log(that.dataList_1_detail)
 								}
 							})
 						}
 					})
-					this.bool = g_id
+					this.bool = pa_id
 					this.isactiveMiddle = !this.isactiveMiddle
 					this.isbuttonRotate = !this.isbuttonRotate
 				}
 			}
 		},
 		onPullDownRefresh: function(){
+			if (this.currentTab === 0) {
+				this.myInv()
+			} else if (this.currentTab === 1) {
+				this.delivergoods()
+			}
 			setTimeout(function() {
 				uni.stopPullDownRefresh()
 			}, 1000)
@@ -204,8 +317,24 @@
 </script>
 
 <style lang="scss" scoped>
-	page{
-		background:rgba(238,238,238,1);
+	.pickupProgress{
+		width: 100%;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		background-color: #EEEEEE;
+	}
+	.error{
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background-color: #EEE;
+	}
+	.tabs{
+		position: fixed;
+		z-index: 1;
 	}
 	.entrusbuylist_2{
 		padding: 18rpx 20rpx;
@@ -215,6 +344,8 @@
 		flex-direction: column;
 		margin: 10rpx;
 		position: relative;
+		box-sizing: border-box;
+		border: 2rpx solid #EEEEEE;
 		.entrusbuylist_2_main{
 			display: flex;
 			.entrusbuylist_2_left{
@@ -226,7 +357,6 @@
 					flex: 1;
 					width:100%;
 					height:100%;
-					background:rgba(253,87,87,1);
 					border-radius:6rpx;
 					image{
 						width: 100%;
@@ -265,7 +395,7 @@
 				.ntrusbuylist_2_right_button{
 					width: 160rpx !important;
 					height:80rpx !important;
-					font-size:22rpx !important;
+					font-size:28rpx !important;
 					line-height:80rpx !important;
 					background-color: #9E2036 !important;
 				}
@@ -318,6 +448,8 @@
 		border-radius: 6rpx;
 		display: flex;
 		margin: 10rpx;
+		box-sizing: border-box;
+		border: 2rpx solid #EEEEEE;
 		.entrusbuylist_1_left{
 			width:120rpx;
 			display: flex;
@@ -327,7 +459,6 @@
 				flex: 1;
 				width:100%;
 				height:100%;
-				background: #9E2036;
 				border-radius:6rpx;
 				overflow: hidden;
 				image{
@@ -365,10 +496,11 @@
 			.entrusbuylist_1_right_button{
 				width: 160rpx !important;
 				height:80rpx !important;
-				font-size:22rpx !important;
+				font-size:28rpx !important;
 				line-height:80rpx !important;
 				background-color: #9E2036 !important;
 				border: none !important;
+				box-shadow: none !important;
 			}
 		}
 	}

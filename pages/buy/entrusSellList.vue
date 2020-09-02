@@ -3,7 +3,8 @@
 		<view class="" v-for="(v,i) in detail" v-if="debool==true">
 			<buylist :imgUrl="v.g_pic" :code="v.g_code" :title="v.g_title" :price="v.ut_price" :num="v.stock_num" g_price="卖出价" g_num="数量" button="卖出" @click="showModal(v.g_id,v.ut_id)"></buylist>
 		</view>
-		<view class="F-xy" v-if="debool==false" style="font-size: 16px;height: calc(80vh);">
+		<view class="FY FY-c FX-c" v-if="debool==false" style="font-size: 16px;height: calc(80vh);">
+			<tui-icon name="nodata" size="60" color="#999"></tui-icon>
 			暂无内容
 		</view>
 		
@@ -73,7 +74,7 @@ import buylist from "../../components/buylist.vue"
 				],
 				regionTxt: '粤',
 				bottomPopup: false,
-				debool:false,
+				debool:true,
 				tabIndex: 26,
 				detail:'',
 				details:'',
@@ -103,9 +104,16 @@ import buylist from "../../components/buylist.vue"
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
-							that.debool=true;
+							if(res.data.data.length){
+								that.debool=true;
+							}else{
+								that.debool=false;
+							}
 							console.log(res.data);
 							that.detail=res.data.data;
+						},
+						fail:(err)=>{
+							that.debool=false;
 						}
 					});
 			    }

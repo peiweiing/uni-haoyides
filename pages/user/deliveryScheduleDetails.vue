@@ -1,5 +1,6 @@
 <template>
 	<view class="pickupProgress">
+		<!-- <view class="backTo" @click="backTo"></view> -->
 		<!-- tab标签 -->
 		<view class="pickuplist_tabs">
 			<tui-tabs 
@@ -11,7 +12,7 @@
 			></tui-tabs>
 		</view>
 		<!-- 当日零售量 -->
-		<view v-if="currentTab==0">
+		<view v-if="currentTab==0" class="currentTab">
 			<!-- <view style="width: 100%; height: 70rpx;"></view> -->
 			<view
 			class="entrusbuylist"
@@ -56,7 +57,7 @@
 			</view>
 		</view>
 		<!-- 当日批发量 -->
-		<view v-if="currentTab==1">
+		<view v-if="currentTab==1" class="currentTab">
 			<!-- <view style="width: 100%; height: 70rpx;"></view> -->
 			<view
 			class="entrusbuylist"
@@ -96,6 +97,9 @@
 						></tui-numberbox>
 					</view>
 				</view>
+			</view>
+			<view class="" style="height: 140rpx;">
+				
 			</view>
 		</view>
 		<!-- 全部 -->
@@ -151,6 +155,7 @@
 </template>
 
 <script>
+	import App from "../../App.vue"
 	export default {
 		data() {
 			return {
@@ -182,62 +187,76 @@
 					if (month <10) {
 						month = "0"+month
 					}
+					if (date <10) {
+						date = "0"+date
+					}
 					return year+"-"+month+"-"+date
 				}
 			},
 			confirmNum() {
 				if (this.currentTab === 0) {
-					return this.dataList_1[this.chooseNum_1].num
+					if(this.dataList_1.length>0){
+					return this.dataList_1[this.chooseNum_1].num??0
+					}else{
+						return 0;
+					}
 				} else if (this.currentTab === 1) {
-					return this.dataList_2[this.chooseNum_2].num
+					if(this.dataList_2.length>0){
+					return this.dataList_2[this.chooseNum_2].num??0
+					}else{
+						return 0;
+					}
 				} else {
-					return this.dataList_3[this.chooseNum_3].num
+					console.log('tab',this.currentTab);
+					if(this.dataList_3.length>0){
+						return this.dataList_3[this.chooseNum_3].num??0
+					}else{
+						return 0;
+					}
+					
 				}
 			}
 		},
 		methods: {
 			changeTab: function(e){
 				this.currentTab = e.index
+				this.deliveryScheduleDetails(this.currentTab)
+				this.deliveryScheduleDetails(this.currentTab)
+				this.deliveryScheduleDetails(this.currentTab)
 			},
 			clickButton: function() {},
 			change_1: function(e, id) {
-				var that = this;
-				    this.dataList_1.forEach(function(item, index) {
-				                //item 就是当日按循环到的对象
-				                //index是循环的索引，从0开始
-				       if(item.ut_id == id){
-				        item.num =e.value;
-				        that.chooseNum_1=index;
-				       }else{
-				        item.num = 0;
-				       }
-				    })
+				var that = this
+				this.dataList_1.forEach(function(item, index) {
+					if(item.ut_id == id){
+						item.num =e.value
+						that.chooseNum_1=index
+					}else{
+						item.num = 0
+					}
+				})
 			},
 			change_2: function(e, id) {
-				var that = this;
-				    this.dataList_2.forEach(function(item, index) {
-				                //item 就是当日按循环到的对象
-				                //index是循环的索引，从0开始
-				       if(item.ut_id == id){
-				        item.num =e.value;
-				        that.chooseNum_2=index;
-				       }else{
-				        item.num = 0;
-				       }
-				    })
+				var that = this
+				this.dataList_2.forEach(function(item, index) {
+					if(item.ut_id == id){
+						item.num =e.value
+						that.chooseNum_2=index
+					}else{
+						item.num = 0
+					}
+				})
 			},
 			change_3: function(e, id) {
-				var that = this;
-				    this.dataList_3.forEach(function(item, index) {
-				                //item 就是当日按循环到的对象
-				                //index是循环的索引，从0开始
-				       if(item.ut_id == id){
-				        item.num =e.value;
-				        that.chooseNum_3=index;
-				       }else{
-				        item.num = 0;
-				       }
-				    })
+				var that = this
+				this.dataList_3.forEach(function(item, index) {
+					if(item.ut_id == id){
+						item.num =e.value
+						that.chooseNum_3=index
+					}else{
+						item.num = 0
+					}
+				})
 			},
 			confirmSum: function(index) {
 				this.isCon = true
@@ -247,21 +266,24 @@
 					{
 					num:this.dataList_1[this.chooseNum_1].num,
 					g_id:this.dataList_1[this.chooseNum_1].g_id,
-					ut_id:this.dataList_1[this.chooseNum_1].ut_id
+					ut_id:this.dataList_1[this.chooseNum_1].ut_id,
+					type:1
 					}
 				}
 				if (index === 1) {
 					data = 	{
 					num:this.dataList_2[this.chooseNum_2].num,
 					g_id:this.dataList_2[this.chooseNum_2].g_id,
-					ut_id:this.dataList_2[this.chooseNum_2].ut_id
+					ut_id:this.dataList_2[this.chooseNum_2].ut_id,
+					type:2
 					}
 				}
 				if (index === 2) {
 					data = 	{
 					num:this.dataList_3[this.chooseNum_3].num,
 					g_id:this.dataList_3[this.chooseNum_3].g_id,
-					ut_id:this.dataList_3[this.chooseNum_3].ut_id
+					ut_id:this.dataList_3[this.chooseNum_3].ut_id,
+					type:3
 					}
 				}
 				var that =this;
@@ -271,7 +293,7 @@
 						var getres = res.data;
 						uni.request({
 							method: "POST",
-							url: "http://api.lovehou.com/api/order/pickupgoods",
+							url: App.pickupgoods,
 							header: {
 								"Authorization": getres
 							},
@@ -304,7 +326,7 @@
 						var getres = res.data;
 						uni.request({
 							method: "POST",
-							url: "http://api.lovehou.com/api/order/pickuplist",
+							url: App.pickuplist,
 							header: {
 								"Authorization": getres
 							},
@@ -313,24 +335,40 @@
 								g_id: that.optionId
 							},
 							success: res => {
-								console.log("2→", res)
+								console.log(res)
 								if ((type+1)===1) {
-									that.dataList_1 = res.data.data
-									console.log(that.dataList_1)
-									// that.pickUpData_1.g_id = res.data.data[0].g_id
-									// that.pickUpData_1.ut_id = res.data.data[0].ut_id
+									if(res.data.data==null){
+										that.dataList_1=[]
+										uni.showToast({
+											title: res.data.msg,
+											icon: "none"
+										})
+									}else{
+										that.dataList_1 = res.data.data
+									}
 								}
 								if ((type+1)===2) {
-									that.dataList_2 = res.data.data
-									// that.pickUpData_2.g_id = res.data.data[0].g_id
-									// that.pickUpData_2.ut_id = res.data.data[0].ut_id
+									if(res.data.data==null){
+										that.dataList_2=[]
+										uni.showToast({
+											title: res.data.msg,
+											icon: "none"
+										})
+									}else{
+										that.dataList_2 = res.data.data
+									}
 								}
 								if ((type+1)===3) {
-									that.dataList_3 = res.data.data
-									// that.pickUpData_3.g_id = res.data.data[0].g_id
-									// that.pickUpData_3.ut_id = res.data.data[0].ut_id
+									if(res.data.data==null){
+										that.dataList_3=[]
+										uni.showToast({
+											title: res.data.msg,
+											icon: "none"
+										})
+									}else{
+										that.dataList_3 = res.data.data
+									}
 								}
-								console.log("789456", that.dataList_1)
 							}
 						})
 					}
@@ -340,8 +378,6 @@
 		onLoad: function (option) {
 			this.optionId = option.id
 			this.deliveryScheduleDetails(0)
-			// this.deliveryScheduleDetails(1)
-			// this.deliveryScheduleDetails(2)
 		},
 		onPullDownRefresh: function(){
 			setTimeout(function() {
@@ -355,11 +391,15 @@
 	page{
 		background:rgba(238,238,238,1);
 	}
-	// .pickuplist_tabs{
-	// 	position: fixed;
-	// 	z-index: 999;
-	// 	margin-top: -10rpx;
-	// }
+	.backTo{
+		opacity: 0;
+		width: 100rpx;
+		position: fixed;
+		z-index: 999;
+		top: 0;
+		height: 88rpx;
+		background-color: #9E2036;
+	}
 	.entrusbuylist{
 		padding: 18rpx 20rpx;
 		background: rgba(255,255,255,1);
@@ -425,6 +465,7 @@
 		right: 40rpx;
 		.confirm-btn{
 			background-color: #9E2036;
+			box-shadow: none;
 		}
 	}
 </style>

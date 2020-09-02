@@ -2,7 +2,7 @@
 	<view class="container">
 		<view class="product-list">
 			<!--商品列表-->
-			<view class="pro-item" @tap="detail(item.g_id)" v-for="(item,index) in productList" :key="index">
+			<view class="pro-item" @tap="detail(item.g_id)" v-for="(item,index) in productList" :key="index" v-if="isShow">
 				<image :src="item.g_pic" class="pro-img" mode="widthFix" />
 				<view class="pro-content">
 					<view class="pro-tit">{{item.g_title}}</view>
@@ -19,6 +19,11 @@
 				</view>
 			</view>
 			<!--商品列表-->
+			
+			<view class="FY FY-c FX-c" v-if="isShow==false" style="font-size: 16px;width: 100%;height: calc(80vh);">
+				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
 		</view>
 		<!--加载loadding-->
 		<tui-loadmore v-if="loadding" :index="3" type="primary"></tui-loadmore>
@@ -53,10 +58,11 @@
 		data() {
 			return {
 				pageIndex: 1,
+				isShow:true,
 				bottomPopup: false,
 				productList: [
-					{url:"../list/distGoodsDetails",img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
-					{url:"../list/distGoodsDetail",img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
+					// {url:"../list/distGoodsDetails",img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
+					// {url:"../list/distGoodsDetail",img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
 				],
 				regionArr: [
 					'大佑生宝小分子','编码:16888802','批发价:¥598.00','批发资格:2份','买入数量：2份','合计:¥260.00',
@@ -74,22 +80,20 @@
 				success: function (res) {
 					var getres = res.data;
 					uni.request({
-						url: App.getchannel,
-						method: 'POST',
-						header: {'Authorization':getres},
-						data: {'type':2},
-						success: (res) => {
-							console.log(res.data);
-							that.newsList=res.data.data;
-						}
-					});
-					uni.request({
 						url: App.list,
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
+							if(res.data.data.length){
+								that.isShow = true;
+							}else{
+								that.isShow = false;
+							}
 							console.log(res.data);
 							that.productList=res.data.data;
+						},
+						fail:(err)=>{
+							that.isShow=false;
 						}
 					});
 				}

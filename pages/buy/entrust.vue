@@ -8,7 +8,7 @@
 		itemWidth="50%"
 		></tui-tabs>
 		<view class="" v-if="currentTab==0">
-			<view class="entrusbuylist" v-for="item in dataList1">
+			<view class="entrusbuylist" v-for="item in dataList1" v-if="isShow1">
 				<view class="entrusbuylist_left">
 					<view class="entrusbuylist_left_img">
 						<image :src="item.g_pic"></image>
@@ -26,15 +26,20 @@
 				</view>
 				<view class="entrusbuylist_right">
 					<view class="tui-btn-box">
-						<tui-button class="ntrusbuylist_right_button" type="bronze" plain @click="clickButton">
+						<tui-button class="ntrusbuylist_right_button" type="bronze" plain @click="clickButton(item.ut_id)">
 							撤销
 						</tui-button>
 					</view>
 				</view>
 			</view>
+			
+			<view class="FY FY-c FX-c" v-if="isShow1==false" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
 		</view>
 		<view class="" v-if="currentTab==1">
-			<view class="entrusbuylist" v-for="item in dataList2">
+			<view class="entrusbuylist" v-for="item in dataList2" v-if="isShow2">
 				<view class="entrusbuylist_left">
 					<view class="entrusbuylist_left_img">
 						<image :src="item.g_pic"></image>
@@ -52,11 +57,16 @@
 				</view>
 				<view class="entrusbuylist_right">
 					<view class="tui-btn-box">
-						<tui-button class="ntrusbuylist_right_button" type="bronze" plain @click="clickButton">
+						<tui-button class="ntrusbuylist_right_button" type="bronze" plain @click="clickButtons(item.ut_id)">
 							撤销
 						</tui-button>
 					</view>
 				</view>
+			</view>
+			
+			<view class="FY FY-c FX-c" v-if="isShow2==false" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				暂无内容
 			</view>
 		</view>
 	</view>
@@ -71,14 +81,16 @@
 					{name: "委托买入"},
 					{name: "委托卖出"}
 				],
+				isShow1:true,
+				isShow2:true,
 				currentTab: 0,
 				dataList:'',
 				dataList1: [
-					{id: 1,imgUrl: "../../static/img/s02.jpg",title: "大佑生宝小分子海参饮品",price: 598,num: 10,code: 16888801,button: "撤销"},
-					{id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
+					// {id: 1,imgUrl: "../../static/img/s02.jpg",title: "大佑生宝小分子海参饮品",price: 598,num: 10,code: 16888801,button: "撤销"},
+					// {id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
 				],
 				dataList2: [
-					{id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
+					// {id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
 				]
 			}
 		},
@@ -94,8 +106,16 @@
 						header: {'Authorization':getres},
 						data:{'type':1},
 						success: (res) => {
+							if(res.data.data.length){
+								that.isShow1 = true;
+							}else{
+								that.isShow1 = false;
+							}
 							console.log(res.data);
 							that.dataList1=res.data.data;
+						},
+						fail:(err)=>{
+							that.isShow1=false;
 						}
 					});
 					uni.request({
@@ -104,8 +124,16 @@
 						header: {'Authorization':getres},
 						data:{'type':2},
 						success: (res) => {
+							if(res.data.data.length){
+								that.isShow2 = true;
+							}else{
+								that.isShow2 = false;
+							}
 							console.log(res.data);
 							that.dataList2=res.data.data;
+						},
+						fail:(err)=>{
+							that.isShow2=false;
 						}
 					});
 				}
@@ -115,7 +143,86 @@
 			changeTab(e) {
 				this.currentTab = e.index
 			},
-			clickButton() {
+			clickButton(e) {
+				var that = this;
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							url: App.revokePurchase,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:{'ut_id':e},
+							success: (res) => {
+								console.log(res)
+								uni.showToast({
+									icon: 'none',
+									title: res.data.msg
+								})
+								uni.request({
+									url: App.mygetEntrusList,
+									method: 'POST',
+									header: {'Authorization':getres},
+									data:{'type':1},
+									success: (res) => {
+										if(res.data.data.length){
+											that.isShow1 = true;
+										}else{
+											that.isShow1 = false;
+										}
+										console.log(res.data);
+										that.dataList1=res.data.data;
+									},
+									fail:(err)=>{
+										that.isShow1=false;
+									}
+								});
+							}
+						});
+					}
+				})
+				console.log(Math.random())
+			},
+			clickButtons(e) {
+				var that = this;
+				uni.getStorage({
+					key: 'token',
+					success: function (res) {
+						var getres = res.data;
+						uni.request({
+							url: App.revokeSell,
+							method: 'POST',
+							header: {'Authorization':getres},
+							data:{'ut_id':e},
+							success: (res) => {
+								console.log(res)
+								uni.showToast({
+									icon: 'none',
+									title: res.data.msg
+								})
+								uni.request({
+									url: App.mygetEntrusList,
+									method: 'POST',
+									header: {'Authorization':getres},
+									data:{'type':2},
+									success: (res) => {
+										if(res.data.data.length){
+											that.isShow2 = true;
+										}else{
+											that.isShow2 = false;
+										}
+										console.log(res.data);
+										that.dataList2=res.data.data;
+									},
+									fail:(err)=>{
+										that.isShow2=false;
+									}
+								});
+							}
+						});
+					}
+				})
 				console.log(Math.random())
 			}
 		},

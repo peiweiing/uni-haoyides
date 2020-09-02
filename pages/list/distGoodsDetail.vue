@@ -21,9 +21,9 @@
 		<view class="tui-banner-swiper">
 			<swiper :autoplay="true" :interval="5000" :duration="150" :circular="true" :style="{ height: scrollH + 'px' }"
 			 @change="bannerChange">
-				<block v-for="(item, index) in module" :key="index">
+				<block v-for="(item, index) in module.g_slider_pic" :key="index">
 					<swiper-item :data-index="index" @tap.stop="previewImage">
-						<image :src="module.g_slider_pic" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
+						<image :src="item" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
 					</swiper-item>
 				</block>
 			</swiper>
@@ -80,7 +80,7 @@
 		<view class="tui-operation">
 			<view class="tui-operation-left tui-col-5">
 				<view class="tui-operation-item" hover-class="tui-opcity" :hover-stay-time="150">
-					我的库存：{{100}}份
+					我的库存：{{module.total_inv}}份
 				</view>
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
@@ -339,6 +339,7 @@ import App from '../../App.vue'
 								});
 								setTimeout(function(){
 									that.module.g_salevol=res.data.data.g_salevol
+									that.module.total_inv=res.data.data.g_salevol
 								},1000)
 						    },
 							complete: ()=> {
@@ -940,6 +941,7 @@ import App from '../../App.vue'
 	}
 
 	.tui-operation-item {
+		font-size: 14px;
 		flex: 1;
 		display: flex;
 		align-items: center;

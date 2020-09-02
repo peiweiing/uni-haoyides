@@ -60,7 +60,7 @@
 				</view>
 				<view class="tui-new-box">
 					<view class="tui-new-item" :class="[index != 0 && index != 1 ? 'tui-new-mtop' : '']" v-for="(item, index) in newProduct"
-					 :key="index" @tap="detail(item.g_id)">
+					 :key="index" @tap="detail(item.g_id)" v-if="isShow">
 						<image :src="'/static/images/mall/new/' + (item.type == 1 ? 'new' : 'discount') + '.png'" class="tui-new-label"></image>
 						<view class="tui-title-box">
 							<view class="tui-new-title">{{ item.g_title }}</view>
@@ -73,6 +73,10 @@
 						<image :src="item.g_pic" class="tui-new-img"></image>
 					</view>
 				</view>
+				<view class="FY FY-c FX-c" v-if="isShow==false" style="font-size: 16px;width: 100%;min-height: calc(10vh);">
+					<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+					暂无内容
+				</view>
 			</view>
 		</view>
 		
@@ -80,7 +84,7 @@
 			<view class="tui-title__img">
 				<image src="../../static/img/goodslist.png" mode="widthFix"></image>
 			</view>
-			<view class="tui-product-list">
+			<view class="tui-product-list" v-if="isShows">
 				<view class="tui-product-container">
 					<block v-for="(item, index) in productList" :key="index" v-if="(index + 1) % 2 != 0">
 						<!--商品列表-->
@@ -127,6 +131,10 @@
 					</block>
 				</view>
 			</view>
+			<view class="FY FY-c FX-c" v-if="isShows==false" style="font-size: 16px;width: 100%;min-height: calc(40vh);background-color: #fff;border-radius: 20rpx;">
+				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
 		</view>
 		
 		
@@ -139,6 +147,8 @@
 	export default {
 		data() {
 			return {
+				isShow:true,
+				isShows:true,
 				current: 0,
 				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				banner: ['../../static/img/swiper01.jpg', '../../static/img/swiper02.jpg'],
@@ -148,12 +158,12 @@
 					"阿里计划将每股普通股拆为8股，增加筹资灵活性"
 				],
 				newProduct: [
-					{url:'../list/distGoodsDetail',name: '丽醒海带精萃饮植物饮品',present: 68.00,original: 98,pic: '1.jpg',type: 1,isLabel: true,img:'../../static/img/s001.png'},
-					{url:'../list/distGoodsDetails',name: '大佑生宝小分子海参饮品',present: 598.00,original: 899,pic: '2.jpg',type: 2,isLabel: true,img:'../../static/img/s002.png'}
+					// {url:'../list/distGoodsDetail',name: '丽醒海带精萃饮植物饮品',present: 68.00,original: 98,pic: '1.jpg',type: 1,isLabel: true,img:'../../static/img/s001.png'},
+					// {url:'../list/distGoodsDetails',name: '大佑生宝小分子海参饮品',present: 598.00,original: 899,pic: '2.jpg',type: 2,isLabel: true,img:'../../static/img/s002.png'}
 				],
 				productList: [
-					{img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
-					{img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
+					// {img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
+					// {img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
 				],
 			}
 		},
@@ -162,6 +172,7 @@
 			uni.getStorage({
 				key: 'token',
 				success: function (res) {
+					console.log(res)
 					var getres = res.data;
 					uni.request({
 						url: App.getchannel,
@@ -178,8 +189,16 @@
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
+							if(res.data.data.length){
+								that.isShow = true;
+							}else{
+								that.isShow = false;
+							}
 							console.log(res.data);
 							that.newProduct=res.data.data;
+						},
+						fail:(err)=>{
+							that.isShow=false;
 						}
 					});
 					uni.request({
@@ -187,10 +206,24 @@
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
+							if(res.data.data.length){
+								that.isShows = true;
+							}else{
+								that.isShows = false;
+							}
 							console.log(res.data);
 							that.productList=res.data.data;
+						},
+						fail:(err)=>{
+							that.isShows=false;
 						}
 					});
+				},
+				fail:(err)=>{
+					console.log(err)
+					uni.reLaunch({
+						url: '../login/login',
+					})
 				}
 			})
 		},

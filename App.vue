@@ -1,6 +1,9 @@
 <script>
 // 域名
+	// const hostname= "http://api.gdyingshi.cn/api/"
 	const hostname= "http://api.lovehou.com/api/"
+// 版本更新
+	const getversion = hostname+"getversion";
 // 账号登录
 	const login = hostname+"login";
 //验证码
@@ -43,6 +46,10 @@
 	const entrustpurchase = hostname+"goods/entrustpurchase";
 //委托卖出需求发布
 	const consignmentSale = hostname+"goods/consignmentSale";
+//委托买入需求撤销
+	const revokePurchase = hostname+"goods/revokePurchase";
+//委托卖出需求撤销
+	const revokeSell = hostname+"goods/revokeSell";
 //批发买入商品
 	const wholegoodslist = hostname+"order/wholegoodslist";
 //批发买入购买详情
@@ -62,6 +69,14 @@
 	const Idrealuserinfo = hostname+"user/Idrealuserinfo";
 //我的库存
 	const myinv = hostname+"user/myinv";
+//提货进度详情
+	const deliveryschedule = hostname+"user/deliveryschedule";
+//提货进度商品列表
+	const deliverygoods = hostname+"user/deliverygoods";
+//提货流程
+	const pickupgoods = hostname+"order/pickupgoods";
+//提货列表页
+	const pickuplist = hostname+"order/pickuplist";
 export default {
 		login,verifyCode,register,
 		// updatepwd,
@@ -70,58 +85,104 @@ export default {
 		entrusBuy,getEntrusBuyList,entrusBuyList,
 		getEntrusSellList,checkEntrusCanSell,listsellBuy,mygetEntrusList,
 		entrustlst,entrustlstsell,entrustpurchase,consignmentSale,
-		wholegoodslist,getgoodsDetail,Wholesale,
-		spotpay,Idcardreal,uploadEditor,index,Idrealuserinfo,myinv,
+		revokePurchase,revokeSell,wholegoodslist,getgoodsDetail,Wholesale,
+		spotpay,Idcardreal,uploadEditor,index,Idrealuserinfo,
+		myinv,deliveryschedule,deliverygoods,pickupgoods,pickuplist,
 		
 	onLaunch: function() {
-		//#ifdef APP-PLUS  
-		    var server = "https://www.example.com/update"; //检查更新地址  
-		    var req = { //升级检测数据  
-		        "appid": plus.runtime.appid,  
-		        "version": plus.runtime.version  
-		    };  
-		    uni.request({  
-		        url: server,  
-		        data: req,  
-		        success: (res) =&gt; {  
-		            if (res.statusCode == 200 &amp;&amp; res.data.status === 1) {  
-		                uni.showModal({ //提醒用户更新  
-		                    title: "更新提示",  
-		                    content: res.data.note,  
-		                    success: (res) =&gt; {  
-		                        if (res.confirm) {  
-		                            plus.runtime.openURL(res.data.url);  
-		                        }  
-		                    }  
-		                })  
-		            }  
-		        }  
-		    })  
-		    //#endif  
+		let that = this;
+		// #ifdef APP-PLUS
+		/* 5+环境锁定屏幕方向 */
+		plus.screen.lockOrientation('portrait-primary'); //锁定
 		
-		// #ifdef MP-WEIXIN
-		if (wx.canIUse('getUpdateManager')) {
-			const updateManager = wx.getUpdateManager();
-			updateManager.onCheckForUpdate(function(res) {
-				// 请求完新版本信息的回调
-				if (res.hasUpdate) {
-					updateManager.onUpdateReady(function() {
-						that.tui.modal('更新提示', '新版本已经上线啦~，为了获得更好的体验，建议立即更新', false, res => {
-							// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-							updateManager.applyUpdate();
-						});
-					});
-					updateManager.onUpdateFailed(function() {
-						// 新的版本下载失败
-						that.tui.modal('更新失败', '新版本更新失败，为了获得更好的体验，请您删除当前小程序，重新搜索打开', false, res => {});
+		/* 5+环境升级提示 */
+		//app检测更新	
+		let platform = plus.os.name.toLocaleLowerCase()
+		plus.runtime.getProperty(plus.runtime.appid, (widgetInfo) => {
+			return false;
+			that.tui.request(getversion, {
+				platform: platform,
+				version: widgetInfo.version //资源版本号
+			}, 'POST', false, true).then((res) => {
+				console.log(res);
+				if (res.code === 200 && res.data && (res.data.updateUrl || res.data.partUpdateUrl)) {
+					let data = res.data
+					that.tui.modal('检测到新版本', data.updateLog ? data.updateLog : '请您先更新再进行操作，若不及时更新可能导致部分功能无法正常使用。', false, res => {
+						if (data.hasPartUpdate === 0) {
+							//应用市场更新
+							plus.runtime.openURL(data.updateUrl);
+							plus.runtime.restart();
+						} else if (data.hasPartUpdate === 1) {
+							//资源更新（服务器端更新）
+							that.tui.href(`/pages/common/update/update?url=${data.partUpdateUrl}`)
+						}
 					});
 				}
-			});
-		}
+			}).catch((e) => {})
+		});
+		
+		// #endif
+		
+		
+		// #ifdef MP-WEIXIN
+		// if (wx.canIUse('getUpdateManager')) {
+		// 	const updateManager = wx.getUpdateManager();
+		// 	updateManager.onCheckForUpdate(function(res) {
+		// 		// 请求完新版本信息的回调
+		// 		if (res.hasUpdate) {
+		// 			updateManager.onUpdateReady(function() {
+		// 				that.tui.modal('更新提示', '新版本已经上线啦~，为了获得更好的体验，建议立即更新', false, res => {
+		// 					// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+		// 					updateManager.applyUpdate();
+		// 				});
+		// 			});
+		// 			updateManager.onUpdateFailed(function() {
+		// 				// 新的版本下载失败
+		// 				that.tui.modal('更新失败', '新版本更新失败，为了获得更好的体验，请您删除当前小程序，重新搜索打开', false, res => {});
+		// 			});
+		// 		}
+		// 	});
+		// }
 		// #endif
 	},
 	onShow: function() {
-		
+		uni.getStorage({
+			key: 'token',
+			success: function (res) {
+				console.log(res)
+				if(res.data.status==401){
+					uni.showModal({
+					    title: '提示',
+					    content: '登录已过期，请重新登录',
+					    success: function (res) {
+					        if (res.confirm) {
+								uni.reLaunch({
+									url: 'pages/login/login',
+								})
+					            console.log('用户点击确定');
+					        } else if (res.cancel) {
+								uni.showToast({
+								    title: '10秒后自动跳转至登录页面',
+								    duration: 2000
+								});
+								setTimeout(function(){
+									uni.reLaunch({
+										url: 'pages/login/login',
+									})
+								},10000)
+					            console.log('用户点击取消');
+					        }
+					    }
+					});
+				}
+			},
+			fail:(err)=>{
+				console.log(err)
+				uni.reLaunch({
+					url: 'pages/login/login',
+				})
+			}
+		})
 	},
 	onHide: function() {
 		//console.log('App Hide')

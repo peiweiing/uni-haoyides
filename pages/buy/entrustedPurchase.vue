@@ -5,10 +5,9 @@
 		</view>
 		<tui-card
 		class="tui-card"
-		v-if="isShow"
-		:image="bottomList.img[0].img"
-		:title="bottomList.img[0].title"
-		:tag="bottomList.img[0].tag"
+		:image="bottomList.img ? bottomList.img[0].img : ''"
+		:title="bottomList.img ? bottomList.img[0].title : ''"
+		:tag="bottomList.img ? bottomList.img[0].tag : ''"
 		@click="popup"
 		>
 			<template v-slot:footer>
@@ -36,7 +35,7 @@
 						<input
 						placeholder-class="tui-phcolor"
 						disabled class="tui-input"
-						:placeholder="bottomList.g_minprice+' ~ '+bottomList.g_maxprice"
+						:placeholder="priceRange(bottomList.g_minprice, bottomList.g_maxprice)"
 						maxlength="50"
 						type="digit"
 						/>
@@ -96,9 +95,9 @@
 						>
 							<tui-card
 							class="tui-card-share"
-							:image="item.img[0].img"
-							:title="item.img[0].title"
-							:tag="item.img[0].tag"
+							:image="item.img ? item.img[0].img : ''"
+							:title="item.img ? item.img[0].title : ''"
+							:tag="item.img ? item.img[0].tag : ''"
 							@click="popup"
 							>
 								<template v-slot:footer>
@@ -156,9 +155,15 @@
 				num:'',
 				popupShow: false,
 				bottomLists: [],
-				bottomList: {},
+				bottomList: {
+					g_code: "0000000",
+					g_id: 0,
+					g_pic: "",
+					g_price: "00.00",
+					g_salevol: 0,
+					g_title: "",
+				},
 				current: 0,
-				isShow: false,
 				isConfirm: false
 			}
 		},
@@ -173,14 +178,38 @@
 						method: 'POST',
 						header: {'Authorization':getres},
 						success: (res) => {
-							that.bottomLists = res.data.data;
-							that.bottomList = res.data.data[0];
-							that.isShow = true
-							// console.log(res.data)
+							console.log(res)
+							if (res.data.status === 200) {
+								if (res.data.data.length !== 0) {
+									that.bottomList = res.data.data[0];
+									that.bottomLists = res.data.data;
+								} else {
+									uni.showToast({
+										title: "无数据",
+										icon: "none"
+									})
+								}
+							} else {
+								uni.showToast({
+									title: res.data.msg,
+									icon: "none"
+								})
+							}
 						}
 					});
 				}
 			})
+		},
+		computed: {
+			priceRange() {
+				return function(min, max) {
+					if (!min || !max) {
+						return "00.00~00.00"
+					} else {
+						return min+"~"+max
+					}
+				}
+			}
 		},
 		methods: {
 			formSubmit: function(e) {
@@ -272,7 +301,7 @@
 
 <style lang="scss" scoped>
 	page{
-		background:rgba(238,238,238,1);
+		background-color: #EEE;
 	}
 	.container {
 		padding: 30rpx;

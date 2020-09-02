@@ -7,7 +7,7 @@
 				</view>
 				<view class="tui-info">
 					<view class="tui-nickname">
-						{{this.mobile}}
+						{{userInfo.u_acc}}
 						<!-- <image src="/static/images/mall/my/icon_vip_3x.png" class="tui-img-vip"></image> -->
 					</view>
 					<!-- <view class="tui-explain">这家伙很懒…</view> -->
@@ -31,27 +31,27 @@
 				<view class="tui-order-list">
 					<view class="tui-order-item">
 						<view class="tui-icon-box">
-							￥{{userInfo.bal_trades}}
+							￥{{userInfo.total_acc}}
 						</view>
 						<view class="tui-order-text">总资产</view>
 					</view>
 					<view class="tui-order-item">
 						<view class="tui-icon-box">
-							{{userInfo.bal_point}}
+							{{userInfo.g_inv+userInfo.g_lockinv}}
 						</view>
 						<view class="tui-order-text">总库存</view>
 					</view>
 					<view class="tui-order-item">
 						<view class="tui-icon-box">
-							{{userInfo.g_inv}}
+							{{userInfo.g_lockinv}}
 						</view>
 						<view class="tui-order-text">锁定库存</view>
 					</view>
 					<view class="tui-order-item">
 						<view class="tui-icon-box">
-							{{userInfo.g_lockinv}}
+							{{userInfo.bal_point}}
 						</view>
-						<view class="tui-order-text">积分</view>
+						<view class="tui-order-text">商品值</view>
 					</view>
 				</view>
 				<tui-list-cell class="balance">
@@ -111,7 +111,9 @@
 					g_inv: 0,
 					g_lockinv: 0,
 					u_avatar: "../../static/img/headerImg.jpg",
-					u_nickname: " ",
+					u_nickname: "",
+					u_acc: "暂无",
+					total_acc: 0
 				},
 				dataList: [
 					{name: "wallet",title: "我的库存",color: "#9E2036",size: 30,url:"pickupProgress"},
@@ -122,30 +124,36 @@
 				current: 0
 			}
 		},
-		onLoad: function() {
-			this.mobile = uni.getStorageSync("mobile")
+		onShow: function() {
 			var that =this;
 			uni.getStorage({
 				key: 'token',
 				success: function (res) {
-					// console.log(res)
 					var getres = res.data;
 					uni.request({
 						method: "POST",
 						url: App.index,
 						header: {
 							"Authorization": getres
-							// "Authorization": "CCE7398F976214F932B340326B7A9C82"
 						},
 						success: res => {
 							console.log(res)
-							const data = res.data.data[0]
-							data.bal_point ? that.userInfo.bal_point = data.bal_point : ''
-							data.bal_trades ? that.userInfo.bal_trades = data.bal_trades : ''
-							data.g_inv ? that.userInfo.g_inv = data.g_inv : ''
-							data.g_lockinv ? that.userInfo.g_lockinv = data.g_lockinv : ''
-							data.u_avatar ? that.userInfo.u_avatar = data.u_avatar : ''
-							data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
+							if (res.data.status === 200) {
+								const data = res.data.data
+								data.bal_point ? that.userInfo.bal_point = Number(data.bal_point).toFixed(2) : ''
+								data.bal_trades ? that.userInfo.bal_trades = data.bal_trades : ''
+								data.g_inv ? that.userInfo.g_inv = data.g_inv : ''
+								data.g_lockinv ? that.userInfo.g_lockinv = data.g_lockinv : ''
+								data.u_avatar ? that.userInfo.u_avatar = data.u_avatar : ''
+								data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
+								data.u_acc ? that.userInfo.u_acc = data.u_acc : ''
+								data.total_acc ? that.userInfo.total_acc = data.total_acc : ''
+							} else {
+								uni.showToast({
+									title: res.data.msg,
+									icon: "none"
+								})
+							}
 						}
 					})
 				}
@@ -184,8 +192,8 @@
 	.tui-icon-box {
 		position: relative;
 		font-size: 38rpx;
-		color: #8B8B8B;
-		font-weight: lighter;
+		color: #FF0000;
+		font-weight: bold;
 	}
 	.boxcs{
 		background-color: #fff;
@@ -232,7 +240,7 @@
 
 	}
 	.tui-nickname {
-		font-size: 30rpx;
+		font-size: 32rpx;
 		font-weight: 500;
 		color: #fff;
 		display: flex;
@@ -269,7 +277,6 @@
 	.tui-box {
 		width: 100%;
 		background: #fff;
-		box-shadow: 0 3rpx 20rpx rgba(183, 183, 183, 0.1);
 		border-radius: 10rpx;
 		overflow: hidden;
 	}
@@ -292,8 +299,7 @@
 	}
 	.tui-order-text {
 		font-size: 24rpx;
-		color: #FF0000;
-		font-weight: bold;
+		color: #999999;
 	}
 	.tui-tool-box {
 		margin-top: 20rpx;
@@ -339,7 +345,8 @@
 	}
 	.balance_textNum{
 		font-size: 40rpx;
-		font-weight: lighter;
+		font-weight: bold;
+		color: #FF0000;
 	}
 	.yesterday_detail{
 		display: flex;
@@ -348,12 +355,12 @@
 	}
 	.yesterday_text{
 		font-size: 24rpx;
-		color: #FF0000;
-		font-weight: bold;
+		color: #999;
 	}
 	.yesterday_text_center{
 		font-size: 30rpx;
-		font-weight: lighter;
+		font-weight: bold;
+		color: #FF0000;
 	}
 	.tui-title {
 		padding: 50rpx 30rpx 30rpx 30rpx;
