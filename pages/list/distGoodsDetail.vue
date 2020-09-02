@@ -339,7 +339,7 @@ import App from '../../App.vue'
 								});
 								setTimeout(function(){
 									that.module.g_salevol=res.data.data.g_salevol
-									that.module.total_inv=res.data.data.g_salevol
+									that.module.total_inv=res.data.data.total_inv
 								},1000)
 						    },
 							complete: ()=> {
