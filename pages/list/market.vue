@@ -11,7 +11,6 @@
 				</template>
 			</tui-card>
 		</view>
-		
 		<view class="qiun-bg-white qiun-title-bar qiun-common-mt">
 			<view class="qiun-title-dot-light">交易笔数</view>
 			<!-- 使用图表拖拽功能时，建议给canvas增加disable-scroll=true属性，在拖拽时禁止屏幕滚动 -->
@@ -26,7 +25,6 @@
 			<!-- 使用图表拖拽功能时，建议给canvas增加disable-scroll=true属性，在拖拽时禁止屏幕滚动 -->
 			<!--#endif-->
 		</view>
-		
 		<view class="qiun-bg-white qiun-title-bar qiun-common-mt">
 		  <view class="qiun-title-dot-light">交易量</view>
 		</view>
@@ -38,12 +36,10 @@
 		  <canvas canvas-id="canvasColumn" id="canvasColumn" class="charts" @touchstart="touchIt($event,'canvasColumn')"></canvas>
 		  <!--#endif-->
 		</view>
-		
 		<view class="divend FX-sa FY-c">
 			<tui-button margin="0 20rpx 26rpx 0" type="green" width="280rpx" height="90rpx" :size="32" @click="detail">买入</tui-button>
 			<tui-button margin="0 20rpx 26rpx 0" type="bronze" width="280rpx" height="90rpx" :size="32" @click="detail">卖出</tui-button>
 		</view>
-		
 		<!--底部抽屉-->
 		<tui-bottom-popup :show="bottomPopup" @close="hideModal">
 			<view class="region-box">
@@ -66,41 +62,6 @@
 				</view>
 			</view>
 		</tui-bottom-popup>
-		<!-- <tui-bottom-popup :show="bottomPopup" @close="popup">
-			<view class="tui-share">
-				<radio-group @change="radioChange">
-					<scroll-view scroll-y class="tui-share-content">
-						<view class="share-content-list FX-sb" v-for="(v, i) in cardend" :key="i" @click="clickBottomList(i)">
-							<tui-card class="tui-card-share" :image="v.img" :title="v.title" :tag="v.tag" @click="popup">
-								<template v-slot:footer>
-									<view class="tui-default">
-										<text class="">价格:￥{{v.price}}</text>
-										<text class="">交易量:{{v.num}}</text>
-										<text class="">交易金额:￥{{v.heji}}</text>
-									</view>
-								</template>
-							</tui-card>
-							<label class="tui-checkbox">
-								<tui-icon name="circle" :size="30" :color="'#9E2036'" @click="popup" v-if="i !== current">
-									
-								</tui-icon>
-								<tui-icon name="circle-fill" :size="30" :color="'#9E2036'" @click="popup" v-if="i === current">
-									
-								</tui-icon>
-							</label>
-						</view>
-					</scroll-view>
-				</radio-group>
-				<view
-				class="tui-btn-cancle"
-				@tap="popup"
-				>
-					取消
-				</view>
-			</view>
-		</tui-bottom-popup> -->
-		
-			
 	</view>
 </template>
 
@@ -130,29 +91,85 @@
 				cardend:[
 					{
 						g_id:'0',
-						img: {url: "/static/img/s01.jpg",circle: true},title: {text: "大佑生宝小分子"},tag: {text:"编码：168888202"},
-						price:"598",num:"666",heji:"398268",
-						header: {line: true,bgcolor: "#F7F7F7"}
+						img: {
+							url: "/static/img/s01.jpg",
+							circle: true,
+						},
+						title: {
+							text: "大佑生宝小分子",
+						},
+						tag: {
+							text:"编码：168888202",
+						},
+						price:"598",
+						num:"666",
+						heji:"398268",
+						header: {
+							line: true,
+							bgcolor: "#F7F7F7",
+						}
 					},
 					{
 						g_id:'1',
-						img: {url: "/static/img/s02.jpg",circle: true},title: {text: " 丽醒海带精萃饮"},tag: {text: "编码：168888202"},
-						price:"68",num:"999",heji:"67932",
-						header: {line: true,bgcolor: "#F7F7F7"}
+						img: {
+							url: "/static/img/s02.jpg",
+							circle: true,
+						},
+						title: {
+							text: " 丽醒海带精萃饮",
+						},
+						tag: {
+							text: "编码：168888202",
+						},
+						price:"68",
+						num:"999",
+						heji:"67932",
+						header: {
+							line: true,
+							bgcolor: "#F7F7F7",
+						}
 					},
 				],
 				card:[
 					{
 						g_id:'0',
-						img: {url: "/static/img/s01.jpg",circle: true},title: {text: "大佑生宝小分子"},tag: {text:"编码：168888202"},
-						price:"598",num:"666",heji:"398268",
-						header: {line: true,bgcolor: "#F7F7F7"},
+						img: {
+							url: "/static/img/s01.jpg",
+							circle: true,
+						},
+						title: {
+							text: "大佑生宝小分子",
+						},
+						tag: {
+							text:"编码：168888202",
+						},
+						price:"598",
+						num:"666",
+						heji:"398268",
+						header: {
+							line: true,
+							bgcolor: "#F7F7F7",
+						},
 					},
 					{
 						g_id:'1',
-						img: {url: "/static/img/s02.jpg",circle: true},title: {text: " 丽醒海带精萃饮"},tag: {text: "编码：168888202"},
-						price:"68",num:"999",heji:"67932",
-						header: {line: true,bgcolor: "#F7F7F7"}
+						img: {
+							url: "/static/img/s02.jpg",
+							circle: true,
+						},
+						title: {
+							text: " 丽醒海带精萃饮",
+						},
+						tag: {
+							text: "编码：168888202",
+						},
+						price:"68",
+						num:"999",
+						heji:"67932",
+						header: {
+							line: true,
+							bgcolor: "#F7F7F7",
+						}
 					},
 				],
 			}

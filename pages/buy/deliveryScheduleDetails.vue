@@ -1,6 +1,5 @@
 <template>
-	<view class="pickupProgress">
-		<!-- <view class="backTo" @click="backTo"></view> -->
+	<view class="deliver">
 		<!-- tab标签 -->
 		<view class="pickuplist_tabs">
 			<tui-tabs 
@@ -13,11 +12,15 @@
 		</view>
 		<!-- 当日零售量 -->
 		<view v-if="currentTab==0" class="currentTab">
-			<!-- <view style="width: 100%; height: 70rpx;"></view> -->
+			<view class="FY FY-c FX-c" v-if="noData" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
 			<view
 			class="entrusbuylist"
 			v-for="(item, index) in dataList_1"
 			:key="index"
+			v-if="!noData"
 			>
 				<view class="entrusbuylist_main">
 					<!-- 左 -->
@@ -35,7 +38,7 @@
 							{{item.g_title}}
 						</view>
 						<view class="entrusbuylist_center_price">
-							<text>买入价:￥{{item.ut_amountpay}}</text>
+							<text>单价:￥{{item.ut_amountpay}}</text>
 							<text>可提量:{{item.stocknum}}份</text>
 						</view>
 						<view class="entrusbuylist_center_price">
@@ -58,11 +61,15 @@
 		</view>
 		<!-- 当日批发量 -->
 		<view v-if="currentTab==1" class="currentTab">
-			<!-- <view style="width: 100%; height: 70rpx;"></view> -->
+			<view class="FY FY-c FX-c" v-if="noData" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
 			<view
 			class="entrusbuylist"
 			v-for="(item, index) in dataList_2"
 			:key="index"
+			v-if="!noData"
 			>
 				<view class="entrusbuylist_main">
 					<!-- 左 -->
@@ -80,7 +87,7 @@
 							{{item.g_title}}
 						</view>
 						<view class="entrusbuylist_center_price">
-							<text>买入价:￥{{item.ut_amountpay}}</text>
+							<text>单价:￥{{item.ut_amountpay}}</text>
 							<text>可提量:{{item.stocknum}}份</text>
 						</view>
 						<view class="entrusbuylist_center_price">
@@ -104,8 +111,15 @@
 		</view>
 		<!-- 全部 -->
 		<view v-if="currentTab==2">
-			<!-- <view style="width: 100%; height: 70rpx;"></view> -->
-			<view class="entrusbuylist" v-for="(item, index) in dataList_3" :key="index">
+			<view class="FY FY-c FX-c" v-if="noData" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
+			<view class="entrusbuylist"
+			v-for="(item, index) in dataList_3"
+			:key="index"
+			v-if="!noData"
+			>
 				<view class="entrusbuylist_main">
 					<!-- 左 -->
 					<view class="entrusbuylist_left">
@@ -122,11 +136,11 @@
 							{{item.g_title}}
 						</view>
 						<view class="entrusbuylist_center_price">
-							<text>买入价:￥{{item.ut_amountpay}}</text>
+							<text>单价:￥{{item.ut_amountpay}}</text>
 							<text>可提量:{{item.stocknum}}份</text>
 						</view>
 						<view class="entrusbuylist_center_price">
-							<text>成交日期:{{getLockTime(item.ut_locktime)}}</text>
+							<text>成交日期:{{getLockTime(item.ut_datetime)}}</text>
 						</view>
 					</view>
 					<!-- 右 -->
@@ -171,8 +185,9 @@
 				chooseNum_2: 0,
 				dataList_3: [],
 				chooseNum_3: 0,
+				optionId: -1,
 				isCon: false,
-				optionId: -1
+				noData: false
 			}
 		},
 		computed: {
@@ -207,22 +222,39 @@
 						return 0;
 					}
 				} else {
-					console.log('tab',this.currentTab);
 					if(this.dataList_3.length>0){
 						return this.dataList_3[this.chooseNum_3].num??0
 					}else{
 						return 0;
 					}
-					
 				}
 			}
 		},
 		methods: {
-			changeTab: function(e){
+			changeTab: async function(e){
 				this.currentTab = e.index
-				this.deliveryScheduleDetails(this.currentTab)
-				this.deliveryScheduleDetails(this.currentTab)
-				this.deliveryScheduleDetails(this.currentTab)
+				await this.deliveryScheduleDetails(e.index)
+				if (e.index === 0) {
+					if (this.dataList_1.length === 0) {
+						this.isCon = true
+					} else {
+						this.isCon = false
+					}
+				}
+				if (e.index === 1) {
+					if (this.dataList_2.length === 0) {
+						this.isCon = true
+					}else {
+						this.isCon = false
+					}
+				}
+				if (e.index === 2) {
+					if (this.dataList_3.length === 0) {
+						this.isCon = true
+					}else {
+						this.isCon = false
+					}
+				}
 			},
 			clickButton: function() {},
 			change_1: function(e, id) {
@@ -262,117 +294,183 @@
 				this.isCon = true
 				let data = {}
 				if (index === 0) {
-					data = 
-					{
-					num:this.dataList_1[this.chooseNum_1].num,
-					g_id:this.dataList_1[this.chooseNum_1].g_id,
-					ut_id:this.dataList_1[this.chooseNum_1].ut_id,
-					type:1
+					if (this.dataList_1[this.chooseNum_1].num <= 0) {
+						uni.showToast({
+							title: "至少选择一件商品",
+							icon: "none"
+						})
+						this.isCon = false
+						return
+					} else {
+						data = {
+							num:this.dataList_1[this.chooseNum_1].num,
+							g_id:this.dataList_1[this.chooseNum_1].g_id,
+							ut_id:this.dataList_1[this.chooseNum_1].ut_id,
+							type:index+1
+						}
 					}
 				}
 				if (index === 1) {
-					data = 	{
-					num:this.dataList_2[this.chooseNum_2].num,
-					g_id:this.dataList_2[this.chooseNum_2].g_id,
-					ut_id:this.dataList_2[this.chooseNum_2].ut_id,
-					type:2
+					if (this.dataList_2[this.chooseNum_2].num <= 0) {
+						uni.showToast({
+							title: "至少选择一件商品",
+							icon: "none"
+						})
+						this.isCon = false
+						return
+					} else {
+						data = {
+							num:this.dataList_2[this.chooseNum_2].num,
+							g_id:this.dataList_2[this.chooseNum_2].g_id,
+							ut_id:this.dataList_2[this.chooseNum_2].ut_id,
+							type:index+1
+						}
 					}
 				}
 				if (index === 2) {
-					data = 	{
-					num:this.dataList_3[this.chooseNum_3].num,
-					g_id:this.dataList_3[this.chooseNum_3].g_id,
-					ut_id:this.dataList_3[this.chooseNum_3].ut_id,
-					type:3
+					if (this.dataList_3[this.chooseNum_3].num <= 0) {
+						uni.showToast({
+							title: "至少选择一件商品",
+							icon: "none"
+						})
+						this.isCon = false
+						return
+					} else {
+						data = {
+							num:this.dataList_3[this.chooseNum_3].num,
+							g_id:this.dataList_3[this.chooseNum_3].g_id,
+							ut_id:this.dataList_3[this.chooseNum_3].ut_id,
+							type:index+1
+						}
 					}
 				}
 				var that =this;
 				uni.getStorage({
-					key: 'token',
+					key: "user",
 					success: function (res) {
-						var getres = res.data;
-						uni.request({
-							method: "POST",
-							url: App.pickupgoods,
-							header: {
-								"Authorization": getres
-							},
-							data: data,
-							success: res => {
-								console.log(res)
-								that.isCon = false
-								if (res.data.status === 200) {
-									uni.showToast({
-										title: res.data.msg,
-										icon: "none"
-									})
-									that.deliveryScheduleDetails(that.currentTab)
-								} else {
-									uni.showToast({
-										title: res.data.msg,
-										icon: "none"
-									})
+						that.user = res.data
+						if(that.user!=1){
+							uni.showModal({
+								title: '提示',
+								content: '请先实名认证',
+								success: res => { if (res.confirm) { uni.navigateTo({ url: '../user/realName' }) } }
+							});
+						}else{
+							that.sendRequest({
+								method: "POST",
+								url: App.pickupgoods,
+								data: data,
+								success: res => {
+									that.isCon = false
+									if (res.status === 200) {
+										uni.showToast({
+											title: res.msg,
+											icon: "none"
+										})
+										setTimeout(function() {
+											that.deliveryScheduleDetails(that.currentTab)
+										}, 1000)
+									} else {
+										uni.showToast({
+											title: res.msg,
+											icon: "none"
+										})
+										setTimeout(function() {
+											that.deliveryScheduleDetails(that.currentTab)
+										}, 1000)
+									}
+								},
+								fail:function(e){
+									that.isCon = false
+									console.log("getchannel  fail:" + JSON.stringify(e));
 								}
-							}
-						})
-					}
-				})
+							});
+						}
+					},
+				});
 			},
 			deliveryScheduleDetails: function(type) {
 				var that =this;
-				uni.getStorage({
-					key: 'token',
-					success: function (res) {
-						var getres = res.data;
-						uni.request({
-							method: "POST",
-							url: App.pickuplist,
-							header: {
-								"Authorization": getres
-							},
-							data: {
-								type: type+1,
-								g_id: that.optionId
-							},
-							success: res => {
-								console.log(res)
-								if ((type+1)===1) {
-									if(res.data.data==null){
-										that.dataList_1=[]
-										uni.showToast({
-											title: res.data.msg,
-											icon: "none"
-										})
-									}else{
-										that.dataList_1 = res.data.data
-									}
-								}
-								if ((type+1)===2) {
-									if(res.data.data==null){
-										that.dataList_2=[]
-										uni.showToast({
-											title: res.data.msg,
-											icon: "none"
-										})
-									}else{
-										that.dataList_2 = res.data.data
-									}
-								}
-								if ((type+1)===3) {
-									if(res.data.data==null){
-										that.dataList_3=[]
-										uni.showToast({
-											title: res.data.msg,
-											icon: "none"
-										})
-									}else{
-										that.dataList_3 = res.data.data
-									}
+				that.sendRequest({
+					method: "POST",
+					url: App.pickuplist,
+					data: {
+						type: type+1,
+						g_id: that.optionId
+					},
+					complete: res => {
+						console.log(res)
+						if (res.status !==200 ) {
+							this.isCon = true
+							that.noData = true
+						}
+					},
+					success: res => {
+						if ((type+1)===1) {
+							if(res.data === null || res.status !== 200){
+								uni.showToast({
+									title: res.msg,
+									icon: "none"
+								})
+								this.isCon = true
+								that.noData = true
+							}else{
+								if (res.data.length === 0) {
+									that.dataList_1 = []
+									that.isCon = true
+									that.noData = true
+								} else {
+									that.dataList_1 = res.data
+									that.isCon = false
+									that.noData = false
 								}
 							}
-						})
+						}
+						if ((type+1)===2) {
+							if(res.data==null || res.status !== 200){
+								uni.showToast({
+									title: res.msg,
+									icon: "none"
+								})
+								that.isCon = true
+								that.noData = true
+							}else{
+								if (res.data.length === 0) {
+									that.dataList_2 = []
+									that.isCon = true
+									that.noData = true
+								} else {
+									that.dataList_2 = res.data
+									that.isCon = false
+									that.noData = false
+								}
+							}
+						}
+						if ((type+1)===3) {
+							if(res.data==null || res.status !== 200){
+								uni.showToast({
+									title: res.msg,
+									icon: "none"
+								})
+								that.isCon = true
+								that.noData = true
+							}else{
+								if (res.data.length === 0) {
+									that.dataList_3 = []
+									that.isCon = true
+									that.noData = true
+								} else {
+									that.dataList_3 = res.data
+									that.isCon = false
+									that.noData = false
+								}
+							}
+						}
+					},
+					fail:function(e){
+						console.log("getchannel  fail:" + JSON.stringify(e));
 					}
-				})
+				});
 			}
 		},
 		onLoad: function (option) {
@@ -388,17 +486,12 @@
 </script>
 
 <style lang="scss" scoped>
-	page{
-		background:rgba(238,238,238,1);
-	}
-	.backTo{
-		opacity: 0;
-		width: 100rpx;
-		position: fixed;
-		z-index: 999;
+	.deliver{
+		width: 100%;
+		position: absolute;
 		top: 0;
-		height: 88rpx;
-		background-color: #9E2036;
+		bottom: 0;
+		background-color: #EEEEEE;
 	}
 	.entrusbuylist{
 		padding: 18rpx 20rpx;

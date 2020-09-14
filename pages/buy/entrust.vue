@@ -1,12 +1,14 @@
 <template>
 	<view class="pickupProgress">
+		<!-- tab -->
 		<tui-tabs 
 		class="pickuplist_tabs"
 		:tabs="navbar"
-		:currentTab="currentTab>1?0:currentTab"
+		:currentTab="currentTab > 2 ? 0 : currentTab"
 		@change="changeTab"
-		itemWidth="50%"
+		itemWidth="33.3333%"
 		></tui-tabs>
+		<!-- 委托买入 -->
 		<view class="" v-if="currentTab==0">
 			<view class="entrusbuylist" v-for="item in dataList1" v-if="isShow1">
 				<view class="entrusbuylist_left">
@@ -20,8 +22,9 @@
 				<view class="entrusbuylist_center" style="flex: 1;">
 					<view class="entrusbuylist_right_title">{{item.g_title}}</view>
 					<view class="entrusbuylist_right_price">
-						<text>委托价:￥{{item.ut_price > 999999 ? "999999.00+" : item.ut_price}}</text>
-						<text>数量:{{item.ut_num > 999 ? '999+' : item.ut_num}}份</text>
+						<text>委托价:￥{{Number(item.ut_price).toFixed(2)}}</text>
+						<text>委托:{{item.ut_num}}份</text>
+						<text>成交:{{item.ut_dealnum}}份</text>
 					</view>
 				</view>
 				<view class="entrusbuylist_right">
@@ -34,10 +37,11 @@
 			</view>
 			
 			<view class="FY FY-c FX-c" v-if="isShow1==false" style="font-size: 16px;height: calc(80vh);">
-				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
 			</view>
 		</view>
+		<!-- 委托卖出 -->
 		<view class="" v-if="currentTab==1">
 			<view class="entrusbuylist" v-for="item in dataList2" v-if="isShow2">
 				<view class="entrusbuylist_left">
@@ -51,8 +55,9 @@
 				<view class="entrusbuylist_center" style="flex: 1;">
 					<view class="entrusbuylist_right_title">{{item.g_title}}</view>
 					<view class="entrusbuylist_right_price">
-						<text>委托价:￥{{item.ut_price > 999999 ? "999999.00+" : item.ut_price}}</text>
-						<text>数量:{{item.ut_num > 999 ? '999+' : item.ut_num}}份</text>
+						<text>委托价:￥{{item.ut_price}}</text>
+						<text>委托:{{item.ut_num}}份</text>
+						<text>成交:{{item.ut_dealnum}}份</text>
 					</view>
 				</view>
 				<view class="entrusbuylist_right">
@@ -65,8 +70,40 @@
 			</view>
 			
 			<view class="FY FY-c FX-c" v-if="isShow2==false" style="font-size: 16px;height: calc(80vh);">
-				<tui-icon name="nodata" size="60" color="#999"></tui-icon>
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
+			</view>
+		</view>
+		<!-- 全部 -->
+		<view class="" v-if="currentTab==2">
+			<view class="FY FY-c FX-c" v-if="isShow3==false" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+				暂无内容
+			</view>
+			<view class="entrusbuylist" v-for="item in dataList3" v-if="isShow3">
+				<view class="entrusbuylist_left">
+					<view class="entrusbuylist_left_img">
+						<image :src="item.g_pic"></image>
+					</view>
+					<view class="entrusbuylist_left_text">
+						{{item.g_code}}
+					</view>
+				</view>
+				<view class="entrusbuylist_center" style="flex: 1;">
+					<view class="entrusbuylist_right_title">{{item.g_title}}</view>
+					<view class="entrusbuylist_right_price">
+						<text>{{getTime(item.ut_datetime)}}</text>
+						<text>成交:{{item.ut_dealnum}}份</text>
+						<text>
+							{{item.ut_tradestatus === 0 ? '交易中' : (item.ut_tradestatus === 1 ? '交易完成' : '已撤销')}}
+						</text>
+					</view>
+				</view>
+				<view class="entrusbuylist_right" style="font-size: 36rpx; padding: 0 20rpx;">
+					<view class="tui-btn-box" :style="'color: ' + (item.ut_tradecate === 0 ? '#07C160' : '#9E2036')">
+						{{item.ut_tradecate === 0 ? '买入' : '卖出'}}
+					</view>
+				</view>
 			</view>
 		</view>
 	</view>
@@ -79,151 +116,186 @@
 			return {
 				navbar: [
 					{name: "委托买入"},
-					{name: "委托卖出"}
+					{name: "委托卖出"},
+					{name: "全部"}
 				],
-				isShow1:true,
-				isShow2:true,
+				isShow1: true,
+				isShow2: true,
+				isShow3: true,
 				currentTab: 0,
 				dataList:'',
-				dataList1: [
-					// {id: 1,imgUrl: "../../static/img/s02.jpg",title: "大佑生宝小分子海参饮品",price: 598,num: 10,code: 16888801,button: "撤销"},
-					// {id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
-				],
-				dataList2: [
-					// {id: 2,imgUrl: "../../static/img/s01.jpg",title: "丽醒海带精萃饮植物饮品",price: 68,num: 100,code: 16888802,button: "撤销"}
-				]
+				dataList1: [], // 委托买入
+				dataList2: [], // 委托卖出
+				dataList3: [] // 全部
 			}
 		},
-		onLoad() {
+		computed: {
+			// 获取时间(年月日)
+			getTime() {
+				return function(data) {
+					let year = new Date(data * 1000).getFullYear();
+					let month = new Date(data * 1000).getMonth()+1;
+					let date = new Date(data * 1000).getDate();
+					if (month < 10) { month = "0" + month; }	
+					if (date < 10) { date = "0" + date; }
+					return year + "-" + month + "-" + date;
+				}
+			}
+		},
+		onShow() {
 			var that =this;
-			uni.getStorage({
-				key: 'token',
-				success: function (res) {
-					var getres = res.data;
-					uni.request({
-						url: App.mygetEntrusList,
-						method: 'POST',
-						header: {'Authorization':getres},
+			this.sendRequest({
+				url :App.mygetEntrusList,
+				method:'POST',
+				data:{'type':1},
+				success : function(res){
+					if(res.data.length !== 0){
+						that.isShow1 = true;
+					}else{
+						that.isShow1 = false;
+					}
+					that.dataList1=res.data;
+				},
+				fail:function(e){
+					that.isShow1=false;
+					console.log("getchannel  fail:" + JSON.stringify(e));
+				}
+			});
+		},
+		methods: {
+			getList(type){	
+				var that =this;
+				this.sendRequest({
+					url :App.mygetEntrusList,
+					method:'POST',
+					data:{'type':type},
+					success : function(res){
+						if(res.data.length){
+							type==1? that.isShow1 = true: that.isShow2 = true;
+						}else{
+							type==1? that.isShow1 = true: that.isShow2 = true;
+						}
+						console.log(res.data);
+						type==1? that.dataList1=res.data : that.dataList2=res.data;
+					},
+					fail:function(e){
+						type==1? that.isShow1 = true: that.isShow2 = true;
+						console.log("getchannel  fail:" + JSON.stringify(e));
+					}
+				});
+			},
+			changeTab(e) {
+				this.currentTab = e.index;
+				if (e.index === 0) {
+					var that =this;
+					this.sendRequest({
+						url :App.mygetEntrusList,
+						method:'POST',
 						data:{'type':1},
-						success: (res) => {
-							if(res.data.data.length){
+						success : function(res){
+							if(res.data.length !== 0){
 								that.isShow1 = true;
 							}else{
 								that.isShow1 = false;
 							}
-							console.log(res.data);
-							that.dataList1=res.data.data;
+							that.dataList1=res.data;
 						},
-						fail:(err)=>{
+						fail:function(e){
 							that.isShow1=false;
+							console.log("getchannel  fail:" + JSON.stringify(e));
 						}
 					});
-					uni.request({
-						url: App.mygetEntrusList,
-						method: 'POST',
-						header: {'Authorization':getres},
-						data:{'type':2},
+					return;
+				};
+				this.currentTab = e.index;
+				if (e.index === 2) {
+					var that =this;
+					this.sendRequest({
+						url :App.allEntrusList,
+						method:'POST',
 						success: (res) => {
-							if(res.data.data.length){
+							console.log(res)
+							if (res.status === 200 && res.data.length !== 0 && res.data) {
+								that.dataList3 = res.data;
+								that.isShow3 = true;
+							} else {
+								that.isShow3 = false;
+							};
+						},
+						fail: (e) => {
+							that.isShow1=false;
+							console.log("getchannel  fail:" + JSON.stringify(e));
+						}
+					});
+					return;
+				};
+				if (e.index === 1) {
+					var that =this;
+					this.sendRequest({
+						url :App.mygetEntrusList,
+						method:'POST',
+						data:{'type':2},
+						success : function(res){
+							if(res.data.length !== 0){
 								that.isShow2 = true;
 							}else{
 								that.isShow2 = false;
 							}
-							console.log(res.data);
-							that.dataList2=res.data.data;
+							that.dataList2=res.data;
 						},
-						fail:(err)=>{
+						fail:function(e){
 							that.isShow2=false;
+							console.log("getchannel  fail:" + JSON.stringify(e));
 						}
 					});
+					return;
 				}
-			})
-		},
-		methods: {
-			changeTab(e) {
-				this.currentTab = e.index
 			},
 			clickButton(e) {
 				var that = this;
-				uni.getStorage({
-					key: 'token',
-					success: function (res) {
-						var getres = res.data;
-						uni.request({
-							url: App.revokePurchase,
-							method: 'POST',
-							header: {'Authorization':getres},
-							data:{'ut_id':e},
-							success: (res) => {
-								console.log(res)
-								uni.showToast({
-									icon: 'none',
-									title: res.data.msg
-								})
-								uni.request({
-									url: App.mygetEntrusList,
-									method: 'POST',
-									header: {'Authorization':getres},
-									data:{'type':1},
-									success: (res) => {
-										if(res.data.data.length){
-											that.isShow1 = true;
-										}else{
-											that.isShow1 = false;
-										}
-										console.log(res.data);
-										that.dataList1=res.data.data;
-									},
-									fail:(err)=>{
-										that.isShow1=false;
-									}
-								});
-							}
-						});
+				this.sendRequest({
+					url :App.revokePurchase,
+					method:'POST',
+					data:{'ut_id':e},
+					success : function(res){
+						if(res.data == null || res.data.length){
+							that.isShow1 = true;
+						}else{
+							that.isShow1 = false;
+						}
+						console.log("getchannel success:" + JSON.stringify(res));
+						that.dataList1=res.data;
+						that.getList(1);
+					},
+					fail:function(e){
+						that.isShow1=false;
+						console.log("getchannel  fail:" + JSON.stringify(e));
 					}
-				})
-				console.log(Math.random())
+				});
+				// console.log(Math.random())
 			},
 			clickButtons(e) {
 				var that = this;
-				uni.getStorage({
-					key: 'token',
-					success: function (res) {
-						var getres = res.data;
-						uni.request({
-							url: App.revokeSell,
-							method: 'POST',
-							header: {'Authorization':getres},
-							data:{'ut_id':e},
-							success: (res) => {
-								console.log(res)
-								uni.showToast({
-									icon: 'none',
-									title: res.data.msg
-								})
-								uni.request({
-									url: App.mygetEntrusList,
-									method: 'POST',
-									header: {'Authorization':getres},
-									data:{'type':2},
-									success: (res) => {
-										if(res.data.data.length){
-											that.isShow2 = true;
-										}else{
-											that.isShow2 = false;
-										}
-										console.log(res.data);
-										that.dataList2=res.data.data;
-									},
-									fail:(err)=>{
-										that.isShow2=false;
-									}
-								});
-							}
-						});
+				this.sendRequest({
+					url :App.revokePurchase,
+					method:'POST',
+					data:{'ut_id':e},
+					success : function(res){
+						if(res.data == null || res.data.length){
+							that.isShow2 = true;
+						}else{
+							that.isShow2 = false;
+						}
+						console.log("getchannel success:" + JSON.stringify(res));
+						that.dataList2=res.data;
+						that.getList(2);
+					},
+					fail:function(e){
+						that.isShow2=false;
+						console.log("getchannel  fail:" + JSON.stringify(e));
 					}
-				})
-				console.log(Math.random())
+				});
+				// console.log(Math.random())
 			}
 		},
 		onPullDownRefresh() {
@@ -236,20 +308,22 @@
 </script>
 
 <style lang="scss" scoped>
-	page{
+	.pickupProgress{
 		width:100%;
-		height:100%;
-		background:rgba(238,238,238,1);
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		background:#EEE;
 	}
 	.entrusbuylist{
-		padding: 18rpx 20rpx;
-		height: 151rpx;
+		padding: 18rpx;
+		height: 120rpx;
 		background: rgba(255,255,255,1);
-		border-radius: 6rpx;
+		border-radius: 20rpx;
 		display: flex;
 		margin: 10rpx;
 		.entrusbuylist_left{
-			width:120rpx;
+			width:60*2rpx;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -257,11 +331,11 @@
 				flex: 1;
 				width:100%;
 				height:100%;
-				background:rgba(253,87,87,1);
 				border-radius:6rpx;
 				image{
 					width: 100%;
 					height: 100%;
+					border-radius: 10rpx;
 				}
 			}
 			.entrusbuylist_left_text{
@@ -273,19 +347,18 @@
 		}
 		.entrusbuylist_center{
 			width: 100%;
-			padding: 20rpx;
-			padding-bottom: 40rpx;
+			padding: 10rpx 20rpx;
 			display: flex;
 			flex-direction: column;
 			justify-content: space-between;
 			.entrusbuylist_right_title{
-				font-size: 26rpx;
+				font-size: 32rpx;
 				color:rgba(51,51,51,1);
 			}
 			.entrusbuylist_right_price{
 				display: flex;
 				justify-content: space-between;
-				font-size: 24rpx;
+				font-size: 26rpx;
 				color:rgba(153,153,153,1);
 			}
 		}
@@ -293,9 +366,9 @@
 			display: flex;
 			align-items: center;
 			.ntrusbuylist_right_button{
-				width: 160rpx !important;
+				width: 120rpx !important;
 				height:80rpx !important;
-				font-size:22rpx !important;
+				font-size:28rpx !important;
 				line-height:80rpx !important;
 			}
 		}

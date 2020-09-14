@@ -1,9 +1,6 @@
 <template>
 	<view class="realName">
-		<form
-		@submit="formSubmit"
-		@reset="formReset"
-		>
+		<form @submit="formSubmit">
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
 					<view class="tui-title">
@@ -86,6 +83,8 @@
 				</button>
 			</view>
 		</form>
+		<!--toast提示-->
+		<tui-toast ref="toast"></tui-toast>
 	</view>
 </template>
 
@@ -111,32 +110,35 @@
 		},
 		onLoad: function() {
 			var that =this;
-			uni.getStorage({
-				key: 'token',
-				success: function (res) {
-					var getres = res.data;
-					uni.request({
-						method: "POST",
-						url: App.Idrealuserinfo,
-						header: {
-							"Authorization": getres
-						},
-						success: res => {
-							console.log("实名认证信息:", res.data.data[0].u_auth)
-							that.u_info = res.data.data[0]
-							if (res.data.data[0].u_auth === 1) {
-								that.isRealName = true
-								uni.showToast({
-									title: "您已经实名认证过了!",
-									icon: "none"
-								});
-							}
-						}
-					})
+			that.sendRequest({
+				method: "POST",
+				url: App.Idrealuserinfo,
+				success: res => {
+					// console.log("实名认证信息:", res.data[0].u_auth)
+					that.u_info = res.data[0]
+					if (res.data[0].u_auth === 1) {
+						that.isRealName = true
+						this.showToast(3, '您已经实名认证过了!');
+					}
+				},
+				fail:function(e){
+					console.log("getchannel  fail:" + JSON.stringify(e));
 				}
-			})
+			});
 		},
 		methods: {
+			// 信息反馈
+			showToast: function(type, msg, msg2) {
+				let params = { title: msg, imgUrl: "../../static/img/toast/check-circle.png", icon: true };
+				switch (type) {
+					case 2: params.title = msg; params.imgUrl = "../../static/img/toast/fail-circle.png"; break;
+					case 3: params.title = msg; params.imgUrl = "../../static/img/toast/info-circle.png"; break;
+					case 4: params.title = msg; params.icon = false; break;
+					case 5: params.title = msg; params.content = msg2; break;
+					default: break;
+				}
+				this.$refs.toast.show(params)
+			},
 			formSubmit: function(e) {
 				if (e.detail.value.name === "") {
 					this.isInputFocus_1 = true
@@ -166,67 +168,42 @@
 				let checkRes = form.validation(formData, rules);
 				if (!checkRes) {
 					if (this.imageData.length !== 2) {
-						uni.showToast({
-							title: "请上传身份证件照片!",
-							icon: "none"
-						});
+						this.showToast(3, '请上传身份证件照片!');
 					} else {
 						if (this.imageData[0].indexOf("blob:") === -1 && this.imageData[1].indexOf("blob:") === -1) {
-							
 							var that =this;
-							uni.getStorage({
-								key: 'token',
-								success: function (res) {
-									var getres = res.data;
-									uni.request({
-										method: "POST",
-										url: App.Idcardreal,
-										data: {
-											realname: that.realname,
-											idcard: that.idcard,
-											mobile: that.mobile,
-											idcardf: that.imageData[0],
-											idcardb: that.imageData[1]
-										},
-										header: {
-											"Authorization": getres
-										},
-										success: (res) => {
-											console.log(res);
-											if(res.data.status!==200){
-												uni.showToast({
-													title: res.data.msg,
-													icon: "none"
-												});
-											}else{
-												uni.showToast({
-													title: res.data.msg,
-													icon: "none"
-												});
-												setTimeout(function() {
-													uni.navigateBack()
-												}, 1000)
-											}
-									
-											
-											
-										}
-									});
+							that.sendRequest({
+								method: "POST",
+								url: App.Idcardreal,
+								data: {
+									realname: that.realname,
+									idcard: that.idcard,
+									mobile: that.mobile,
+									idcardf: that.imageData[0],
+									idcardb: that.imageData[1]
+								},
+								success: (res) => {
+									console.log(res);
+									if(res.status!==200){
+										this.showToast(2, res.msg);
+									}else{
+										uni.setStorageSync('user',1);
+										this.showToast(2, res.msg);
+										setTimeout(function() {
+											uni.navigateBack()
+										}, 1000)
+									}
+								},
+								fail:function(e){
+									console.log("getchannel  fail:" + JSON.stringify(e));
 								}
-							})
-						
-						} else {
-							uni.showToast({
-								title: "请重新上传照片!",
-								icon: "none"
 							});
+						} else {
+							this.showToast(2, '请重新上传照片!');
 						}
 					}
 				} else {
-					uni.showToast({
-						title: checkRes,
-						icon: "none"
-					});
+					this.showToast(3, checkRes);
 				}
 			},
 			result: function(e) {

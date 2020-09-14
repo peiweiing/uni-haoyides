@@ -12,8 +12,8 @@
 				:duration="150"
 				class="tui-banner-swiper"
 				:circular="true"
-				previous-margin="60rpx"
-				next-margin="60rpx"
+				previous-margin="30rpx"
+				next-margin="30rpx"
 			>
 				<swiper-item v-for="(item, index) in banner" :key="index" class="tui-banner-item">
 					<!-- <image
@@ -37,24 +37,55 @@
 		<!--banner-->
 		<view class="divcs">
 			<view class="tui-title">
-				现货
+				现货交易
 			</view>
-			<tui-grid>
-				<block v-for="(item,index) in dataList1" :key="index">
-					<tui-grid-item :cell="3" @click="detail(item.url)">
-						<view class="tui-grid-icon">
-							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
+			<view class="xianhuo_1">
+				<view v-for="(item,index) in dataList1" :key="index">
+						<view :cell="3" @click="detail(item.url)" class="xianhuo_2">
+							<view class="xianhuo_img">
+								<image :src="item.imgUrl"></image>
+							</view>
+							<text class="xianhuo_text">{{item.title}}</text>
 						</view>
-						<text class="tui-grid-label">{{item.title}}</text>
-					</tui-grid-item>
-				</block>
-			</tui-grid>
+					</view>
+			</view>
+		</view>
+		
+		
+		<view class="divcs">
+			<view class="tui-title">
+				批发
+			</view>
+				<view class="pifa_1">
+					<view v-for="(item,index) in dataList2" :key="index" style="flex: 1;">
+						<view :cell="3" @click="detail(item.url)" class="pifa_2">
+							<view class="pifa_img">
+								<image :src="item.imgUrl"></image>
+							</view>
+							<text class="pifa_text">{{item.title}}</text>
+						</view>
+					</view>
+				</view>
+			
 		</view>
 		
 		<view class="divcs">
 			<view class="tui-title">
-				委托
+				我的库存
 			</view>
+			<view class="kucun_1">
+				<view v-for="(item,index) in dataList4" :key="index" style="flex: 1;">
+					<view :cell="3" @click="detail(item.url)" class="kucun_2">
+						<view class="kucun_img">
+							<image :src="item.imgUrl"></image>
+						</view>
+						<text class="kucun_text">{{item.title}}</text>
+					</view>
+				</view>
+			</view>
+		</view>
+		
+		<!-- <view class="divcs">
 			<tui-grid>
 				<block v-for="(item,index) in dataLists" :key="index">
 					<tui-grid-item :cell="3" @click="detail(item.url)">
@@ -65,23 +96,7 @@
 					</tui-grid-item>
 				</block>
 			</tui-grid>
-		</view>
-			
-		<view class="divcs">
-			<view class="tui-title">
-				批发
-			</view>
-			<tui-grid>
-				<block v-for="(item,index) in dataList2" :key="index">
-					<tui-grid-item :cell="3" @click="detail(item.url)">
-						<view class="tui-grid-icon">
-							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
-						</view>
-						<text class="tui-grid-label">{{item.title}}</text>
-					</tui-grid-item>
-				</block>
-			</tui-grid>
-		</view>
+		</view> -->
 	</view>
 </template>
 
@@ -93,17 +108,18 @@
 				// banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				banner: ['../../static/img/swiper01.jpg', '../../static/img/swiper02.jpg'],
 				dataList1: [
-					{name: "unreceive",size: 30,title:'现货买入',color: "#9E2036",url:'distGoodsList'},
+					{imgUrl: "../../static/img/20200912135930.png",title:'买入',url:'entrustedPurchase'},
+					{imgUrl: "../../static/img/maichu.png",title:'卖出',url:'consignmentSale'},
+					{imgUrl: "../../static/img/tihuo.png",title:'提货',url:'pickupProgress'},
 				],
 				dataList2: [
-					{name: "cart",size: 30,title:'批发买入',color: "#9E2036",url:'wholesaleList'},
+					{imgUrl: "../../static/img/pifa.png",title:'批发买入',url:'wholesaleList'},
+					{imgUrl: "../../static/img/mingxi.png",title:'批发明细',url:'wholesaleDetail'},
 				],
-				dataLists: [
-					{name: "member",size: 30,title:'委托买入',color: "#9E2036",url:'entrustedPurchase'},
-					{name: "wealth",size: 30,title:'委托卖出',color: "#9E2036",url:'consignmentSale'},
-					{name: "share",size: 30,title:'我的委托',color: "#9E2036",url:'entrust'},
-					{name: "bankcard",size: 30,title:'摘牌买入',color: "#9E2036",url:'EntrusBuyList'},
-					{name: "redpacket",size: 30,title:'摘牌卖出',color: "#9E2036",url:'entrusSellList'},
+				dataList4: [
+					{imgUrl: "../../static/img/kucun.png",title:'现货库存',url:'xianHuo'},
+					{imgUrl: "../../static/img/dongjie.png",title:'冻结库存',url:'dongJie'},
+					{imgUrl: "../../static/img/users.png",title:'我的委托',url:'entrust'},
 				],
 			}
 		},
@@ -133,10 +149,13 @@
 
 <style lang="scss" scoped>
 .container {
-	min-height: calc(100vh);
-	padding-bottom: 2%;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 	box-sizing: border-box;
-	background-color: #EDEDED;
+	background-color: #EEE;
 	.bgcImg{
 		height: 200rpx;
 	}
@@ -149,6 +168,76 @@
 		}
 		.tui-grids{
 			border-radius: 20rpx;
+		}
+	}
+	.xianhuo_1{
+		display: flex;
+		justify-content: space-around;
+		padding: 20rpx 0;
+	}
+	.xianhuo_2{
+		width: 200rpx;
+		position: relative;
+		.xianhuo_img{
+			height: 100rpx;
+			image{
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.xianhuo_text{
+			position: absolute;
+			top: 26rpx;
+			left: 12rpx;
+			font-size: 36rpx;
+			color: #FFF;
+			font-weight: lighter;
+		}
+	}
+	.pifa_1{
+		display: flex;
+		padding: 40rpx 0;
+	}
+	.pifa_2{
+		display: flex;
+		align-items: center;
+		box-sizing: border-box;
+		border-right: 2rpx solid #EEE;
+		justify-content: center;
+		.pifa_img{
+			width: 48rpx;
+			height: 48rpx;
+			margin-right: 20rpx;
+			image{
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.pifa_text{
+			font-size: 32rpx;
+		}
+	}
+	.kucun_1{
+		display: flex;
+		padding: 40rpx 0;
+	}
+	.kucun_2{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		box-sizing: border-box;
+		border-right: 2rpx solid #EEE;
+		.kucun_img{
+			width: 48rpx;
+			height: 48rpx;
+			margin-bottom: 10rpx;
+			image{
+				width: 100%;
+				height: 100%;
+			}
+		}
+		.kucun_text{
+			font-size: 32rpx;
 		}
 	}
 }
@@ -164,24 +253,23 @@
 
 .tui-banner-swiper {
 	width: 100%;
-	height: 240rpx;
+	height: 170*2rpx;
 }
 
 .tui-banner-item {
-	padding: 0 16rpx;
+	padding: 0 10rpx;
 	box-sizing: border-box;
 }
-
 .tui-slide-image {
 	width: 100%;
-	height: 240rpx;
+	height: 100%;
 	display: block;
-	border-radius: 12rpx;
+	border-radius: 20rpx;
 	/* transition: all 0.1s linear; */
 }
 
 .tui-banner-scale {
-	transform: scaleY(0.9);
+	// transform: scaleY(0.9);
 	transform-origin: center center;
 }
 
@@ -242,12 +330,13 @@
 
 	.tui-title {
 		// padding: 50rpx 30rpx 30rpx 30rpx;
-		padding: 2%;
-		font-size: 32rpx;
+		padding: 3%;
+		font-size: 36rpx;
 		color: #333;
 		box-sizing: border-box;
 		font-weight: bold;
 		clear: both;
+		border-bottom: 2rpx solid #EEE;
 	}
 	.tui-grid-icon {
 		width: 64rpx;

@@ -12,8 +12,8 @@
 				:duration="150"
 				class="tui-banner-swiper"
 				:circular="true"
-				previous-margin="60rpx"
-				next-margin="60rpx"
+				previous-margin="30rpx"
+				next-margin="30rpx"
 			>
 				<swiper-item v-for="(item, index) in banner" :key="index" class="tui-banner-item">
 					<!-- <image
@@ -53,15 +53,15 @@
 						<text>排行榜</text>
 						<text class="tui-sub__desc">大家都在买</text>
 					</view>
-					<view class="tui-more__box">
+				<!-- 	<view class="tui-more__box">
 						<text>更多</text>
 						<tui-icon name="arrowright" :size="36" unit="rpx" color="#999"></tui-icon>
-					</view>
+					</view> -->
 				</view>
 				<view class="tui-new-box">
 					<view class="tui-new-item" :class="[index != 0 && index != 1 ? 'tui-new-mtop' : '']" v-for="(item, index) in newProduct"
 					 :key="index" @tap="detail(item.g_id)" v-if="isShow">
-						<image :src="'/static/images/mall/new/' + (item.type == 1 ? 'new' : 'discount') + '.png'" class="tui-new-label"></image>
+						<image :src="'/static/images/mall/new/' + (item.type == 1 ? 'new' : 'new') + '.png'" class="tui-new-label"></image>
 						<view class="tui-title-box">
 							<view class="tui-new-title">{{ item.g_title }}</view>
 							<view class="tui-new-price FY-c">
@@ -157,80 +157,26 @@
 					"格兰仕暗示拜访拼多多后遭天猫打压，拼多多高层赞其有勇气",
 					"阿里计划将每股普通股拆为8股，增加筹资灵活性"
 				],
-				newProduct: [
-					// {url:'../list/distGoodsDetail',name: '丽醒海带精萃饮植物饮品',present: 68.00,original: 98,pic: '1.jpg',type: 1,isLabel: true,img:'../../static/img/s001.png'},
-					// {url:'../list/distGoodsDetails',name: '大佑生宝小分子海参饮品',present: 598.00,original: 899,pic: '2.jpg',type: 2,isLabel: true,img:'../../static/img/s002.png'}
-				],
-				productList: [
-					// {img: "../../static/img/s02.jpg",name: '大佑生宝小分子海参饮品',sale: 598.00,factory: 899,payNum: 2342},
-					// {img: "../../static/img/01.jpg",name: ' 丽醒海带精萃饮植物饮品',sale: 68.00,factory: 98,payNum: 999},
-				],
+				newProduct: [],
+				productList: []
 			}
 		},
-		onLoad() {
+		onShow() {
 			var that =this;
-			uni.getStorage({
-				key: 'token',
-				success: function (res) {
-					console.log(res)
-					var getres = res.data;
-					uni.request({
-						url: App.getchannel,
-						method: 'POST',
-						header: {'Authorization':getres},
-						data:{'type':2},
-						success: (res) => {
-							console.log(res.data);
-							that.newsList=res.data.data;
-						}
-					});
-					uni.request({
-						url: App.sortgoods,
-						method: 'POST',
-						header: {'Authorization':getres},
-						success: (res) => {
-							if(res.data.data.length){
-								that.isShow = true;
-							}else{
-								that.isShow = false;
-							}
-							console.log(res.data);
-							that.newProduct=res.data.data;
-						},
-						fail:(err)=>{
-							that.isShow=false;
-						}
-					});
-					uni.request({
-						url: App.list,
-						method: 'POST',
-						header: {'Authorization':getres},
-						success: (res) => {
-							if(res.data.data.length){
-								that.isShows = true;
-							}else{
-								that.isShows = false;
-							}
-							console.log(res.data);
-							that.productList=res.data.data;
-						},
-						fail:(err)=>{
-							that.isShows=false;
-						}
-					});
+			this.sendRequest({
+				url :App.index_1,
+				method:'POST',
+				success : function(res){
+				   that.newsList=res.data.channel_list;
+				   that.newProduct=res.data.sort_goods_list;
+				   that.productList=res.data.goods_list;
 				},
-				fail:(err)=>{
-					console.log(err)
-					uni.reLaunch({
-						url: '../login/login',
-					})
+				fail:function(e){
+					console.log("index_1  fail:" + JSON.stringify(e));
 				}
-			})
+			});
 		},
-		methods: {	
-			// change: function(e) {
-			// 	this.current = e.detail.current;
-			// },
+		methods: {
 			swiper(e){
 				console.log(e)
 			},
@@ -282,11 +228,11 @@
 
 .tui-banner-swiper {
 	width: 100%;
-	height: 240rpx;
+	height: 170*2rpx;
 }
 
 .tui-banner-item {
-	padding: 0 16rpx;
+	padding: 0 10rpx;
 	box-sizing: border-box;
 }
 
@@ -299,7 +245,7 @@
 }
 
 .tui-banner-scale {
-	transform: scaleY(0.9);
+	// transform: scaleY(0.9);
 	transform-origin: center center;
 }
 

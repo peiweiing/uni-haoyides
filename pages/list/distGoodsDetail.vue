@@ -19,11 +19,11 @@
 
 		<!--banner-->
 		<view class="tui-banner-swiper">
-			<swiper :autoplay="true" :interval="5000" :duration="150" :circular="true" :style="{ height: scrollH + 'px' }"
-			 @change="bannerChange">
+			<swiper :autoplay="true" :interval="5000" :duration="150" :circular="true"
+			 @change="bannerChange" style="height: inherit;">
 				<block v-for="(item, index) in module.g_slider_pic" :key="index">
 					<swiper-item :data-index="index" @tap.stop="previewImage">
-						<image :src="item" class="tui-slide-image" :style="{ height: scrollH + 'px' }" />
+						<image :src="item" class="tui-slide-image" />
 					</swiper-item>
 				</block>
 			</swiper>
@@ -85,7 +85,7 @@
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
 				<view class="tui-flex-1">
-					<tui-button :disabled="disabled" height="68rpx" :size="26" type="bronze" shape="circle" @click="submit(module.g_id)">立即购买</tui-button>
+					<tui-button :disabled="disabled" height="68rpx" :size="26" type="green" shape="circle" @click="submit(module.g_id)">立即购买</tui-button>
 				</view>
 			</view>
 		</view>
@@ -174,6 +174,8 @@
 			</view>
 		</tui-bottom-popup> -->
 		<!--底部选择层-->
+		<!--toast提示-->
+		<tui-toast ref="toast"></tui-toast>
 	</view>
 </template>
 
@@ -196,6 +198,7 @@ import App from '../../App.vue'
 					'../../static/img/05.jpg',
 				],
 				bannerIndex: 1,
+				detailid:'',
 				topMenu: [
 					{icon: 'message',text: '消息',size: 26,badge: 3},
 					{icon: 'home',text: '首页',size: 23,badge: 0},
@@ -209,12 +212,13 @@ import App from '../../App.vue'
 				menuShow: false,
 				popupShow: false,
 				value: 1,
-				collected: false
+				collected: false,
+				user: 0
 			};
 		},
 		onLoad: function(options) {
 			let that =this;
-			var detailid =options.id;
+			that.detailid =options.id;
 			let obj = {};
 			// #ifdef MP-WEIXIN
 			obj = wx.getMenuButtonBoundingClientRect();
@@ -225,7 +229,6 @@ import App from '../../App.vue'
 			// #ifdef MP-ALIPAY
 			my.hideAddToDesktopMenu();
 			// #endif
-			console.log(detailid)
 			setTimeout(() => {
 				uni.getSystemInfo({
 					success: res => {
@@ -237,25 +240,38 @@ import App from '../../App.vue'
 				});
 			}, 0);
 			
-			uni.getStorage({
-			    key: 'token',
-			    success: function (res) {
-			        console.log(res.data);
-					uni.request({
-					    url: App.detail,
-						method: 'POST',
-					    header: {'Authorization':res.data},
-						data: {"g_id":detailid},
-					    success: (res) => {
-					        console.log(res);
-							that.module=res.data.data;
-					    }
-					});
-			    }
+		},
+		onShow() {
+			let that =this;
+			this.sendRequest({
+				url :App.detail,
+				method:'POST',
+				data: {"g_id":that.detailid},
+				success : function(res){
+					// console.log("getchannel success:" + JSON.stringify(res));
+				   that.module=res.data;
+				   // console.log(that.module)
+				   // console.log(that.module.g_slider_pic)
+				},
+				fail:function(e){
+					console.log("getchannel  fail:" + JSON.stringify(e));
+				}
 			});
-			
 		},
 		methods: {
+			// 信息反馈
+			showToast: function(type, msg, msg2) {
+				let params = { title: msg, imgUrl: "../../static/img/toast/check-circle.png", icon: true };
+				switch (type) {
+					case 1: params.title = msg; params.imgUrl = "../../static/img/toast/check-circle.png"; break;
+					case 2: params.title = msg; params.imgUrl = "../../static/img/toast/fail-circle.png"; break;
+					case 3: params.title = msg; params.imgUrl = "../../static/img/toast/info-circle.png"; break;
+					case 4: params.title = msg; params.icon = false; break;
+					case 5: params.title = msg; params.content = msg2; break;
+					default: break;
+				}
+				this.$refs.toast.show(params);
+			},
 			bannerChange: function(e) {
 				this.bannerIndex = e.detail.current;
 			},
@@ -323,33 +339,46 @@ import App from '../../App.vue'
 				that.disabled=true;
 				console.log(that.disabled)
 				uni.getStorage({
-				    key: 'token',
-				    success: function (res) {
-				        console.log(res.data);
-						uni.request({
-						    url: App.spotpay,
-							method: 'POST',
-						    header: {'Authorization':res.data},
-							data: {"g_id":e},
-						    success: (res) => {
-						        console.log(res);
-								uni.showToast({
-									icon: 'none',
-									title: res.data.msg
-								});
-								setTimeout(function(){
-									that.module.g_salevol=res.data.data.g_salevol
-									that.module.total_inv=res.data.data.total_inv
-								},1000)
-						    },
-							complete: ()=> {
-								console.log('执行了')
-								that.disabled=false;
-							},
-						});
-				    }
+					key: 'user',
+					success: function (res) {
+						console.log(res.data);
+						that.user = res.data
+						if(that.user!=1){
+							uni.showModal({
+								title: '提示',
+								content: '请先实名认证',
+								success: function (res) {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '../user/realName',
+										})
+										console.log('用户点击确定');
+									} else if (res.cancel) {
+										console.log('用户点击取消');
+									}
+								},
+							});
+						}else{
+							that.sendRequest({
+								url: App.spotpay,
+								method: 'POST',
+								data: {"g_id":e},
+								success: (res) => {
+									// console.log(res);
+									that.showToast(1, res.msg);
+									setTimeout(function(){
+										that.module.g_salevol=res.data.g_salevol
+										that.module.total_inv=res.data.total_inv
+									},1000)
+								},
+								complete: ()=> {
+									console.log('执行了')
+									that.disabled=false;
+								},
+							});
+						}
+					},
 				});
-				// this.popupShow = false;
 			},
 			coupon() {
 				uni.navigateTo({
@@ -460,6 +489,7 @@ import App from '../../App.vue'
 
 	.tui-banner-swiper {
 		position: relative;
+		height: 800rpx;
 	}
 	.tui-video__box{
 		width: 166rpx;
@@ -497,6 +527,7 @@ import App from '../../App.vue'
 
 	.tui-slide-image {
 		width: 100%;
+		height: inherit;
 		display: block;
 	}
 

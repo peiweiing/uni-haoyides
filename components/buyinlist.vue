@@ -2,20 +2,24 @@
 	<view class="entrusbuylist">
 		<view class="entrusbuylist_left">
 			<view class="entrusbuylist_left_img">
-				<image :src="imgUrl"></image>
+				<image :src="buyinlist.imgUrl"></image>
 			</view>
-			<view class="entrusbuylist_left_text">{{code}}</view>
+			<view class="entrusbuylist_left_text">
+				{{buyinlist.code}}
+			</view>
 		</view>
 		<view class="entrusbuylist_center" style="flex: 1;">
-			<view class="entrusbuylist_right_title">{{title}}</view>
+			<view class="entrusbuylist_right_title">{{buyinlist.title}}</view>
 			<view class="entrusbuylist_right_price">
-				<view class=""><text>{{g_price}}</text><text>{{price}}</text></view>
-				<view class=""><text>{{g_num}}</text><text>{{num}}</text></view>
+				<text>挂牌价:￥{{buyinlist.price > 999999 ? "999999.00+" : buyinlist.price.toFixed(2)}}</text>
+				<text>数量:{{buyinlist.num > 999 ? '999+' : buyinlist.num}}份</text>
 			</view>
 		</view>
 		<view class="entrusbuylist_right">
 			<view class="tui-btn-box">
-				<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton">{{button}}</tui-button>
+				<tui-button class="ntrusbuylist_right_button" type="green" plain @click="clickButton">
+					{{buyinlist.button}}
+				</tui-button>
 			</view>
 		</view>
 	</view>
@@ -23,16 +27,7 @@
 
 <script>
 	export default {
-		props: {
-			imgUrl:String,
-			code:String,
-			title:String,
-			price:String,
-			num:Number,
-			button:String,
-			g_price:String,
-			g_num:String
-		},
+		props: ["buyinlist"],
 		methods: {
 			clickButton() {
 				this.$emit("click")
@@ -79,13 +74,13 @@
 			flex-direction: column;
 			justify-content: space-between;
 			.entrusbuylist_right_title{
-				font-size: 32rpx;
-				color:#333333;
+				font-size: 26rpx;
+				color:rgba(51,51,51,1);
 			}
 			.entrusbuylist_right_price{
 				display: flex;
 				justify-content: space-between;
-				font-size: 26rpx;
+				font-size: 20rpx;
 				color:rgba(153,153,153,1);
 			}
 		}
@@ -93,10 +88,10 @@
 			display: flex;
 			align-items: center;
 			.ntrusbuylist_right_button{
-				width:160rpx !important;
-				height:60rpx !important;
-				font-size:32rpx !important;
-				line-height:60rpx !important;
+				// width:220rpx !important;
+				height:40rpx !important;
+				font-size:22rpx !important;
+				line-height:40rpx !important;
 				padding: 0 20rpx;
 			}
 		}

@@ -13,11 +13,9 @@
 		<!-- 提货进度 -->
 		<scroll-view scroll-y v-if="currentTab==1">
 			<view style="height: 80rpx;"></view>
-			<view class="error" v-if="dataList_1 !== []">
-				无数据
-				<tui-no-data imgUrl="/static/images/toast/img_nodata.png">
-					暂无数据
-				</tui-no-data>
+			<view class="FY FY-c FX-c" v-if="dataList_1_error" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+				暂无内容
 			</view>
 			<view
 			class="entrusbuylist_2"
@@ -54,9 +52,9 @@
 							<tui-button
 							class="ntrusbuylist_2_right_button"
 							type="green"
-							@click="clickButton()"
+							disabled
 							>
-								库存累计中
+								{{item.pa_status === 0 ? '库存累计中' : '已审核'}}
 							</tui-button>
 						</view>
 					</view>
@@ -95,11 +93,9 @@
 		<!-- 我的库存 -->
 		<scroll-view scroll-y v-if="currentTab==0">
 			<view style="height: 80rpx;"></view>
-			<view class="error" v-if="dataList_2 !== []">
-				无数据
-				<tui-no-data imgUrl="/static/images/toast/img_nodata.png">
-					暂无数据
-				</tui-no-data>
+			<view class="FY FY-c FX-c" v-if="dataList_2_error" style="font-size: 16px;height: calc(80vh);">
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+				暂无内容
 			</view>
 			<view class="entrusbuylist_1" v-for="item in dataList_2">
 				<view class="entrusbuylist_1_left">
@@ -111,12 +107,7 @@
 					</view>
 				</view>
 				<view class="entrusbuylist_1_center" style="flex: 1;">
-					<view
-					class="entrusbuylist_1_right_title"
-					:style="item.g_title === '000' ? 'opacity: 0;' : ''"
-					>
-						{{item.g_title}}
-					</view>
+					<view class="entrusbuylist_1_right_title">{{item.g_title}}</view>
 					<view class="entrusbuylist_1_right_price">
 						<text>价格:￥{{item.g_price}}</text>
 						<text>数量:{{item.g_inv}}份</text>
@@ -148,30 +139,14 @@
 					{name: "提货进度"}
 				],
 				currentTab: 0,
-				dataList_1: [
-					// {
-					// 	g_code: "0000000",
-					// 	g_pic: "",
-					// 	g_price: "00.00",
-					// 	g_title: "000",
-					// 	pa_amount: 0,
-					// 	pa_id: 1
-					// }
-				],
+				dataList_1: [],
 				dataList_1_detail: [],
-				dataList_2: [
-					// {
-					// 	g_code: "0000000",
-					// 	g_inv: 0,
-					// 	g_lockinv: 0,
-					// 	g_pic: "",
-					// 	g_price: "00.00",
-					// 	g_title: "000"
-					// }
-				],
+				dataList_2: [],
 				isactiveMiddle: false,
 				isbuttonRotate: true,
-				bool: -1
+				bool: -1,
+				dataList_2_error: false,
+				dataList_1_error: false
 			}
 		},
 		onLoad: function() {
@@ -199,73 +174,63 @@
 			changeTab: function(e){
 				this.currentTab = e.index
 				if (e.index === 1) {
+					this.dataList_1_error = false
+					this.isLoading_1 = true
 					this.delivergoods()
 				} else if (e.index === 0) {
+					this.dataList_2_error = false
+					this.isLoading_2 = true
 					this.myInv()
 				}
 			},
 			myInv: function() {
 				var that =this;
-				uni.getStorage({
-					key: 'token',
-					success: function (res) {
-						var getres = res.data;
-						uni.request({
-							method: "POST",
-							url: App.myinv,
-							header: {
-								"Authorization": getres
-							},
-							success: res => {
-								console.log(res)
-								if (res.data.status !== 200) {
-									uni.showToast({
-										title: res.data.msg,
-										icon: "none"
-									})
-									that.dataList_2 = []
-								} else {
-									that.dataList_2 = res.data.data
-								}
+				that.sendRequest({
+					method: "POST",
+					url: App.myinv,
+					success: res => {
+						console.log(res)
+						that.isLoading_2 = false
+						if (res.status !== 200) {
+							that.dataList_2_error = true
+						} else {
+							that.dataList_2 = res.data
+							if (that.dataList_2.length === 0) {
+								that.dataList_2_error = true
 							}
-						})
+						}
+					},
+					fail:function(e){
+						console.log("getchannel  fail:", e);
 					}
-				})
+				});
 			},
 			delivergoods: function() {
 				var that =this;
-				uni.getStorage({
-					key: 'token',
-					success: function (res) {
-						var getres = res.data;
-						uni.request({
-							method: "POST",
-							url: App.deliverygoods,
-							header: {
-								"Authorization": getres
-							},
-							success: res => {
-								console.log(res)
-								if (res.data.status !== 200) {
-									uni.showToast({
-										title: res.data.msg,
-										icon: "none"
-									})
-									that.dataList_1 = []
-								} else {
-									that.dataList_1 = res.data.data
-								}
+				that.sendRequest({
+					method: "POST",
+					url: App.deliverygoods,
+					success: res => {
+						console.log(res)
+						that.isLoading_1 = false
+						if (res.status !== 200) {
+							this.dataList_1_error = true
+						} else {
+							that.dataList_1 = res.data
+							if (that.dataList_1.length === 0) {
+								that.dataList_1_error = true
 							}
-						})
+						}
+					},
+					fail:function(e){
+						console.log("getchannel  fail:" + JSON.stringify(e));
 					}
-				})
+				});
 			},
 			clickButton: function(id) {
-				if (id) {
-					uni.navigateTo({
-						url: "./deliveryScheduleDetails?id="+id
-					})
-				}
+				uni.navigateTo({
+					url: "./deliveryScheduleDetails?id="+id
+				})
 			},
 			pickupdetail: function(g_id, pa_id) {
 				if (this.isactiveMiddle) {
@@ -277,26 +242,20 @@
 					}, 500)
 				} else {
 					var that =this;
-					uni.getStorage({
-						key: 'token',
-						success: function (res) {
-							var getres = res.data;
-							uni.request({
-								method: "POST",
-								url: App.deliveryschedule,
-								header: {
-									"Authorization": getres
-								},
-								data: {
-									"pa_id": pa_id
-								},
-								success: res => {
-									console.log(res)
-									that.dataList_1_detail = res.data.data
-								}
-							})
+					that.sendRequest({
+						method: "POST",
+						url: App.deliveryschedule,
+						data: {
+							"pa_id": pa_id
+						},
+						success: res => {
+							console.log(res)
+							that.dataList_1_detail = res.data
+						},
+						fail:function(e){
+							console.log("getchannel  fail:" + JSON.stringify(e));
 						}
-					})
+					});
 					this.bool = pa_id
 					this.isactiveMiddle = !this.isactiveMiddle
 					this.isbuttonRotate = !this.isbuttonRotate
@@ -323,14 +282,6 @@
 		top: 0;
 		bottom: 0;
 		background-color: #EEEEEE;
-	}
-	.error{
-		position: fixed;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background-color: #EEE;
 	}
 	.tabs{
 		position: fixed;

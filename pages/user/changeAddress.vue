@@ -1,6 +1,10 @@
 <template>
 	<view class="tui-safe-area">
-		<view class="tui-address">
+		<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
+			<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
+			暂无内容
+		</view>
+		<scroll-view scroll-y class="tui-address" v-if="!!!nodata">
 			<block v-for="(item,index) in addressList" :key="index">
 				<tui-list-cell padding="0">
 					<view class="tui-address-flex">
@@ -23,56 +27,56 @@
 					</view>
 				</tui-list-cell>
 			</block>
-		</view>
-		<!-- 新增地址 -->
-		<view class="tui-address-new">
-			<tui-button
-			shadow
-			shape="circle"
-			type="danger"
-			height="88rpx"
-			@click="editAddr"
+		</scroll-view>
+		<view class="confirm_box">
+			<button
+			class="tui-button-primary"
+			hover-class="tui-button-hover"
+			formType="submit"
+			type="primary"
+			@click="navigateTo('./newAddress')"
 			>
-				+ 新增收货地址
-			</tui-button>
+				+ 新 增 收 货 地 址
+			</button>
 		</view>
 	</view>
 </template>
 
 <script>
+	import App from "../../App.vue"
 	export default {
 		data() {
 			return {
-				token: "",
+				nodata: false,
 				addressList: []
 			}
 		},
-		onLoad: function(options) {
-			var that =this;
-			uni.getStorage({
-				key: 'token',
-				success: function (res) {
-					var getres = res.data;
-					uni.request({
-						method: "POST",
-						url: "http://api.lovehou.com/api/user/Shippingaddress",
-						header: {
-							"Authorization": getres
-							// "Authorization": "CCE7398F976214F932B340326B7A9C82"
-						},
-						success: res => {
-							console.log(res.data.data)
-							that.addressList = res.data.data
-						}
-					})
-				}
-			})
+		onLoad: async function() {
+			const getAddressList_res = await this.getAddressList();
+			console.log("收货地址列表请求:", getAddressList_res);
+			// 请求是否成功
+			if (getAddressList_res.status !== 200) { this.nodata = true; this.showToast(getAddressList_res.msg); return };
+			// 请求到的数据是否为null
+			if (!!!getAddressList_res.data) { this.nodata = true; return };
+			// 请求到的数据是否空
+			if (getAddressList_res.data.length === 0) { this.nodata = true; return };
+			this.addressList = getAddressList_res.data;
+			// console.log("addressList→", this.addressList);
 		},
-		onShow: function() {},
 		methods: {
-			editAddr() {
-				uni.navigateTo({
-					url: "./newAddress"
+			// 信息反馈
+			showToast: function(data) { uni.showToast({ title: data, icon: "none" }) },
+			// 跳转页面
+			navigateTo: function(url) { uni.navigateTo({ url }) },
+			// 收货地址列表请求
+			getAddressList: async function() {
+				return await new Promise((resolve, reject) => {
+					this.sendRequest({
+						method: "POST",
+						url: App.Shippingaddress,
+						success: res => { resolve(res) },
+						fail: err => { reject(err) }
+					})
 				})
 			}
 		}
@@ -80,10 +84,19 @@
 </script>
 
 <style lang="scss" scoped>
-	.tui-address {
+	.tui-safe-area {
+		box-sizing: border-box;
+		position: absolute;
+		top: 0;
+		bottom: 0;
 		width: 100%;
-		padding-top: 20rpx;
-		padding-bottom: 160rpx;
+		background-color: #EEE;
+	}
+	.tui-address {
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
+		padding-bottom: 180rpx;
 	}
 	.tui-address-flex {
 		display: flex;
@@ -140,20 +153,14 @@
 		width: 36rpx;
 		height: 36rpx;
 	}
-	.tui-address-new {
-		width: 100%;
-		position: fixed;
-		left: 0;
-		bottom: 0;
-		z-index: 999;
-		padding: 20rpx 25rpx 30rpx;
+	.confirm_box{
+		position: absolute;
+		bottom: 80rpx;
+		left: 40rpx;
+		right: 40rpx;
 		box-sizing: border-box;
-		background: #fafafa;
 	}
-	.tui-safe-area {
-		padding-bottom: env(safe-area-inset-bottom);
-	}
-	.tui-address-new /deep/ .tui-shadow-danger{
-		background-color: #9E2036 !important;
+	.tui-button-primary{
+		background-color: #9E2036;
 	}
 </style>

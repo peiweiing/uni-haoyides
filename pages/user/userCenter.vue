@@ -2,9 +2,9 @@
 	<view class="boxcs">
 		<view class="tui-mybg-box">
 			<view class="tui-header-center">
-				<view class="header_image">
-					<!-- <image :src="userInfo.u_avatar" class="tui-avatar"></image> -->
-				</view>
+				<!-- <view class="header_image">
+					<image :src="userInfo.u_avatar" class="tui-avatar"></image>
+				</view> -->
 				<view class="tui-info">
 					<view class="tui-nickname">
 						{{userInfo.u_acc}}
@@ -17,10 +17,10 @@
 					type="white"
 					:plain="true"
 					shape="circle"
-					width="128rpx"
-					height="40rpx"
-					:size="22"
-					@click="goRealName"
+					width="160rpx"
+					height="60rpx"
+					:size="28"
+					@click="navigateTo('./realName')"
 					>
 					实名认证</tui-button>
 				</view>
@@ -31,13 +31,13 @@
 				<view class="tui-order-list">
 					<view class="tui-order-item">
 						<view class="tui-icon-box">
-							￥{{userInfo.total_acc}}
+							￥{{Number(userInfo.total_acc).toFixed(2)}}
 						</view>
 						<view class="tui-order-text">总资产</view>
 					</view>
 					<view class="tui-order-item">
 						<view class="tui-icon-box">
-							{{userInfo.g_inv+userInfo.g_lockinv}}
+							{{userInfo.total_inv}}
 						</view>
 						<view class="tui-order-text">总库存</view>
 					</view>
@@ -55,14 +55,24 @@
 					</view>
 				</view>
 				<tui-list-cell class="balance">
-					<view class="balance_text">账户余额：
+					<view class="balance_text">账户余额:
 						<text class="balance_textNum">￥{{userInfo.bal_trades}}</text>
 					</view>
 					<view>
-						<tui-button class="tui-btn-balance">充值</tui-button>
+						<tui-button
+						class="tui-btn-balance green_button"
+						@click="navigateTo('./recharge')"
+						>
+							充值
+						</tui-button>
 					</view>
 					<view>
-						<tui-button class="tui-btn-balance">提现</tui-button>
+						<tui-button
+						class="tui-btn-balance red_button"
+						@click="navigateTo('./withdrawal')"
+						>
+							提现
+						</tui-button>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell class="yesterday_detail" :arrow="true">
@@ -72,29 +82,47 @@
 				</tui-list-cell>
 			</view>
 			<tui-grid>
-				<block v-for="(item,index) in dataList" :key="index">
-					<tui-grid-item :cell="3" @click="details(item.url)" class="tui-grid-item">
+				<view v-for="(item,index) in dataList" :key="index" class="liuShui">
+					<view :cell="3" @click="navigateTo(item.url)" class="tui-grid-item">
 						<view class="tui-grid-icon">
 							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
 						</view>
 						<text class="tui-grid-label">{{item.title}}</text>
-					</tui-grid-item>
-				</block>
+					</view>
+				</view>
 			</tui-grid>
 				<image style="width: 100%;height: 200rpx;" src="../../static/img/userimg.png" mode=""></image>
-			<tui-list-cell @click="changeAddress" :arrow="true">
+			<tui-list-cell @click="navigateTo('./changeAddress')" :arrow="true">
 				<view class="tui-item-box">
 					<tui-icon name="position" :size="24" color="#ff7900"></tui-icon>
 					<text class="tui-list-cell_name">修改地址</text>
 				</view>
 			</tui-list-cell>
-			<tui-list-cell @click="detail" :arrow="true">
+			<tui-list-cell @click="navigateTo('./changePassword')" :arrow="true">
 				<view class="tui-item-box">
 					<tui-icon name="setup" :size="24" color="#5677fc"></tui-icon>
 					<view class="tui-list-cell_name">修改密码</view>
 				</view>
 			</tui-list-cell>
+			<tui-list-cell @click='openActionSheet' :arrow="true">
+				<view class="tui-item-box">
+					<tui-icon name="revoke" :size="24" color="#FF0000"></tui-icon>
+					<view class="tui-list-cell_name">退出登录</view>
+				</view>
+			</tui-list-cell>
 		</view>
+		<!-- 底部退出登录弹窗 -->
+		<tui-actionsheet
+		:show="showActionSheet"
+		:tips="tips"
+		:item-list="itemList"
+		:mask-closable="maskClosable"
+		:color="color"
+		:size="size"
+		:is-cancel="isCancel"
+		@click="itemClick"
+		@cancel="closeActionSheet"
+		></tui-actionsheet>
 	</view>
 </template>
 
@@ -104,7 +132,6 @@
 		data() {
 			return {
 				mobile: "",
-				token: "",
 				userInfo: {
 					bal_point: "00.00",
 					bal_trades: "00.00",
@@ -112,71 +139,82 @@
 					g_lockinv: 0,
 					u_avatar: "../../static/img/headerImg.jpg",
 					u_nickname: "",
-					u_acc: "暂无",
+					u_acc: "加载中...",
 					total_acc: 0
 				},
 				dataList: [
-					{name: "wallet",title: "我的库存",color: "#9E2036",size: 30,url:"pickupProgress"},
-					{name: "feedback",title: "资金流水",color: "#9E2036",size: 30,url:""},
-					{name: "nodata",title: "积分流水",color: "#9E2036",size: 30,url:""}
+					{name: "feedback",title: "资金流水",color: "#9E2036",size: 30,url:"./capital"},
+					{name: "nodata",title: "积分流水",color: "#9E2036",size: 30,url:"./integral"}
 				],
 				banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
-				current: 0
+				current: 0,
+				// 底部退出登录弹窗
+				showActionSheet: false,
+				maskClosable: true,
+				tips: "退出登录会清除您的登录信息，确认退出吗？",
+				itemList: [{ text: "退出登录", color: "#E3302D" }],
+				color: "#9a9a9a",
+				size: 26,
+				isCancel: true
 			}
 		},
 		onShow: function() {
 			var that =this;
-			uni.getStorage({
-				key: 'token',
-				success: function (res) {
-					var getres = res.data;
-					uni.request({
-						method: "POST",
-						url: App.index,
-						header: {
-							"Authorization": getres
-						},
-						success: res => {
-							console.log(res)
-							if (res.data.status === 200) {
-								const data = res.data.data
-								data.bal_point ? that.userInfo.bal_point = Number(data.bal_point).toFixed(2) : ''
-								data.bal_trades ? that.userInfo.bal_trades = data.bal_trades : ''
-								data.g_inv ? that.userInfo.g_inv = data.g_inv : ''
-								data.g_lockinv ? that.userInfo.g_lockinv = data.g_lockinv : ''
-								data.u_avatar ? that.userInfo.u_avatar = data.u_avatar : ''
-								data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
-								data.u_acc ? that.userInfo.u_acc = data.u_acc : ''
-								data.total_acc ? that.userInfo.total_acc = data.total_acc : ''
-							} else {
-								uni.showToast({
-									title: res.data.msg,
-									icon: "none"
-								})
-							}
-						}
-					})
+			that.sendRequest({
+				method: "POST",
+				url: App.index,
+				success: res => {
+					if (res.status === 200) {
+						const data = res.data
+						data.bal_point ? that.userInfo.bal_point = Number(data.bal_point).toFixed(2) : ''
+						data.bal_trades ? that.userInfo.bal_trades = data.bal_trades : ''
+						data.g_inv ? that.userInfo.g_inv = data.g_inv : ''
+						data.g_lockinv ? that.userInfo.g_lockinv = data.g_lockinv : ''
+						data.u_avatar ? that.userInfo.u_avatar = data.u_avatar : ''
+						data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
+						data.u_acc ? that.userInfo.u_acc = data.u_acc : ''
+						data.total_acc ? that.userInfo.total_acc = data.total_acc : ''
+						that.userInfo.total_inv = data.total_inv
+					} else {
+						this.showToast(res.msg)
+					}
 				}
 			})
 		},
 		methods: {
-			change: function(e) {
-				this.current = e.detail.current;
-			},
+			// 信息反馈
+			showToast: function(data) { uni.showToast({ title: data, icon: "none", mask: true }) },
+			change: function(e) { this.current = e.detail.current; },
 			details: function(e) {
-				console.log(e)
+				console.log(e);
 				uni.navigateTo({
 					url: '/pages/user/'+e
 				});
 			},
-			goRealName: function() {
-				uni.navigateTo({
-					url: "./realName"
-				})
-			},
-			changeAddress: function() {
-				uni.navigateTo({
-					url: "./changeAddress"
+			// 跳转页面
+			navigateTo: function(url) { uni.navigateTo({ url }) },
+			// 底部退出登录弹窗
+			closeActionSheet: function() { this.showActionSheet = false; },
+			openActionSheet: function() { this.showActionSheet = true; },
+			itemClick: function(e) {
+				let index = e.index;
+				this.closeActionSheet();
+				var _this = this;
+				_this.sendRequest({
+					method: "POST",
+					url: App.logout,
+					success: res => {
+						if (res.status === 200) {
+							uni.clearStorageSync();
+							_this.showToast("退出成功！即将跳转至登录页面...");
+							setTimeout(() => { uni.navigateTo({ url: "../login/login" }) }, 2000);
+						} else {
+							_this.showToast(res.msg + "操作失败！请重试...");
+						}
+					},
+					fail: err => {
+						_this.showToast(err.msg + "操作失败！请重试...");
+					}
 				})
 			}
 		}
@@ -191,12 +229,16 @@
 	}
 	.tui-icon-box {
 		position: relative;
-		font-size: 38rpx;
+		font-size: 40rpx;
 		color: #FF0000;
 		font-weight: bold;
 	}
 	.boxcs{
-		background-color: #fff;
+		background-color: #FFF;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 100%;
 	}
 	.tui-mybg-box {
 		width: 100%;
@@ -222,26 +264,19 @@
 		display: block;
 		overflow: hidden;
 		border-radius: 50%;
-		// border: 2rpx solid #EEE;
 		.tui-avatar{
 			width: 100%;
 			height: 100%;
 		}
 	}
-	/* .tui-avatar {
-		flex-shrink: 0;
-		width: 128rpx;
-		height: 128rpx;
-		display: block;
-	} */
 	.tui-info {
 		width: 60%;
-		padding-left: 30rpx;
+		padding-left: 80rpx;
 
 	}
 	.tui-nickname {
-		font-size: 32rpx;
-		font-weight: 500;
+		font-size: 40rpx;
+		font-weight: lighter;
 		color: #fff;
 		display: flex;
 		align-items: center;
@@ -261,10 +296,6 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-	.tui-btn-edit {
-		flex-shrink: 0;
-		padding-right: 22rpx;
 	}
 	.tui-content-box {
 		width: 100%;
@@ -298,7 +329,7 @@
 		justify-content: space-around;
 	}
 	.tui-order-text {
-		font-size: 24rpx;
+		font-size: 26rpx;
 		color: #999999;
 	}
 	.tui-tool-box {
@@ -332,6 +363,12 @@
 		height: 60rpx !important;
 		line-height: 60rpx !important;
 	}
+	.green_button{
+		background-color: #07C160 !important;
+	}
+	.red_button{
+		background-color: #9E2036 !important;
+	}
 	.center_swiper{
 		width: 100%;
 		margin: 20rpx 0;
@@ -354,12 +391,11 @@
 		align-items: center;
 	}
 	.yesterday_text{
-		font-size: 24rpx;
+		font-size: 26rpx;
 		color: #999;
 	}
 	.yesterday_text_center{
-		font-size: 30rpx;
-		font-weight: bold;
+		font-size: 32rpx;
 		color: #FF0000;
 	}
 	.tui-title {
@@ -369,6 +405,11 @@
 		box-sizing: border-box;
 		font-weight: bold;
 		clear: both;
+	}
+	/deep/ .tui-grids{
+		padding: 30rpx 0;
+		display: flex !important;
+		justify-content: space-around !important;
 	}
 	.tui-grid-icon {
 		width: 64rpx;
@@ -382,21 +423,18 @@
 		text-align: center;
 		font-weight: 400;
 		color: #999;
-		font-size: 24rpx;
+		font-size: 26rpx;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		margin-top: 10rpx;
-	}
-	.tui-grid-label-5 {
-		margin-top: 0 !important;
-		color: #8a5966 !important;
 	}
 	.tui-item-box{
 		display: flex;
 		align-items: center;
 	}
 	.tui-list-cell_name{
-		padding-left: 10rpx;
+		padding-left: 20rpx;
+		font-size: 34rpx;
 	}
 </style>

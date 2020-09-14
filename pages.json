@@ -1,9 +1,9 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "好得益健康商城"
+				"navigationBarTitleText": "好益得健康商城"
 			}
 		}
         ,{
@@ -24,7 +24,7 @@
         ,{
             "path" : "pages/list/market",
 			"style": {
-				"navigationBarTitleText": "行情"
+				"navigationBarTitleText": "交易行情"
 			}
         }
         ,{
@@ -43,9 +43,9 @@
 			}
         }
         ,{
-            "path" : "pages/user/pickupProgress",
+            "path" : "pages/buy/pickupProgress",
 			"style": {
-				"navigationBarTitleText": "我的库存"
+				"navigationBarTitleText": "提 货"
 			}
         }
         ,{
@@ -60,18 +60,18 @@
 				"navigationBarTitleText": "现货买入"
 			}
         }
-        ,{
-            "path" : "pages/buy/EntrusBuyList",
-			"style": {
-				"navigationBarTitleText": "摘牌买入"
-			}
-        }
-        ,{
-            "path" : "pages/buy/entrusSellList",
-			"style": {
-				"navigationBarTitleText": "摘牌卖出"
-			}
-        }
+   //      ,{
+   //          "path" : "pages/buy/EntrusBuyList",
+			// "style": {
+			// 	"navigationBarTitleText": "摘牌买入"
+			// }
+   //      }
+   //      ,{
+   //          "path" : "pages/buy/entrusSellList",
+			// "style": {
+			// 	"navigationBarTitleText": "摘牌卖出"
+			// }
+   //      }
         ,{
             "path" : "pages/list/distGoodsDetails",
 			"style": {
@@ -96,13 +96,13 @@
         ,{
             "path" : "pages/buy/consignmentSale",
             "style" : {
-				"navigationBarTitleText": "委托卖出"
+				"navigationBarTitleText": "卖 出"
 			}
         }
         ,{
             "path" : "pages/buy/entrustedPurchase",
             "style" : {
-				"navigationBarTitleText": "委托买入"
+				"navigationBarTitleText": "买 入"
 			}
         }
         ,{
@@ -112,7 +112,7 @@
 			}
         }
         ,{
-            "path" : "pages/user/deliveryScheduleDetails",
+            "path" : "pages/buy/deliveryScheduleDetails",
             "style" : {
 				"navigationBarTitleText": "选择提货明细"
 			}
@@ -128,6 +128,54 @@
           "style" : {
           	"navigationBarTitleText": "新增收货地址"
           }
+        }
+        ,{
+            "path" : "pages/user/changePassword",
+          "style" : {
+          	"navigationBarTitleText": "修改密码"
+          }
+        }
+        ,{
+            "path" : "pages/user/capital",
+          "style" : {
+          	"navigationBarTitleText": "资金流水"
+          }
+        }
+		,{
+		    "path" : "pages/user/integral",
+		  "style" : {
+		  	"navigationBarTitleText": "积分流水"
+		  }
+		}
+        ,{
+            "path" : "pages/user/withdrawal",
+		  "style" : {
+		  	"navigationBarTitleText": "提 现"
+		  }
+        }
+        ,{
+            "path" : "pages/buy/xianHuo",
+		  "style" : {
+		  	"navigationBarTitleText": "现货库存"
+		  }
+        }
+        ,{
+            "path" : "pages/buy/dongJie",
+		  "style" : {
+		  	"navigationBarTitleText": "冻结库存"
+		  }
+        }
+        ,{
+            "path" : "pages/buy/deliveryDetails",
+		  "style" : {
+		  	"navigationBarTitleText": "选择提货明细"
+		  }
+        }
+        ,{
+            "path" : "pages/buy/wholesaleDetail",
+		  "style" : {
+		  	"navigationBarTitleText": "批发明细"
+		  }
         }
     ],
 	"easycom": {
@@ -160,13 +208,13 @@
 			},
 			{
 				"pagePath": "pages/list/market",
-				"text": "行情",
+				"text": "交易行情",
 				"iconPath": "static/img/three.png",
 				"selectedIconPath": "static/img/threes.png"
 			},
 			{
 				"pagePath": "pages/user/userCenter",
-				"text": "我的",
+				"text": "个人中心",
 				"iconPath": "static/img/user.png",
 				"selectedIconPath": "static/img/users.png"
 			}
