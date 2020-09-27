@@ -160,22 +160,22 @@
 					success: function (res) {
 						console.log(res.data);
 						that.user = res.data
-						// if(that.user!=1){
-						// 	uni.showModal({
-						// 		title: '提示',
-						// 		content: '请先实名认证',
-						// 		success: function (res) {
-						// 			if (res.confirm) {
-						// 				uni.navigateTo({
-						// 					url: '../user/realName',
-						// 				})
-						// 				console.log('用户点击确定');
-						// 			} else if (res.cancel) {
-						// 				console.log('用户点击取消');
-						// 			}
-						// 		},
-						// 	});
-						// }else{
+						if(that.user!=1){
+							uni.showModal({
+								title: '提示',
+								content: '请先实名认证',
+								success: function (res) {
+									if (res.confirm) {
+										uni.navigateTo({
+											url: '../user/realName',
+										})
+										console.log('用户点击确定');
+									} else if (res.cancel) {
+										console.log('用户点击取消');
+									}
+								},
+							});
+						}else{
 							if(that.total!=''&&that.conTotal!=''&&that.total==that.conTotal){
 								// 请求:
 								that.sendRequest({
@@ -204,7 +204,7 @@
 								});
 							}
 							
-						// }
+						}
 					},
 				});
 				
