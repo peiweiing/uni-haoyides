@@ -45,10 +45,11 @@
 						</view>
 					</tui-list-cell>
 				</view>
-				<view class="choose">
+				
+				<!-- <view class="choose">
 					请选择支付方式
-				</view>
-				<view class="info">
+				</view> -->
+				<!-- <view class="info">
 					<tui-list-cell @click="changePay(1)">
 						<view class="payment_cho">
 							<view class="payment">
@@ -87,13 +88,21 @@
 							></tui-icon>
 						</view>
 					</tui-list-cell>
-				</view>
+				</view> -->
 			</scroll-view>
 			<view class="confirm_box">
-				<button
+				<!-- <button
 				class="tui-button-primary"
 				hover-class="tui-button-hover"
 				formType="submit"
+				type="primary"
+				>
+					确 认 充 值
+				</button> -->
+				<button
+				class="tui-button-primary"
+				hover-class="tui-button-hover"
+				@tap="onrecharges"
 				type="primary"
 				>
 					确 认 充 值
@@ -141,6 +150,65 @@
 					default: break;
 				}
 				this.$refs.toast.show(params)
+			},
+			onrecharges(){
+				let that =this;
+				let data ={payChoose:that.payChoose,money:that.total};
+				
+				uni.getStorage({
+					key: 'user',
+					success: function (res) {
+						console.log(res.data);
+						that.user = res.data
+						// if(that.user!=1){
+						// 	uni.showModal({
+						// 		title: '提示',
+						// 		content: '请先实名认证',
+						// 		success: function (res) {
+						// 			if (res.confirm) {
+						// 				uni.navigateTo({
+						// 					url: '../user/realName',
+						// 				})
+						// 				console.log('用户点击确定');
+						// 			} else if (res.cancel) {
+						// 				console.log('用户点击取消');
+						// 			}
+						// 		},
+						// 	});
+						// }else{
+							if(that.total!=''&&that.conTotal!=''&&that.total==that.conTotal){
+								// 请求:
+								that.sendRequest({
+									url :App.getRechargeInfo,
+									method:'POST',
+									data:data,
+									success : function(res){
+										console.log("确认充值",res.data)
+										let data = res.data;
+										let datas = encodeURIComponent(JSON.stringify(data))
+										uni.navigateTo({
+											url:"recharges?data="+ datas
+										})
+										that.total = ""; // 输入金额输入框清零
+										that.conTotal = ""; // 确认金额输入框清零
+									},
+									fail:function(e){
+										console.log("index_1  fail:" + JSON.stringify(e));
+									}
+								});
+								
+							}else{
+								uni.showToast({
+									icon: 'none',
+									title: '请查看金额是否填写异常'
+								});
+							}
+							
+						// }
+					},
+				});
+				
+				
 			},
 			// 表单提交
 			formSubmit: async function(e) {
@@ -245,7 +313,8 @@
 						fail: err => { reject(err) }
 					})
 				})
-			}
+			},
+			
 		}
 	}
 </script>

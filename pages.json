@@ -182,6 +182,12 @@
           	"navigationBarTitleText": "收银台"
           }
         }
+        ,{
+            "path" : "pages/user/recharges",
+          "style" : {
+          	"navigationBarTitleText": "确认充值"
+          }
+        }
     ],
 	"easycom": {
 		"autoscan": true,

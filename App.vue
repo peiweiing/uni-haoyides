@@ -1,7 +1,7 @@
 <script>
 // 域名
-	 const hostname= "http://api.gdyingshi.cn/api/"
-	// const hostname= "http://api.lovehou.com/api/"
+	 // const hostname= "http://api.gdyingshi.cn/api/"
+	const hostname= "http://api.lovehou.com/api/"
 // 版本更新
 	const getversion = hostname+"getversion";
 // 账号登录
@@ -102,6 +102,11 @@
 	const pickupBefore = hostname+"order/pickupBefore";
 //充值
 	const recharge = hostname+"order/recharge";
+	
+//充值信息
+	const getRechargeInfo = hostname+"user/getRechargeInfo";
+//确认充值详情
+	const createRecharge = hostname+"user/createRecharge";
 //注销登录
 	const logout = hostname+"logout";
 //修改密码
@@ -146,7 +151,7 @@ export default {
 		withdrawaladd,withdrawallist,allEntrusList,goodslist,statistics,addShippin,
 		delShippin,detailShipin,setDefaultShip,editShippin,pickupBefore,orderinfo,
 		payorder,pforderinfo,pfpayorder,entrustOrderInfo,entrustPayOrder,
-		getlunbo,
+		getlunbo,getRechargeInfo,createRecharge,
 		
 	onLaunch: function() {
 			let that = this;

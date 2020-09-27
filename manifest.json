@@ -103,26 +103,26 @@
             "splashscreen" : {
                 "androidStyle" : "default",
                 "android" : {
-                    "hdpi" : "static/20200908111231.png",
-                    "xhdpi" : "static/20200908111231.png",
-                    "xxhdpi" : "static/20200908111231.png"
+                    "hdpi" : "static/20200927115851.png",
+                    "xhdpi" : "static/20200927115851.png",
+                    "xxhdpi" : "static/20200927115851.png"
                 },
                 "iosStyle" : "default",
                 "ios" : {
                     "iphone" : {
-                        "portrait-896h@3x" : "static/20200908111231.png",
-                        "landscape-896h@3x" : "static/20200908111231.png",
-                        "portrait-896h@2x" : "static/20200908111231.png",
-                        "retina47l" : "static/20200908111231.png",
-                        "retina47" : "static/20200908111231.png",
-                        "retina55l" : "static/20200908111231.png",
-                        "retina55" : "static/20200908111231.png",
-                        "iphonexl" : "static/20200908111231.png",
-                        "iphonex" : "static/20200908111231.png",
-                        "landscape-896h@2x" : "static/20200908111231.png",
-                        "retina35" : "static/20200908111231.png",
-                        "retina40l" : "static/20200908111231.png",
-                        "retina40" : "static/20200908111231.png"
+                        "portrait-896h@3x" : "static/20200927115851.png",
+                        "landscape-896h@3x" : "static/20200927115851.png",
+                        "portrait-896h@2x" : "static/20200927115851.png",
+                        "retina47l" : "static/20200927115851.png",
+                        "retina47" : "static/20200927115851.png",
+                        "retina55l" : "static/20200927115851.png",
+                        "retina55" : "static/20200927115851.png",
+                        "iphonexl" : "static/20200927115851.png",
+                        "iphonex" : "static/20200927115851.png",
+                        "landscape-896h@2x" : "static/20200927115851.png",
+                        "retina35" : "static/20200927115851.png",
+                        "retina40l" : "static/20200927115851.png",
+                        "retina40" : "static/20200927115851.png"
                     }
                 }
             }
