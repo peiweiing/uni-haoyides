@@ -215,6 +215,9 @@
 			font-size: 32rpx;
 		}
 	}
+	.pifa_1>view:last-child .pifa_2{
+		border: none;
+	}
 	.kucun_1{
 		display: flex;
 		padding: 40rpx 0;
@@ -237,6 +240,9 @@
 		.kucun_text{
 			font-size: 32rpx;
 		}
+	}
+	.kucun_1>view:last-child .kucun_2{
+		border: none;
 	}
 }
 

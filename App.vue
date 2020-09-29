@@ -1,7 +1,7 @@
 <script>
 // 域名
-	 // const hostname= "http://api.gdyingshi.cn/api/"
-	const hostname= "http://api.lovehou.com/api/"
+	 const hostname= "http://api.gdyingshi.cn/api/"
+	// const hostname= "http://api.lovehou.com/api/"
 // 版本更新
 	const getversion = hostname+"getversion";
 // 账号登录
@@ -137,6 +137,8 @@
 	const entrustOrderInfo = hostname+"goodsinstock/entrustOrderInfo";
 //收银台支付方式-摘牌买入
 	const entrustPayOrder = hostname+"goodsinstock/entrustPayOrder";
+//分享图片获取
+	const shareimg = hostname+"user/shareimg";
 export default {
 		login,verifyCode,register,
 		// updatepwd,
@@ -151,12 +153,12 @@ export default {
 		withdrawaladd,withdrawallist,allEntrusList,goodslist,statistics,addShippin,
 		delShippin,detailShipin,setDefaultShip,editShippin,pickupBefore,orderinfo,
 		payorder,pforderinfo,pfpayorder,entrustOrderInfo,entrustPayOrder,
-		getlunbo,getRechargeInfo,createRecharge,
+		getlunbo,getRechargeInfo,createRecharge,shareimg,
 		
 	onLaunch: function() {
 			let that = this;
 			// 获取应用版本
-			let current_ver = 156;
+			let current_ver = 158;
 			// plus.runtime.getProperty(plus.runtime.appid, function(inf) {
 			// 	console.log(inf.version);
 			// });
@@ -167,7 +169,8 @@ export default {
 				success: (res) => {
 					if(current_ver<res.data.data.current_ver){
 						uni.showModal({
-							title: '检测到新的版本，是否更新',
+							showCancel:false,
+							title: '检测到新的版本，立即更新',
 							content: res.data.data.update_note,
 							success: function (ok) {
 								if (ok.confirm) {

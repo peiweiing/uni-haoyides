@@ -3,7 +3,7 @@
 		
 			<view class="info">
 				<tui-list-cell :hover="false">
-					<view class="tui-line-cell" style="font-size: 20px;">
+					<view class="tui-line-cell f-bold" style="font-size: 16px;">
 						为方便确认您的充值金额，请充值以下金额：
 					</view>
 					
@@ -11,14 +11,23 @@
 						<tui-tag margin="20rpx 20rpx 0 0" type="light-green" @click="show">{{orderInfo}}</tui-tag>
 					</view> -->
 					<view class="box FX-c">
-						<view class="item tui-light-primary">
-							<view class="color">{{orderInfo}} 元</view>
+						<view class="item tui-light-primary F-xy">
+							<view>{{orderInfo}} 元</view>
 						</view>
 					</view>
 				</tui-list-cell> 
+				
 				<tui-list-cell :hover="false">
-					<view class="tui-line-cell" style="font-size: 20px;">
-						长按图片保存二维码到手机相册，并使用微信或支付宝扫一扫：
+					<view class="tui-line-cell f-bold FX" style="font-size: 16px;">
+						<text>
+							长按图片保存二维码到手机相册，并使用
+							<text v-show="types=='微信'" style="color: red;font-size: 18px;">微信</text>
+							<text v-show="types=='支付宝'" style="color: red;font-size: 18px;">支付宝</text>
+							<!-- <text v-if="types=='微信'" style="color: red;font-size: 18px;">微信</text>
+							<text v-if="types=='支付宝'" style="color: red;font-size: 18px;">支付宝</text> -->
+							扫一扫：
+						</text>
+						
 					</view>
 					<!-- <swiper :autoplay="true" :interval="5000" :duration="150" :circular="true" style="height: 550rpx;"
 						 @change="bannerChange">
@@ -34,23 +43,31 @@
 							<image :src="banner" style="width: 70%;height: 500rpx;padding: 4%;"/>
 						</view>
 					</view> -->
-					<view :autoplay="true" :interval="5000" :duration="150" :circular="true" style="height: 550rpx;"
+					<view :autoplay="true" :interval="5000" :duration="150" :circular="true"
 						 @change="bannerChange">
 						<view class="FX-c" @longtap="previewImage(banner)">
-							<image :src="banner" style="width: 70%;height: 500rpx;padding: 4%;"/>
+							<!-- <image :src="banner" style="width: 60%;padding: 4%;"/> -->
+							<image :src="banner" mode="heighFix" style="width: 60%;"></image>
 						</view>
 					</view>
 				</tui-list-cell>
+				
+				<tui-list-cell :hover="false">
+					<view class="tui-line-cell f-bold" style="font-size: 16px;">
+						请在30分钟之内完成支付，否则订单自动失效
+					</view>
+				</tui-list-cell> 
+				
 			</view>
 				
 			
-			<view>
+			<view class="butn">
 				<button
+				:disabled="disabled"
 				class="tui-button-primary"
 				hover-class="tui-button-hover"
 				@tap="payment"
 				type="primary"
-				style="margin: 4%;"
 				>
 					我已付款
 				</button>
@@ -74,17 +91,42 @@
 				total: "" , // 充值金额
 				conTotal: "", // 确认充值金额
 				orderInfo: "", // 订单信息
-				
+				types:'',
+				disabled:false,
 			}
 		},
-		onLoad(e) {
-			const datas = JSON.parse(decodeURIComponent(e.data));
-			this.pid = datas.paymentinfo.id;
-			this.banner=datas.paymentinfo.image_url;
-			this.orderInfo=datas.total_money;
+		// onLoad(e) {
+		// 	const datas = JSON.parse(decodeURIComponent(e.data));
+		// 	this.types = datas.paymentinfo.type;
+		// 	this.pid = datas.paymentinfo.id;
+		// 	this.banner=datas.paymentinfo.image_url;
+		// 	this.orderInfo=datas.total_money;
 			
-			console.log(datas);
-			console.log(this.banner);
+		// 	console.log(datas);
+		// 	console.log(this.banner);
+		// },
+		onLoad(e) {
+			console.log(e);
+			let that =this;
+			let data ={money:e.money};
+			that.sendRequest({
+				url :App.getRechargeInfo,
+				method:'POST',
+				data:data,
+				success : function(res){
+					console.log("确认充值",res.data)
+					let datas = res.data;
+					that.types = datas.paymentinfo.type;
+					that.pid = datas.paymentinfo.id;
+					that.banner=datas.paymentinfo.image_url;
+					that.orderInfo=datas.total_money;
+					console.log("types",that.types);
+					console.log("typesreq",datas.paymentinfo.type);
+				},
+				fail:function(e){
+					console.log("fail:" + JSON.stringify(e));
+				}
+			});
 		},
 		methods: {
 			
@@ -148,6 +190,7 @@
 			payment(){
 				let that =this;
 				let data ={payment_id:that.pid,total_money:that.orderInfo};
+				that.disabled=true;
 				that.sendRequest({
 					url :App.createRecharge,
 					method:'POST',
@@ -165,18 +208,20 @@
 											url: './userCenter',
 										})
 										console.log('用户点击确定');
-										that.total = ""; // 输入金额输入框清零
-										that.conTotal = ""; // 确认金额输入框清零
 									}
 								},
 							});
-							
+							// that.disabled=false;
 						}
 				
 					},
 					fail:function(e){
-						console.log("index_1  fail:" + JSON.stringify(e));
-					}
+						console.log("fail:" + JSON.stringify(e));
+					},
+					complete:function(e){
+						console.log("complete:" + JSON.stringify(e));
+						that.disabled=false;
+					},
 				});
 			},
 			
@@ -189,10 +234,8 @@
 	.recharge{
 		min-height: calc(100vh);
 		box-sizing: border-box;
-		position: absolute;
-		top: 0;
-		bottom: 0;
 		width: 100%;
+		padding: 2%;
 		background-color: #EEE;
 	}
 	.container {
@@ -202,7 +245,9 @@
 		box-sizing: border-box;
 		padding-bottom: 180rpx;
 	}
-	
+	uni-button[disabled]{
+		background-color: #9E2036;
+	}
 	.tui-flex-box {
 		width: 100%;
 		display: flex;
@@ -231,6 +276,9 @@
 			justify-content: space-between;
 			font-size: 24px;
 		}
+	}
+	.tui-light-primary{
+		background-image:linear-gradient(to right,#5c8dff, #00aaff,#5c8dff);
 	}
 	// .box .item:target,.box .item:hover{
 	// 	border: 1px solid #000;
@@ -278,6 +326,9 @@
 		left: 40rpx;
 		right: 40rpx;
 		box-sizing: border-box;
+	}
+	.butn{
+		margin-top: 6%;
 	}
 	.tui-button-primary{
 		background-color: #9E2036;

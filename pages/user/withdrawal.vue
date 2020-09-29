@@ -84,9 +84,9 @@
 						<text class="info_2_font">成功提现</text>
 					</view>
 				</view>
-				<view class="info_3">
+				<!-- <view class="info_3">
 					预计到账时间2个工作日内
-				</view>
+				</view> -->
 			</view>
 		</scroll-view>
 		<!-- 提现进度 -->

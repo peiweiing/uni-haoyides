@@ -4,7 +4,7 @@
 			<view class="tui-header-center">
 				<view class="header_image">
 					<!-- <image :src="userInfo.u_avatar" class="tui-avatar" v-if="userInfo.u_avatar"></image> -->
-					<image src="../../static/img/touxiang.png" class="tui-avatar"></image>
+					<image src="../../static/img/txnew.png" class="tui-avatar"></image>
 				</view>
 				<view class="tui-info">
 					<view class="tui-nickname">
@@ -28,7 +28,7 @@
 					>
 					实名认证
 					</tui-button>
-					<view class="" style="color: #fff; margin-left: -20rpx; font-size: 16px;">
+					<view class="" style="color: #fff; margin-left: -20rpx; font-size: 16px;line-height: 16px;">
 						>
 					</view>
 					<!-- <tui-list-cell class="yesterday_detail" :arrow="true" style="width: 10%;padding: 0;">	 -->
@@ -112,7 +112,7 @@
 					</view>
 				</view>
 			</tui-grid>
-				<image style="width: 100%;height: 200rpx;" src="../../static/img/20200914101930.jpg" mode=""></image>
+				<image style="width: 100%;height: 200rpx;" src="../../static/img/20200914101930.jpg" mode="" @tap="onimg()"></image>
 			<tui-list-cell @click="navigateTo('./changeAddress')" :arrow="true">
 				<view class="tui-item-box">
 					<tui-icon name="position" :size="24" color="#ff7900"></tui-icon>
@@ -205,6 +205,11 @@
 			})
 		},
 		methods: {
+			onimg(){
+				uni.navigateTo({
+					url: './distribution'
+				});
+			},
 			proper(){
 				console.log("dianji")
 				this.property=false;
@@ -309,7 +314,7 @@
 		overflow: hidden;
 		border-radius: 50%;
 		box-sizing: border-box;
-		border: 4rpx solid #999999;
+		// border: 4rpx solid #999999;
 		.tui-avatar{
 			width: 100%;
 			height: 100%;
@@ -504,6 +509,9 @@
 	}
 	.tui-cell-hover{
 		background-color: rgb(255,255,255)!important;
+	}
+	.tui-list-cell::after{
+		border:none!important;
 	}
 	.tui-list-cell_name{
 		padding-left: 20rpx;

@@ -6,81 +6,33 @@
 					<view class="tui-title">
 						姓<text style="opacity: 0;">一</text>名
 					</view>
-					<input
-					:focus="isInputFocus_1"
-					placeholder-class="tui-phcolor"
-					class="tui-input"
-					name="name"
-					:disabled="isRealName"
-					:placeholder="isRealName ? u_info.u_name : '请输入姓名'"
-					maxlength="50"
-					type="text"
-					v-model="realname"
-					/>
+					<input :focus="isInputFocus_1" placeholder-class="tui-phcolor" class="tui-input" name="name" :disabled="isRealName" :placeholder="isRealName ? u_info.u_name : '请输入姓名'" maxlength="50" type="text" v-model="realname"/>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
 					<view class="tui-title">身份证</view>
-					<input
-					:focus="isInputFocus_2"
-					placeholder-class="tui-phcolor"
-					class="tui-input"
-					name="idcard"
-					:disabled="isRealName"
-					:placeholder="isRealName ? u_info.u_idcard.toString() : '请输入身份证号码'"
-					maxlength="50"
-					type="text"
-					v-model="idcard"
-					/>
+					<input :focus="isInputFocus_2" placeholder-class="tui-phcolor" class="tui-input" name="idcard" :disabled="isRealName" :placeholder="isRealName ? u_info.u_idcard.toString() : '请输入身份证号码'" maxlength="50" type="text" v-model="idcard"/>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
 					<view class="tui-title">手机号</view>
-					<input
-					:focus="isInputFocus_3"
-					placeholder-class="tui-phcolor"
-					class="tui-input"
-					name="mobile"
-					disabled
-					:value="u_info.u_acc"
-					maxlength="50"
-					type="text"
-					/>
+					<input :focus="isInputFocus_3" placeholder-class="tui-phcolor" class="tui-input" name="mobile" disabled :value="u_info.u_acc" maxlength="50" type="text"/>
 				</view>
 			</tui-list-cell>
 			<view class="tui-box-upload">
-				<tui-upload
-				class="upload-button"
-				:value="value"
-				:serverUrl="serverUrl"
-				@complete="result"
-				@remove="remove"
-				></tui-upload>
-				<view v-if="isRealName" class="tui-box-upload_img1">
-					<image :src="u_info.idcard_front_url"></image>
+				<view class="tui-box-upload_box1">
+					<tui-upload class="upload-button" :value="value1" :serverUrl="serverUrl" @complete="result" @remove="remove" :forbidDel='forbidDel'></tui-upload>
+					<view class="tui-box-upload_text1">身份证人像面</view>
 				</view>
-				<view v-if="isRealName" class="tui-box-upload_img2">
-					<image :src="u_info.idcard_back_url"></image>
-				</view>
-				<view class="tui-box-upload_text1">
-					身份证人像面
-				</view>
-				<view class="tui-box-upload_text2">
-					身份证国徽面
+				<view class="tui-box-upload_box2">
+					<tui-upload class="upload-button" :value="value2" :serverUrl="serverUrl" @complete="result" @remove="remove" :forbidDel='forbidDel'></tui-upload>
+					<view class="tui-box-upload_text2">身份证国徽面</view>
 				</view>
 			</view>
 			<view class="tui-btn-box">
-				<button
-				class="confirm-btn"
-				hover-class="tui-button-hover"
-				formType="submit"
-				type="primary"
-				:disabled="isRealName"
-				>
-				{{isRealName ? "您已经实名认证过了" : "开始验证"}}
-				</button>
+				<button class="confirm-btn" hover-class="tui-button-hover" formType="submit" type="primary" :disabled="isRealName">{{isRealName ? "您已经实名认证过了" : "开始验证"}}</button>
 			</view>
 		</form>
 		<!--toast提示-->
@@ -101,11 +53,15 @@
 				isInputFocus_2: false,
 				isInputFocus_3: false,
 				imageData: [],
-				serverUrl: App.uploadEditor, //上传地址
-				value:[], //初始化图片
+				serverUrl: App.uploadEditor, // 上传地址
+				value1:[], // 初始化图片
+				value2:[], // 初始化图片
+				forbidDel: false,
 				token: "",
 				isRealName: false,
-				u_info: {}
+				u_info: {
+					u_acc: ''
+				}
 			}
 		},
 		onLoad: function() {
@@ -114,11 +70,15 @@
 				method: "POST",
 				url: App.Idrealuserinfo,
 				success: res => {
-					// console.log("实名认证信息:", res.data[0].u_auth)
-					that.u_info = res.data[0]
+					that.u_info.u_acc = res.data[0].u_acc;
+					console.log(that.u_info.u_acc);
 					if (res.data[0].u_auth === 1) {
-						that.isRealName = true
-						this.showToast(3, '您已经实名认证过了!');
+						that.isRealName = true;
+						this.showToast(3, '您已经实名认证过了!'); 
+						that.u_info = res.data[0];
+						that.forbidDel = true;
+						that.value1.push(that.u_info.idcard_front_url);
+						that.value2.push(that.u_info.idcard_back_url);
 					}
 				},
 				fail:function(e){
@@ -152,13 +112,15 @@
 				let rules = [
 					{
 						name: "name",
-						rule: ["required", "isChinese", "minLength:2", "maxLength:4"], //可使用区间，此处主要测试功能
+						rule: ["required", "isChinese", "minLength:2", "maxLength:4"],
 						msg: ["请输入姓名!", "姓名必须全部为中文!", "姓名必须2个或以上字符!", "姓名不能超过4个字符!"]
-					},{
+					},
+					{
 						name: "idcard",
 						rule: ["required", "isIdCard"],
 						msg: ["请输入身份证号码!", "请输入正确的身份证号码!"]
-					},{
+					},
+					{
 						name: "mobile",
 						rule: ["required", "isMobile"],
 						msg: ["请输入手机号!", "请输入正确的手机号!"]
@@ -210,8 +172,7 @@
 			},
 			remove: function(e) {
 				//移除图片
-				console.log(e)
-				let index = e.index
+				let index = e.index;
 			}
 		}
 	}
@@ -225,7 +186,7 @@
 		width: 100%;
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: space-between;	
 		padding: 24rpx 60rpx 24rpx 30rpx;
 		box-sizing: border-box;
 		font-size: 32rpx;
@@ -258,37 +219,32 @@
 		height: 732rpx;
 		overflow: hidden;
 		display: flex;
+		flex-direction: column;
 		position: relative;
 		justify-content: center;
-		.tui-box-upload_img1, .tui-box-upload_img2{
+		box-sizing: border-box;
+		.tui-box-upload_image1{
 			width: 544rpx;
-			height: 306rpx;
-			position: absolute;
-			top: 40rpx;
-			border-radius: 20rpx;
-			background-color: #CDCDCD;
-			overflow: hidden;
+			height: 346rpx;
+			padding: 40rpx 0 0;
+			margin: auto;
+			box-sizing: border-box;
 			image{
 				width: 100%;
 				height: 100%;
 			}
 		}
-		.tui-box-upload_img2{
-			top: 386rpx;
+		.tui-box-upload_box1, .tui-box-upload_box2{
+			position: relative;
+			width: 100%;
+			height: 346rpx;
+			overflow: hidden;
 		}
-		.tui-box-upload_text1{
+		.tui-box-upload_text1, .tui-box-upload_text2{
 			z-index: 999;
 			position: absolute;
-			bottom: 408rpx;
-			left: 212rpx;
-			font-size: 40rpx;
-			color: #FFF;
-		}
-		.tui-box-upload_text2{
-			z-index: 999;
-			position: absolute;
-			bottom: 62rpx;
-			left: 212rpx;
+			top: 50rpx;
+			left: 350rpx;
 			font-size: 40rpx;
 			color: #FFF;
 		}
@@ -315,5 +271,9 @@
 		margin: 40rpx auto 0;
 		border-radius: 20rpx;
 		background-color: #F7F7F7;
+	}
+	.tui-box-upload /deep/ .tui-item-img{
+		width: 544rpx;
+		height: 306rpx;
 	}
 </style>

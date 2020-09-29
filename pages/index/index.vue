@@ -206,9 +206,9 @@
 					url: '/pages/list/distGoodsDetail?id='+e,
 				});
 			},
-			newdetail(e) {
-				this.tui.toast('详情功能尚未完善~')
-			},
+			// newdetail(e) {
+			// 	this.tui.toast('详情功能尚未完善~')
+			// },
 			more: function(e) {
 				let key = e.currentTarget.dataset.key || '';
 				uni.navigateTo({
@@ -335,7 +335,7 @@
 	.tui-rolling-news {
 		width: 100%;
 		margin: 6% 0;
-		padding: 4% 2%;
+		padding: 2%;
 		background-color: #fff;
 		box-sizing: border-box;
 		display: flex;
@@ -343,20 +343,24 @@
 		justify-content: center;
 		flex-wrap: nowrap;
 	}
-
+	.tui-rolling-news /deep/ .tui-icon-class{
+		margin-bottom: 2rpx !important;
+	}
 	.tui-swiper {
-		font-size: 28rpx;
-		height: 50rpx;
+		margin-left: 10rpx;
+		font-size: 30rpx;
+		height: 80rpx;
+		line-height: 80rpx;
 		flex: 1;
 	}
 
 	.tui-swiper-item {
 		display: flex;
-		align-items: center
+		align-items: center;
 	}
 
 	.tui-news-item {
-		line-height: 28rpx;
+		line-height: 80rpx;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

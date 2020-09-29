@@ -25,7 +25,7 @@
 							name="amount"
 							placeholder="请输入充值金额"
 							maxlength="50"
-							type="text"
+							type="number"
 							v-model="total"
 							/>
 						</view>
@@ -39,7 +39,7 @@
 							name="amount2"
 							placeholder="请输入确认充值金额"
 							maxlength="50"
-							type="text"
+							type="number"
 							v-model="conTotal"
 							/>
 						</view>
@@ -154,59 +154,76 @@
 			onrecharges(){
 				let that =this;
 				let data ={payChoose:that.payChoose,money:that.total};
-				
-				uni.getStorage({
-					key: 'user',
-					success: function (res) {
-						console.log(res.data);
-						that.user = res.data
-						if(that.user!=1){
-							uni.showModal({
-								title: '提示',
-								content: '请先实名认证',
-								success: function (res) {
-									if (res.confirm) {
-										uni.navigateTo({
-											url: '../user/realName',
-										})
-										console.log('用户点击确定');
-									} else if (res.cancel) {
-										console.log('用户点击取消');
-									}
-								},
-							});
-						}else{
-							if(that.total!=''&&that.conTotal!=''&&that.total==that.conTotal){
-								// 请求:
-								that.sendRequest({
-									url :App.getRechargeInfo,
-									method:'POST',
-									data:data,
-									success : function(res){
-										console.log("确认充值",res.data)
-										let data = res.data;
-										let datas = encodeURIComponent(JSON.stringify(data))
-										uni.navigateTo({
-											url:"recharges?data="+ datas
-										})
-										that.total = ""; // 输入金额输入框清零
-										that.conTotal = ""; // 确认金额输入框清零
+				if(that.total>0||that.conTotal>0){
+					uni.getStorage({
+						key: 'user',
+						success: function (res) {
+							console.log(res.data);
+							that.user = res.data
+							if(that.user!=1){
+								uni.showModal({
+									title: '提示',
+									content: '请先实名认证',
+									success: function (res) {
+										if (res.confirm) {
+											uni.navigateTo({
+												url: '../user/realName',
+											})
+											console.log('用户点击确定');
+										} else if (res.cancel) {
+											console.log('用户点击取消');
+										}
 									},
-									fail:function(e){
-										console.log("index_1  fail:" + JSON.stringify(e));
-									}
 								});
-								
 							}else{
-								uni.showToast({
-									icon: 'none',
-									title: '请查看金额是否填写异常'
-								});
+								if(that.total!=''&&that.conTotal!=''&&that.total==that.conTotal){
+									// 请求:
+									// that.sendRequest({
+									// 	url :App.getRechargeInfo,
+									// 	method:'POST',
+									// 	data:data,
+									// 	success : function(res){
+									// 		console.log("确认充值",res.data)
+									// 		let data = res.data;
+									// 		let datas = encodeURIComponent(JSON.stringify(data))
+									// 		uni.navigateTo({
+									// 			url:"recharges?data="+ datas,
+									// 			success : function(nav){
+									// 				that.total = ""; // 输入金额输入框清零
+									// 				that.conTotal = ""; // 确认金额输入框清零
+									// 			}
+									// 		})
+									// 	},
+									// 	fail:function(e){
+									// 		console.log("fail:" + JSON.stringify(e));
+									// 	}
+									// });
+									
+									uni.navigateTo({
+										url:"recharges?money="+ that.total,
+										success : function(nav){
+											that.total = ""; // 输入金额输入框清零
+											that.conTotal = ""; // 确认金额输入框清零
+										}
+									})
+									
+								}else{
+									uni.showToast({
+										icon: 'none',
+										title: '请查看金额是否填写异常'
+									});
+								}
+								
 							}
-							
-						}
-					},
-				});
+						},
+					});
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: '请查看金额是否填写异常'
+					});
+					
+				}
 				
 				
 			},

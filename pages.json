@@ -188,6 +188,36 @@
           	"navigationBarTitleText": "确认充值"
           }
         }
+        ,{
+            "path" : "pages/user/distribution",
+          "style" : {
+          	"navigationBarTitleText": "分销"
+          }
+        }
+        ,{
+            "path" : "pages/login/yinsi",
+			"style" : {
+				"navigationBarTitleText": ""
+			}
+        }
+        ,{
+            "path" : "pages/user/teamManage",
+          "style" : {
+          	"navigationBarTitleText": "团队管理"
+          }
+        }
+        ,{
+            "path" : "pages/user/reward",
+          "style" : {
+          	"navigationBarTitleText": "拼购奖励"
+          }
+        }
+        ,{
+            "path" : "pages/user/history",
+          "style" : {
+          	"navigationBarTitleText": "历史交易"
+          }
+        }
     ],
 	"easycom": {
 		"autoscan": true,

@@ -113,11 +113,11 @@ Vue.prototype.sendRequest= function(param){
 			               
 			            }
 						else{
-								uni.showModal({
-								    showCancel:false,
-								    content:"" + result.msg
-								});
-								return;
+							uni.showModal({
+								showCancel:false,
+								content:"" + result.msg
+							});
+							return;
 						}
 			        typeof param.success == "function" && param.success(result);
 			    },
