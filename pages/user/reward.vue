@@ -6,87 +6,87 @@
 		</view>
 		<!-- 所有 -->
 		<scroll-view scroll-y v-if="currentTab==0" class="all">
-			<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
+			<view class="FY FY-c FX-c" v-if="nodata_1" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
 			</view>
-			<view class="list">
+			<view class="list" v-if="!!!nodata_1">
 				<view class="list_1" v-for="(item, index) in allData" :key="index">
 					<view class="list_1_top">
 						<view class="list_1_top_img">
-							<image :src="item.img"></image>
+							<image :src="item.g_pic"></image>
 						</view>
 						<view class="list_1_top_content">
-							<view class="list_1_top_title">{{item.title}}</view>
+							<view class="list_1_top_title f-nowrap f-hidden3">{{item.g_title}}</view>
 							<view class="list_1_top_info">
-								<view class="list_1_top_price">￥{{item.price}}</view>
-								<view class="list_1_top_reward">拼购奖励：50商品值</view>
+								<view class="list_1_top_price">￥{{(+item.g_price).toFixed(2)}}</view>
+								<view class="list_1_top_reward" :style="'opacity: ' + (item.send_status === 0 ? '0;' : '1;')">拼购奖励：{{(+item.goods_value).toFixed(2)}}商品值</view>
 							</view>
 						</view>
 					</view>
 					<view class="list_1_bottom">
 						<view class="list_1_bottom_name">
-							<text v-for="(data, index) in item.name" :key="index">{{data}}</text>
+							<text v-for="(data, index) in handle(item.usersnames)" :key="index">{{data}}</text>
 						</view>
-						<view class="list_1_bottom_result">拼购成功</view>
+						<view class="list_1_bottom_result" :style="'color: ' + (item.send_status === 1 ? '#F71122;' : '#999;')">{{item.send_status === 1 ? '拼购成功' : `还差 ${(+item.leijinum).toFixed(0)} 人`}}</view>
 					</view>
 				</view>
 			</view>
 		</scroll-view>
 		<!-- 拼购中 -->
 		<scroll-view scroll-y v-if="currentTab==1" class="ing">
-			<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
+			<view class="FY FY-c FX-c" v-if="nodata_2" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
 			</view>
-			<view class="list">
+			<view class="list" v-if="!!!nodata_2">
 				<view class="list_1" v-for="(item, index) in ingData" :key="index">
 					<view class="list_1_top">
 						<view class="list_1_top_img">
-							<image :src="item.img"></image>
+							<image :src="item.g_pic"></image>
 						</view>
 						<view class="list_1_top_content">
-							<view class="list_1_top_title">{{item.title}}</view>
+							<view class="list_1_top_title f-nowrap f-hidden3">{{item.g_title}}</view>
 							<view class="list_1_top_info">
-								<view class="list_1_top_price">￥{{item.price}}</view>
-								<view class="list_1_top_reward" style="opacity: 0;">拼购奖励：50商品值</view>
+								<view class="list_1_top_price">￥{{(+item.g_price).toFixed(2)}}</view>
+								<view class="list_1_top_reward" style="opacity: 0;">(此处不显示)</view>
 							</view>
 						</view>
 					</view>
 					<view class="list_1_bottom">
 						<view class="list_1_bottom_name">
-							<text v-for="(data, index) in item.name" :key="index">{{data}}</text>
+							<text v-for="(data, index) in handle(item.usersnames)" :key="index">{{data}}</text>
 						</view>
-						<view class="list_1_bottom_result" style="color: #999;">还差3人</view>
+						<view class="list_1_bottom_result" style="color: #999;">还差 {{(+item.leijinum).toFixed(0)}} 人</view>
 					</view>
 				</view>
 			</view>
 		</scroll-view>
 		<!-- 已完成 -->
 		<scroll-view scroll-y v-if="currentTab==2" class="done">
-			<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
+			<view class="FY FY-c FX-c" v-if="nodata_3" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
 			</view>
-			<view class="list">
+			<view class="list" v-if="!!!nodata_3">
 				<view class="list_1" v-for="(item, index) in doneData" :key="index">
 					<view class="list_1_top">
 						<view class="list_1_top_img">
-							<image :src="item.img"></image>
+							<image :src="item.g_pic"></image>
 						</view>
 						<view class="list_1_top_content">
-							<view class="list_1_top_title">{{item.title}}</view>
+							<view class="list_1_top_title f-nowrap f-hidden3">{{item.g_title}}</view>
 							<view class="list_1_top_info">
-								<view class="list_1_top_price">￥{{item.price}}</view>
-								<view class="list_1_top_reward">拼购奖励：50商品值</view>
+								<view class="list_1_top_price">￥{{(+item.g_price).toFixed(2)}}</view>
+								<view class="list_1_top_reward">拼购奖励：{{(+item.goods_value).toFixed(2)}}商品值</view>
 							</view>
 						</view>
 					</view>
 					<view class="list_1_bottom">
 						<view class="list_1_bottom_name">
-							<text v-for="(data, index) in item.name" :key="index">{{data}}</text>
+							<text v-for="(data, index) in handle(item.usersnames)" :key="index">{{data}}</text>
 						</view>
-						<view class="list_1_bottom_result">拼购成功</view>
+						<view class="list_1_bottom_result" style="color: #F71122;">拼购成功</view>
 					</view>
 				</view>
 			</view>
@@ -108,58 +108,39 @@
 					{name: "已完成"}
 				],
 				currentTab: 0,
-				nodata: false,
-				allData: [
-					{
-						img: '../../static/images/index/logo.png',
-						title: '你好你好你好你好你好你好你好你好你你好你好你好你好你好你好你好',
-						price: '799.00',
-						name: ['王*', '冯*', '李*', '裴*', '陈*']
-					},
-					{
-						img: '../../static/images/index/logo.png',
-						title: '你好你好你好你好你好你好你好',
-						price: '799.00',
-						name: ['王*', '李*', '裴*', '陈*']
-					},
-					{
-						img: '../../static/images/index/logo.png',
-						title: '你好好你好',
-						price: '799.00',
-						name: ['王*', '陈*']
-					}
-				],
-				ingData: [
-					{
-						img: '../../static/images/index/logo.png',
-						title: '你好你好好你好',
-						price: '799.00',
-						name: ['王*', '冯*', '李*', '裴*', '陈*']
-					}
-				],
-				doneData: [
-					{
-						img: '../../static/images/index/logo.png',
-						title: '你好你好你好你好你好你好你好你好你好你好',
-						price: '799.00',
-						name: ['王*', '冯*', '李*', '裴*', '陈*']
-					}
-				]
+				nodata_1: false,
+				nodata_2: false,
+				nodata_3: false,
+				allData: [],
+				ingData: [],
+				doneData: []
 			}
 		},
-		onLoad: function() {
-			// const getAddressList_res = await this.getAddressList();
-			// if (getAddressList_res.status === 200 && getAddressList_res.data.length !== 0 && getAddressList_res.data) {
-			// 	this.addressList = getAddressList_res.data;
-			// 	this.nodata = false;
-			// } else {
-			// 	this.nodata = true;
-			// };
+		onLoad: async function() {
+			const proceedsdetail_res = await this.proceedsdetail(1);
+			if (proceedsdetail_res.status === 200 && proceedsdetail_res.data.length !== 0 && !!proceedsdetail_res.data) {
+				this.allData = proceedsdetail_res.data;
+				this.nodata_1 = false;
+			} else {
+				this.nodata_1 = true;
+				this.showToast(3, '暂无内容!');
+			};
+		},
+		// 过滤姓名
+		computed: {
+			handle() {
+				return function(data) {
+					return data.map((item) => {
+						const firstStr = item.charAt(0);
+						return firstStr + '*';
+					});
+				}
+			}
 		},
 		methods: {
 			// 信息反馈
 			showToast: function(type, msg, msg2) {
-				let params = { title: msg, imgUrl: "../../static/img/toast/check-circle.png", icon: true };
+				let params = { title: msg, imgUrl: "../../static/img/toast/check-circle.png", icon: true, duration: 1000 };
 				switch (type) {
 					case 1: params.title = msg; params.imgUrl = "../../static/img/toast/check-circle.png"; break;
 					case 2: params.title = msg; params.imgUrl = "../../static/img/toast/fail-circle.png"; break;
@@ -171,15 +152,37 @@
 				this.$refs.toast.show(params)
 			},
 			// tab切换
-			changeTab: function(e){
+			changeTab: async function(e){
+				switch (this.currentTab) {
+					case 0: this.allData = []; break;
+					case 1: this.ingData = []; break;
+					case 2: this.doneData = []; break;
+					default: break;
+				};
 				this.currentTab = e.index;
+				const proceedsdetail_res = await this.proceedsdetail((e.index + 1));
+				if (proceedsdetail_res.status === 200 && proceedsdetail_res.data.length !== 0 && !!proceedsdetail_res.data) {
+					switch (e.index) {
+						case 0: this.allData = proceedsdetail_res.data; this.nodata_1 = false; break;
+						case 1: this.ingData = proceedsdetail_res.data; this.nodata_2 = false; break;
+						case 2: this.doneData = proceedsdetail_res.data; this.nodata_3 = false; break;
+						default: break;
+					};
+				} else {
+					switch (e.index) {
+						case 0: this.nodata_1 = true; this.showToast(3, '暂无内容!'); break;
+						case 1: this.nodata_2 = true; this.showToast(3, '暂无内容!'); break;
+						case 2: this.nodata_3 = true; this.showToast(3, '暂无内容!'); break;
+						default: break;
+					};
+				};
 			},
-			// 获取资金流水
-			cashflow: async function(type) {
+			// 获取拼购明细
+			proceedsdetail: async function(type) {
 				return await new Promise((resolve, reject) => {
 					this.sendRequest({
 						method: "POST",
-						url: App.cashflow,
+						url: App.proceedsdetail,
 						data: { type },
 						success: res => { resolve(res) },
 						fail: err => { reject(err) }
@@ -247,7 +250,8 @@
 					flex: 1;
 					padding-left: 20rpx;
 					.list_1_top_title{
-						font-size: 26rpx;
+						width: 265*2rpx;
+						font-size: 32rpx;
 						color: #666666;
 					}
 					.list_1_top_info{
@@ -255,6 +259,9 @@
 						justify-content: space-between;
 						font-size: 26rpx;
 						color: #999;
+						.list_1_top_price{
+							flex-shrink: 0;
+						}
 					}
 				}
 			}
@@ -280,7 +287,6 @@
 				}
 				.list_1_bottom_result{
 					font-size: 28rpx;
-					color: #F71122;
 					font-weight: bold;
 				}
 			}

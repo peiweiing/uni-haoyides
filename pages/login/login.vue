@@ -5,13 +5,12 @@
 				<image class="img" src="../../static/img/logo.png" mode=""></image>
 			</view>
 		</view>
-		<tui-tabs :tabs="navbar" :currentTab="currentTab>1?0:currentTab" @change="change" itemWidth="50%"></tui-tabs>
+		<!-- <tui-tabs :tabs="navbar" :currentTab="currentTab>1?0:currentTab" @change="change" itemWidth="50%"></tui-tabs> -->
 		<view class="tui-form" v-if="currentTab==0">
 			<view class="tui-view-input">
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
 						<tui-icon name="mobile" color="#9E2036" :size="20"></tui-icon>
-					
 						<input
 							:adjust-position="false"
 							v-model="mobile"
@@ -50,6 +49,7 @@
 				</view>
 			</view> -->
 			<view class="tui-btn-box"><tui-button style="margin-top: 50rpx;" type="bronze" :disabledGray="true" :disabled="disabled" shape="circle" @click="onlogin">登录</tui-button></view>
+			
 		</view>
 		
 		<view class="tui-form" v-if="currentTab==1">
@@ -58,7 +58,7 @@
 					<view class="tui-cell-input">
 						<tui-icon name="mobile" color="#9E2036" :size="20"></tui-icon>
 						<input v-model="mobiles" placeholder="请输入手机号" :disabled="butbool==true" :mobiles="true" placeholder-class="tui-phcolor" type="number" maxlength="11" @input="inputMobiles" />
-						<view class="tui-icon-close" v-show="ismobiles" @tap="clearInput(1)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
+						<view class="tui-icon-close" v-show="mobiles" @tap="clearInput(1)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
@@ -224,7 +224,7 @@ export default {
 			mobile: '',password: '',
 			mobiles: '',passwords: '',passwordss: '',code: '',
 			word: '获取验证码',
-			check:true,ismobiles:true,
+			check:true,
 			cls:false,isOvertime:false,
 			boola:true,boolb:true,
 			boolas:true,boolbs:true,boolcs:true,
@@ -357,7 +357,6 @@ export default {
 						uni.hideLoading();
 						console.log("请求成功",res)
 						console.log("请求成功",res.data.status)
-						that.ismobiles=false;
 						if(res.data.status==200){
 							that.testSecond=60;
 							that.btnSendText="S秒后重试";
@@ -489,7 +488,6 @@ export default {
 			this.currentTab = e.index
 			if(that.currentTab==0){
 				that.mobile='';that.password='';
-				// location.reload();
 			}else if(that.currentTab==1){
 				that.mobiles='';that.code='';that.passwords='';that.passwordss='';that.cls=false;
 			}

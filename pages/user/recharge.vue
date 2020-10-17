@@ -127,15 +127,93 @@
 				orderInfo: "", // 订单信息
 				payment_res_1: "", // resultStatus结果码(9000)
 				payment_res_2: "", // code结果码(10000)
+				tokens:''
 			}
 		},
 		onLoad: async function() {
+			let that = this;
 			const account_res = await this.account();
 			if (account_res.status === 200 && account_res.data.length !== 0 && account_res.data) {
 				this.balance = account_res.data[0].bal_trades;
 			} else {
 				this.showToast(2, "获取信息失败!请重试...");
 			};
+			
+			that.sendRequest({
+				url :App.historyRecharge,
+				// url :App.closeRecharge,
+				method:'POST',
+				success : function(ok){
+					console.log("data",ok.data)
+					if(ok.data.code==200){
+						uni.showModal({
+							title: '提示',
+							content: '您有待确认充值订单',
+							confirmText: '去确认',
+							cancelText:'关闭订单',
+							success: function (res) {
+								if (res.confirm) {
+									console.log('用户点击确定');
+									
+									uni.getStorage({
+										key: 'token',
+										success: function (tokens) {
+											that.tokens=tokens.data;
+											console.log(that.tokens);
+											uni.request({
+												url: App.getOldRecharge,
+												method: 'POST',
+												header: {'Authorization':that.tokens},
+												data:{"id":ok.data.recharge_confirminfo.id},
+												success: (res) => {
+													console.log('确认后请求',res)
+													let data = res.data.data;
+													let datas = encodeURIComponent(JSON.stringify(data))
+													uni.reLaunch({
+														url:"recharges?data="+ datas,
+														success : function(nav){
+															that.total = ""; // 输入金额输入框清零
+															that.conTotal = ""; // 确认金额输入框清零
+														}
+													})
+												},
+											});
+										},
+									})
+									console.log('--456789--');
+								} else if (res.cancel) {
+									console.log('用户点击取消');
+									
+									uni.getStorage({
+										key: 'token',
+										success: function (tokens) {
+											that.tokens=tokens.data;
+											console.log(that.tokens);
+											uni.request({
+												url: App.closeRecharge,
+												method: 'POST',
+												header: {'Authorization':that.tokens},
+												data:{"id":ok.data.recharge_confirminfo.id},
+												success: (res) => {
+													console.log('取消后请求',res)
+												},
+											});
+										},
+									})
+									console.log('--123456--');
+								}
+							}
+						});
+						
+						
+					}
+				},
+				fail:function(e){
+					console.log("fail:" + JSON.stringify(e));
+				}
+			});
+			
+				
 		},
 		methods: {
 			// 信息反馈
@@ -177,35 +255,36 @@
 								});
 							}else{
 								if(that.total!=''&&that.conTotal!=''&&that.total==that.conTotal){
-									// 请求:
-									// that.sendRequest({
-									// 	url :App.getRechargeInfo,
-									// 	method:'POST',
-									// 	data:data,
-									// 	success : function(res){
-									// 		console.log("确认充值",res.data)
-									// 		let data = res.data;
-									// 		let datas = encodeURIComponent(JSON.stringify(data))
-									// 		uni.navigateTo({
-									// 			url:"recharges?data="+ datas,
-									// 			success : function(nav){
-									// 				that.total = ""; // 输入金额输入框清零
-									// 				that.conTotal = ""; // 确认金额输入框清零
-									// 			}
-									// 		})
-									// 	},
-									// 	fail:function(e){
-									// 		console.log("fail:" + JSON.stringify(e));
-									// 	}
-									// });
 									
-									uni.navigateTo({
-										url:"recharges?money="+ that.total,
-										success : function(nav){
-											that.total = ""; // 输入金额输入框清零
-											that.conTotal = ""; // 确认金额输入框清零
+									// 请求:
+									that.sendRequest({
+										url :App.getRechargeInfo,
+										method:'POST',
+										data:data,
+										success : function(res){
+											console.log("确认充值",res.data)
+											let data = res.data;
+											let datas = encodeURIComponent(JSON.stringify(data))
+											if(res.status==200){
+												uni.navigateTo({
+													url:"recharges?data="+ datas,
+													success : function(nav){
+														that.total = ""; // 输入金额输入框清零
+														that.conTotal = ""; // 确认金额输入框清零
+													}
+												})
+											}else {
+												uni.showToast({
+													icon: 'none',
+													title: res.msg,
+												});
+											}
+										},
+										fail:function(e){
+											console.log("fail:" + JSON.stringify(e));
 										}
-									})
+									});
+									
 									
 								}else{
 									uni.showToast({

@@ -195,12 +195,6 @@
           }
         }
         ,{
-            "path" : "pages/login/yinsi",
-			"style" : {
-				"navigationBarTitleText": ""
-			}
-        }
-        ,{
             "path" : "pages/user/teamManage",
           "style" : {
           	"navigationBarTitleText": "团队管理"

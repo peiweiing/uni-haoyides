@@ -149,6 +149,7 @@
 			</scroll-view>
 			<view class="confirm_box">
 				<button
+				:disabled="disabled"
 				class="tui-button-primary"
 				hover-class="tui-button-hover"
 				formType="submit"
@@ -178,6 +179,7 @@
 				payment_res_1: "", // resultStatus结果码(9000)
 				payment_res_2: "", // code结果码(10000)
 				eid:'',uid:'',num:'',
+				disabled:false,
 			}
 		},
 		onLoad: async function(e) {
@@ -231,6 +233,7 @@
 			formSubmit(e){
 				console.log(e);
 				var that = this;
+				that.disabled=true;
 				if(that.payChoose==0){
 					that.sendRequest({
 						url: App.entrusBuy,
@@ -260,7 +263,6 @@
 						success: (res) => {
 							console.log('微信支付',res);
 							that.showToast(1, res.msg);
-							
 						},
 						complete: ()=> {
 							console.log('执行了')
@@ -373,11 +375,14 @@
 			// 支付方式修改
 			changePay: function(data) {
 				if(data==0){
-					this.payChoose=0
+					this.payChoose=0;
+					this.disabled=true;
 				}else if(data==1){
-					this.payChoose=1
+					this.payChoose=1;
+					this.disabled=true;
 				}else if(data==2){
-					this.payChoose=2
+					this.payChoose=2;
+					this.disabled=true;	
 				}
 			},
 			// 获取用户数据信息
@@ -485,6 +490,9 @@
 	}
 	.tui-button-primary{
 		background-color: #9E2036;
+	}
+	.tui-button-hover{
+		background-color: #bd2541;
 	}
 	.payment_cho{
 		padding-right: 20rpx;

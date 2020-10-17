@@ -167,6 +167,10 @@
 					fail:function(e){
 						that.isShow=false;
 						console.log("getchannel  fail:" + JSON.stringify(e));
+					},
+					complete:function(e){
+						that.valnums = 0;
+						that.heji=that.valnums*that.productLists.g_pfprice;
 					}
 				});
 				

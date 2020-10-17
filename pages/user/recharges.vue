@@ -84,9 +84,7 @@
 	export default {
 		data() {
 			return {
-				banner:[
-					// '../../static/20200908111221.png',
-				],pid:'',
+				banner:'',pid:'',
 				payChoose: 1, // 支付方式
 				total: "" , // 充值金额
 				conTotal: "", // 确认充值金额
@@ -95,39 +93,53 @@
 				disabled:false,
 			}
 		},
-		// onLoad(e) {
-		// 	const datas = JSON.parse(decodeURIComponent(e.data));
-		// 	this.types = datas.paymentinfo.type;
-		// 	this.pid = datas.paymentinfo.id;
-		// 	this.banner=datas.paymentinfo.image_url;
-		// 	this.orderInfo=datas.total_money;
-			
-		// 	console.log(datas);
-		// 	console.log(this.banner);
+		// onShow() {
+		// 		let pages = getCurrentPages();
+		// 		let nowPage = pages[ pages.length - 1];
+		// 		let prevPage = pages[ pages.length - 2 ];
+		// 		prevPage.$vm.module.g_salevol = res.data.g_salevol;
+		// 		prevPage.$vm.module.total_inv = res.data.total_inv;   
+		// 		uni.navigateBack({
+		// 			delta:1,
+		// 			success: function() {
+		// 				beforePage.onLoad(); 
+		// 			},
+		// 		});
 		// },
 		onLoad(e) {
+			const datas = JSON.parse(decodeURIComponent(e.data));
+			this.types = datas.paymentinfo.type;
+			this.pid = datas.recharge_confirminfo.id;
+			this.banner = datas.paymentinfo.image_url;
+			this.orderInfo = datas.recharge_confirminfo.total_money;
 			console.log(e);
-			let that =this;
-			let data ={money:e.money};
-			that.sendRequest({
-				url :App.getRechargeInfo,
-				method:'POST',
-				data:data,
-				success : function(res){
-					console.log("确认充值",res.data)
-					let datas = res.data;
-					that.types = datas.paymentinfo.type;
-					that.pid = datas.paymentinfo.id;
-					that.banner=datas.paymentinfo.image_url;
-					that.orderInfo=datas.total_money;
-					console.log("types",that.types);
-					console.log("typesreq",datas.paymentinfo.type);
-				},
-				fail:function(e){
-					console.log("fail:" + JSON.stringify(e));
-				}
-			});
+			console.log(datas);
+			console.log(this.banner);
+			
 		},
+		// onLoad(e) {
+		// 	console.log(e);
+		// 	let that =this;
+		// 	let data ={money:e.money};
+		// 	that.sendRequest({
+		// 		url :App.getRechargeInfo,
+		// 		method:'POST',
+		// 		data:data,
+		// 		success : function(res){
+		// 			console.log("确认充值",res.data)
+		// 			let datas = res.data.recharge_confirminfo;
+		// 			that.types = datas.paymentinfo.type;
+		// 			that.pid = datas.paymentinfo.id;
+		// 			that.banner=datas.paymentinfo.image_url;
+		// 			that.orderInfo=datas.total_money;
+		// 			console.log("types",that.types);
+		// 			console.log("typesreq",datas.paymentinfo.type);
+		// 		},
+		// 		fail:function(e){
+		// 			console.log("fail:" + JSON.stringify(e));
+		// 		}
+		// 	});
+		// },
 		methods: {
 			
 			show() {
@@ -189,7 +201,7 @@
 			},
 			payment(){
 				let that =this;
-				let data ={payment_id:that.pid,total_money:that.orderInfo};
+				let data ={id:that.pid};
 				that.disabled=true;
 				that.sendRequest({
 					url :App.createRecharge,

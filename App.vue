@@ -1,6 +1,7 @@
 <script>
 // 域名
-	 const hostname= "http://api.gdyingshi.cn/api/"
+	const hostname= "http://api.xianhuo.club/api/"
+	 // const hostname= "http://api.gdyingshi.cn/api/"
 	// const hostname= "http://api.lovehou.com/api/"
 // 版本更新
 	const getversion = hostname+"getversion";
@@ -102,11 +103,16 @@
 	const pickupBefore = hostname+"order/pickupBefore";
 //充值
 	const recharge = hostname+"order/recharge";
-	
 //充值信息
 	const getRechargeInfo = hostname+"user/getRechargeInfo";
 //确认充值详情
 	const createRecharge = hostname+"user/createRecharge";
+//待确认充值信息
+	const historyRecharge = hostname+"user/historyRecharge";
+//确认待确认充值信息
+	const getOldRecharge = hostname+"user/getOldRecharge";
+//取消待确认充值信息
+	const closeRecharge = hostname+"user/closeRecharge";
 //注销登录
 	const logout = hostname+"logout";
 //修改密码
@@ -139,6 +145,14 @@
 	const entrustPayOrder = hostname+"goodsinstock/entrustPayOrder";
 //分享图片获取
 	const shareimg = hostname+"user/shareimg";
+//获取拼购明细
+	const proceedsdetail = hostname+"proceedsdetail";
+//获取分销中心
+	const showsharedata = hostname+"showsharedata";
+//获取团队管理
+	const showsharecount = hostname+"showsharecount";
+//获取分销商
+	const isRetailerLevel = hostname+"user/isRetailerLevel";
 export default {
 		login,verifyCode,register,
 		// updatepwd,
@@ -153,12 +167,13 @@ export default {
 		withdrawaladd,withdrawallist,allEntrusList,goodslist,statistics,addShippin,
 		delShippin,detailShipin,setDefaultShip,editShippin,pickupBefore,orderinfo,
 		payorder,pforderinfo,pfpayorder,entrustOrderInfo,entrustPayOrder,
-		getlunbo,getRechargeInfo,createRecharge,shareimg,
+		getlunbo,getRechargeInfo,createRecharge,historyRecharge,getOldRecharge,closeRecharge,
+		shareimg,proceedsdetail,showsharedata,showsharecount,isRetailerLevel,
 		
 	onLaunch: function() {
 			let that = this;
 			// 获取应用版本
-			let current_ver = 158;
+			let current_ver = 165;
 			// plus.runtime.getProperty(plus.runtime.appid, function(inf) {
 			// 	console.log(inf.version);
 			// });

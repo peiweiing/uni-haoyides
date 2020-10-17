@@ -112,7 +112,7 @@
 					</view>
 				</view>
 			</tui-grid>
-				<image style="width: 100%;height: 200rpx;" src="../../static/img/20200914101930.jpg" mode="" @tap="onimg()"></image>
+				<image style="width: 100%;height: 200rpx;" src="../../static/img/20200914101930.jpg" mode="" @tap="onimg"></image>
 			<tui-list-cell @click="navigateTo('./changeAddress')" :arrow="true">
 				<view class="tui-item-box">
 					<tui-icon name="position" :size="24" color="#ff7900"></tui-icon>
@@ -133,17 +133,7 @@
 			</tui-list-cell>
 		</view>
 		<!-- 底部退出登录弹窗 -->
-		<tui-actionsheet
-		:show="showActionSheet"
-		:tips="tips"
-		:item-list="itemList"
-		:mask-closable="maskClosable"
-		:color="color"
-		:size="size"
-		:is-cancel="isCancel"
-		@click="itemClick"
-		@cancel="closeActionSheet"
-		></tui-actionsheet>
+		<tui-actionsheet :show="showActionSheet" :tips="tips" :item-list="itemList" :mask-closable="maskClosable" :color="color" :size="size" :is-cancel="isCancel" @click="itemClick" @cancel="closeActionSheet"></tui-actionsheet>
 	</view>
 </template>
 
@@ -206,8 +196,21 @@
 		},
 		methods: {
 			onimg(){
-				uni.navigateTo({
-					url: './distribution'
+				var _this = this;
+				_this.sendRequest({
+					method: "POST",
+					url: App.isRetailerLevel,
+					success: res => {
+						console.log('123')
+						if (res.data.u_share_level === 0) {
+							_this.showToast("您尚未成为分销商!");
+						} else {
+							uni.navigateTo({ url: './distribution' });
+						};
+					},
+					fail: err => {
+						_this.showToast(err.msg + "操作失败！请重试...");
+					}
 				});
 			},
 			proper(){

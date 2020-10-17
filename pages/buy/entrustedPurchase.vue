@@ -460,6 +460,10 @@
 						},
 						fail:function(e){
 							console.log("getchannel  fail:" + JSON.stringify(e));
+						},
+						complete:function(e){
+							that.valnums = 1;
+							that.heji=that.valnums*that.details.ut_price;
 						}
 					});
 					this.bottomPopup = true;
@@ -470,6 +474,7 @@
 				},
 				cancel: function() {
 					this.bottomPopup = false;
+					// this.valnums = 1;
 				},
 				confirm: function(a,b) {
 					console.log(a,b)
@@ -505,7 +510,10 @@
 									},
 									fail:function(e){
 										console.log(e);
-									}
+									},
+									// complete:function(e){
+									// 	that.valnums = 1;
+									// }
 								});
 							}
 						},

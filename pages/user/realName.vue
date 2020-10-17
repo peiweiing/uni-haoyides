@@ -12,7 +12,7 @@
 			<tui-list-cell :hover="false">
 				<view class="tui-line-cell">
 					<view class="tui-title">身份证</view>
-					<input :focus="isInputFocus_2" placeholder-class="tui-phcolor" class="tui-input" name="idcard" :disabled="isRealName" :placeholder="isRealName ? u_info.u_idcard.toString() : '请输入身份证号码'" maxlength="50" type="text" v-model="idcard"/>
+					<input :focus="isInputFocus_2" placeholder-class="tui-phcolor" class="tui-input" name="idcard" :disabled="isRealName" :placeholder="isRealName ? (u_info.u_idcard+'') : '请输入身份证号码'" maxlength="50" type="text" v-model="idcard"/>
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false">
@@ -23,11 +23,11 @@
 			</tui-list-cell>
 			<view class="tui-box-upload">
 				<view class="tui-box-upload_box1">
-					<tui-upload class="upload-button" :value="value1" :serverUrl="serverUrl" @complete="result" @remove="remove" :forbidDel='forbidDel'></tui-upload>
+					<tui-upload class="upload-button" :value="value1" :serverUrl="serverUrl_1" @complete="result_1" @remove="remove_1" :forbidDel='forbidDel'></tui-upload>
 					<view class="tui-box-upload_text1">身份证人像面</view>
 				</view>
 				<view class="tui-box-upload_box2">
-					<tui-upload class="upload-button" :value="value2" :serverUrl="serverUrl" @complete="result" @remove="remove" :forbidDel='forbidDel'></tui-upload>
+					<tui-upload class="upload-button" :value="value2" :serverUrl="serverUrl_2" @complete="result_2" @remove="remove_2" :forbidDel='forbidDel'></tui-upload>
 					<view class="tui-box-upload_text2">身份证国徽面</view>
 				</view>
 			</view>
@@ -52,8 +52,10 @@
 				isInputFocus_1: false,
 				isInputFocus_2: false,
 				isInputFocus_3: false,
-				imageData: [],
-				serverUrl: App.uploadEditor, // 上传地址
+				imageData_1: [],
+				imageData_2: [],
+				serverUrl_1: App.uploadEditor, // 上传地址
+				serverUrl_2: App.uploadEditor, // 上传地址
 				value1:[], // 初始化图片
 				value2:[], // 初始化图片
 				forbidDel: false,
@@ -130,10 +132,10 @@
 				let formData = e.detail.value;
 				let checkRes = form.validation(formData, rules);
 				if (!checkRes) {
-					if (this.imageData.length !== 2) {
+					if (this.imageData_1.length !== 1 || this.imageData_2.length !== 1) {
 						this.showToast(3, '请上传身份证件照片!');
 					} else {
-						if (this.imageData[0].indexOf("blob:") === -1 && this.imageData[1].indexOf("blob:") === -1) {
+						if (this.imageData_1[0].indexOf("blob:") === -1 && this.imageData_2[0].indexOf("blob:") === -1) {
 							var that =this;
 							that.sendRequest({
 								method: "POST",
@@ -142,8 +144,8 @@
 									realname: that.realname,
 									idcard: that.idcard,
 									mobile: that.mobile,
-									idcardf: that.imageData[0],
-									idcardb: that.imageData[1]
+									idcardf: that.imageData_1[0],
+									idcardb: that.imageData_2[0]
 								},
 								success: (res) => {
 									console.log(res);
@@ -167,11 +169,16 @@
 					this.showToast(3, checkRes);
 				}
 			},
-			result: function(e) {
-				this.imageData = e.imgArr;
+			result_1: function(e) {
+				this.imageData_1 = e.imgArr;
 			},
-			remove: function(e) {
-				//移除图片
+			result_2: function(e) {
+				this.imageData_2 = e.imgArr;
+			},
+			remove_1: function(e) {
+				let index = e.index;
+			},
+			remove_2: function(e) {
 				let index = e.index;
 			}
 		}
@@ -255,6 +262,7 @@
 		left: 40rpx;
 		right: 40rpx;
 		.confirm-btn{
+			z-index: 9999;
 			background-color: #9E2036;
 		}
 	}

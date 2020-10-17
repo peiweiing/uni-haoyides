@@ -1,14 +1,14 @@
 <template>
 	<view class="distribution">
 		<view class="top_img">
-			<image src="../../static/tp/tp.png"></image>
+			<image src="../../static/tp/tp.png" mode="widthFix"></image>
 			<view class="top_box">
 				<view class="top_box_1" style="border-right: 2rpx solid #EEE;">
-					<view class="top_box_1_top">0.00</view>
+					<view class="top_box_1_top">{{(+info.u_com).toFixed(2)}}</view>
 					<view class="top_box_1_bottom">累计佣金</view>
 				</view>
 				<view class="top_box_1">
-					<view class="top_box_1_top">0.00</view>
+					<view class="top_box_1_top">{{(+info.ua_goodsvalue).toFixed(2)}}</view>
 					<view class="top_box_1_bottom">累计商品值</view>
 				</view>
 			</view>
@@ -17,19 +17,19 @@
 			<view class="content_title">我的团队</view>
 			<view class="content_box">
 				<view class="content_box_1" style="border-right: 2rpx solid #EEE;">
-					<view class="content_box_1_top">00</view>
+					<view class="content_box_1_top">{{info.u_level_totalnum}}</view>
 					<view class="content_box_1_bottom">团队人数</view>
 				</view>
 				<view class="content_box_1" style="border-right: 2rpx solid #EEE;">
-					<view class="content_box_1_top">00</view>
+					<view class="content_box_1_top">{{info.level_acctive_total}}</view>
 					<view class="content_box_1_bottom">今日活跃</view>
 				</view>
 				<view class="content_box_1" style="border-right: 2rpx solid #EEE;">
-					<view class="content_box_1_top">00</view>
+					<view class="content_box_1_top">{{info.level_effect_total}}</view>
 					<view class="content_box_1_bottom">今日达标</view>
 				</view>
 				<view class="content_box_1">
-					<view class="content_box_1_top">一般</view>
+					<view class="content_box_1_top">{{info.u_retailer_level}}</view>
 					<view class="content_box_1_bottom">团队级别</view>
 				</view>
 			</view>
@@ -52,11 +52,14 @@
 				</view>
 			</view>
 		</view>
+		<!-- 背景蒙版 -->
 		<view class="share" v-if="isShare" @click="isShare = false"></view>
+		<!-- 分享弹出 -->
 		<view class="share_box" v-if="isShare">
 			<image :src="imageUrl" mode="widthFix"></image>
+			<!-- 分享按钮 -->
 			<view class="share_btn">
-				<tui-button class="share_btn_1" shape="circle" type="white" @click="share(imageUrl)">点击立即分享</tui-button>
+				<tui-button class="share_btn_1" shape="circle" type="white" @click="share">点击立即分享</tui-button>
 			</view>
 		</view>
 		<!--toast提示-->
@@ -71,8 +74,25 @@
 		data() {
 			return {
 				isShare: false,
-				imageUrl: ''
+				imageUrl: '',
+				imageLocal: '',
+				info: {
+					u_retailer_level: '一般',
+					level_acctive_total: 0,
+					level_effect_total: 0,
+					u_level_totalnum: 0,
+					u_com: '00',
+					ua_goodsvalue: '00.00'
+				}
 			}
+		},
+		onLoad: async function() {
+			const showsharedata_res = await this.showsharedata();
+			if (showsharedata_res.status === 200 && showsharedata_res.data.length !== 0 && !!showsharedata_res.data) {
+				this.info = showsharedata_res.data;
+			} else {
+				 this.showToast(3, '系统出错了!请重试!');
+			};
 		},
 		methods: {
 			// 信息反馈
@@ -91,33 +111,48 @@
 			// 发起分享
 			readyShare: async function() {
 				this.isShare = true;
-				if (this.imageUrl === '') {
-					const shareimg_res = await this.shareimg();
-					if (shareimg_res.status === 200 && shareimg_res.data) {
-						this.imageUrl = shareimg_res.data.image;
-					} else {
-						this.showToast(2, '系统出错了!请重试!');
-					};
+				var _this = this;
+				if (_this.imageUrl === '') {
+					const shareimg_res = await _this.shareimg();
+					if (shareimg_res.status === 200 && !!shareimg_res.data) {
+						_this.imageUrl = shareimg_res.data.image;
+						uni.downloadFile({
+							url: _this.imageUrl,
+							success: (res) => { _this.imageLocal = res.tempFilePath; },
+							fail: (err) => { _this.showToast(2, '系统出错了!请重试!'); }
+						});
+					} else { _this.showToast(2, '系统出错了!请重试!'); };
 				};
 			},
 			// 分享
-			share: function(imageUrl) {
+			share: function() {
 				uni.shareWithSystem({
 					type: 'image',
 					summary: '分享',
-					imageUrl,
+					imageUrl: this.imageLocal,
 					success: () => { this.showToast(1, '分享成功!'); },
-					fail: () => { this.showToast(2, '抱歉~分享失败!'); }
+					fail: () => { this.showToast(2, '抱歉!分享失败!'); }
 				});
 			},
 			// 跳转页面
 			nav: function(url) { uni.navigateTo({ url }); },
 			// 获取分享图片
-			shareimg: async function(type) {
+			shareimg: async function() {
 				return await new Promise((resolve, reject) => {
 					this.sendRequest({
 						method: "POST",
 						url: App.shareimg,
+						success: res => { resolve(res) },
+						fail: err => { reject(err) }
+					})
+				})
+			},
+			// 获取分销中心
+			showsharedata: async function(type) {
+				return await new Promise((resolve, reject) => {
+					this.sendRequest({
+						method: "POST",
+						url: App.showsharedata,
 						data: { type },
 						success: res => { resolve(res) },
 						fail: err => { reject(err) }
@@ -215,7 +250,7 @@
 		.content_bottom{
 			display: flex;
 			flex-wrap: wrap;
-			margin: 40rpx 0 0;
+			margin: 40rpx 0;
 			.content_bottom_1{
 				width: 50%;
 				position: relative;
@@ -245,7 +280,7 @@
 		z-index: 999;
 		position: fixed;
 		width: 500rpx;
-		top: 50%;
+		top: 48%;
 		left: 50%;
 		transform: translate(-50%, -50%);
 		box-sizing: border-box;
@@ -260,7 +295,7 @@
 	}
 	.share_btn{
 		position: absolute;
-		bottom: -140rpx;
+		bottom: -120rpx;
 		left: 50rpx;
 		right: 50rpx;
 	}

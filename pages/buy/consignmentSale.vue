@@ -465,6 +465,10 @@
 						console.log(res);
 						that.details=res.data;
 						that.heji=that.valnums*that.details.ut_price;
+					},
+					complete:function(e){
+						that.valnums = 1;
+						that.heji=that.valnums*that.details.ut_price;
 					}
 				});
 				this.bottomPopup = true;

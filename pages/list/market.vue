@@ -220,6 +220,19 @@
 			}
 		},
 		onShow: async function() {
+			
+			this.currentTab = 0;
+			this.isPlain = [
+				{ title: '小时', type: 'h', plain: false },
+				{ title: '日', type: 'd', plain: true },
+				{ title: '周', type: 'u', plain: true },
+				{ title: '月', type: 'm', plain: true },
+				{ title: '年', type: 'y', plain: true }
+			];
+			this.isCharts_1 = true;
+			this.isCharts_2 = false;
+			this.isCharts_3 = false;
+
 			// 商品列表渲染
 			const goodslist_res = await this.goodslist();
 			// console.log(goodslist_res);

@@ -128,10 +128,10 @@
 			swiper(e){
 				console.log(e)
 			},
-			detail: function(e) {
+			detail(e) {
 				console.log(e)
 				uni.navigateTo({
-					url: '/pages/buy/'+e
+					url: e
 				});
 			},
 			details: function(e) {

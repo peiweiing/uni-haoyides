@@ -6,23 +6,27 @@
 		</view>
 		<!-- 一级伙伴 -->
 		<scroll-view scroll-y v-if="currentTab==0" class="one">
-			<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
+			<view class="FY FY-c FX-c" v-if="nodata_1" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
 			</view>
-			<view class="one_list">
-				<view class="one_list_1" v-for="(item, index) in oneData" :key="index">
-					<view class="one_list_11" style="font-size: 36rpx;">{{item.name}}</view>
+			<view class="one_list" v-if="!!!nodata_1">
+				<view class="one_list_1" v-for="(item, index) in oneLevel" :key="index">
+					<view class="one_list_11" style="font-size: 38rpx;">{{item[0].u_name}}</view>
 					<view class="one_list_11">
-						<view class="one_list_11_num">{{item.num1}}</view>
+						<view class="one_list_11_num">{{item[0].entry}}</view>
+						<view>现货买入</view>
+					</view>
+					<view class="one_list_11">
+						<view class="one_list_11_num">{{item[0].seller}}</view>
 						<view>卖出</view>
 					</view>
 					<view class="one_list_11">
-						<view class="one_list_11_num">{{item.num2}}</view>
+						<view class="one_list_11_num">{{item[0].pickup}}</view>
 						<view>提货</view>
 					</view>
 					<view class="one_list_11">
-						<view class="one_list_11_num">{{item.num3}}</view>
+						<view class="one_list_11_num">{{item[0].pfentry}}</view>
 						<view>批发买入</view>
 					</view>
 				</view>
@@ -30,23 +34,27 @@
 		</scroll-view>
 		<!-- 二级伙伴 -->
 		<scroll-view scroll-y v-if="currentTab==1" class="one">
-			<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
+			<view class="FY FY-c FX-c" v-if="nodata_2" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
 				暂无内容
 			</view>
-			<view class="one_list">
-				<view class="one_list_1" v-for="(item, index) in twoData" :key="index">
-					<view class="one_list_11" style="font-size: 36rpx;">{{item.name}}</view>
+			<view class="one_list" v-if="!!!nodata_2">
+				<view class="one_list_1" v-for="(item, index) in twoLevel" :key="index">
+					<view class="one_list_11" style="font-size: 36rpx;">{{item[0].u_name}}</view>
 					<view class="one_list_11">
-						<view class="one_list_11_num">{{item.num1}}</view>
+						<view class="one_list_11_num">{{item[0].entry}}</view>
+						<view>现货买入</view>
+					</view>
+					<view class="one_list_11">
+						<view class="one_list_11_num">{{item[0].seller}}</view>
 						<view>卖出</view>
 					</view>
 					<view class="one_list_11">
-						<view class="one_list_11_num">{{item.num2}}</view>
+						<view class="one_list_11_num">{{item[0].pickup}}</view>
 						<view>提货</view>
 					</view>
 					<view class="one_list_11">
-						<view class="one_list_11_num">{{item.num3}}</view>
+						<view class="one_list_11_num">{{item[0].pfentry}}</view>
 						<view>批发买入</view>
 					</view>
 				</view>
@@ -63,49 +71,27 @@
 	export default {
 		data() {
 			return {
-					navbar: [
-						{name: "一级伙伴"},
-						{name: "二级伙伴"}
-					],
-					currentTab: 0,
-					nodata: false,
-					oneData: [
-						{
-							name: '王**',
-							num1: 999,
-							num2: 888,
-							num3: 666
-						},
-						{
-							name: '冯**',
-							num1: 99,
-							num2: 88,
-							num3: 66
-						},
-						{
-							name: '张**',
-							num1: 959,
-							num2: 858,
-							num3: 656
-						},
-						{
-							name: '李**',
-							num1: 939,
-							num2: 838,
-							num3: 636
-						}
-					],
-					twoData: []
+				navbar: [
+					{name: "一级伙伴"},
+					{name: "二级伙伴"}
+				],
+				currentTab: 0,
+				nodata_1: false,
+				nodata_2: false,
+				oneLevel: [],
+				twoLevel: []
 			}
 		},
-		onLoad: function() {
-			// const getAddressList_res = await this.getAddressList();
-			// if (getAddressList_res.status === 200 && getAddressList_res.data.length !== 0 && getAddressList_res.data) {
-			// 	this.addressList = getAddressList_res.data;
-			// 	this.nodata = false;
-			// } else {
-			// 	this.nodata = true;
-			// };
+		onLoad: async function() {
+			const showsharecount_res = await this.showsharecount(2);
+			if (showsharecount_res.status === 200 && showsharecount_res.data.length !== 0 && !!showsharecount_res.data) {
+				if (showsharecount_res.data.level_1.length === 0) { this.nodata_1 = true; } else { this.oneLevel = showsharecount_res.data.level_1; };
+				if (showsharecount_res.data.level_2.length === 0) { this.nodata_2 = true; } else { this.twoLevel = showsharecount_res.data.level_2; };
+			} else {
+				this.nodata_1 = true;
+				this.nodata_2 = true;
+				this.showToast(3, '暂无内容!');
+			};
 		},
 		methods: {
 			// 信息反馈
@@ -122,15 +108,15 @@
 				this.$refs.toast.show(params)
 			},
 			// tab切换
-			changeTab: function(e){
+			changeTab: async function(e){
 				this.currentTab = e.index;
 			},
-			// 获取资金流水
-			cashflow: async function(type) {
+			// 获取团队管理
+			showsharecount: async function(type) {
 				return await new Promise((resolve, reject) => {
 					this.sendRequest({
 						method: "POST",
-						url: App.cashflow,
+						url: App.showsharecount,
 						data: { type },
 						success: res => { resolve(res) },
 						fail: err => { reject(err) }
@@ -178,7 +164,7 @@
 			border-radius: 20rpx;
 			margin-bottom: 10rpx;
 			.one_list_11{
-				width: 20%;
+				flex: 1;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
