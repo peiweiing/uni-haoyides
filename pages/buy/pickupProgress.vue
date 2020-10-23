@@ -143,12 +143,12 @@
 				modal: false,
 				button: [
 					{
-						text: '取消订单',
+						text: '取消',
 						type: 'red',
 						plain: true //是否空心
 					},
 					{
-						text: '去确认',
+						text: '确认',
 						type: 'red',
 						plain: false
 					}
@@ -275,7 +275,7 @@
 				const pickupBefore_res = await this.pickupBefore();
 				// console.log(pickupBefore_res);
 				if (pickupBefore_res.data[0].u_addr === 0) {
-					this.modal = false;
+					this.modal = true;
 					this.title = '没有设置默认收货地址';
 					this.content = '是否前往设置默认收货地址?';
 					// uni.showModal({

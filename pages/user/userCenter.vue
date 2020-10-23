@@ -64,7 +64,7 @@
 				<view class="tui-order-item">
 					<view class="tui-order-text">商品值</view>
 					<view class="tui-icon-box">
-						{{userInfo.bal_point}}
+						{{userInfo.ua_goodsvalue}}
 					</view>
 				</view>
 			</view>
@@ -187,7 +187,8 @@
 						data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
 						data.u_acc ? that.userInfo.u_acc = data.u_acc : ''
 						data.total_acc ? that.userInfo.total_acc = data.total_acc : ''
-						data.commission ? that.userInfo.commission = data.commission : ''
+						that.userInfo.commission=res.data.commission.toFixed(2);
+						that.userInfo.ua_goodsvalue=res.data.ua_goodsvalue;
 						that.userInfo.total_inv = data.total_inv
 					} else {
 						this.showToast(res.msg)

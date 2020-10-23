@@ -74,17 +74,17 @@
 				modal: false,
 				button: [
 					{
-						text: '取消订单',
+						text: '取消',
 						type: 'red',
 						plain: true //是否空心
 					},
 					{
-						text: '去确认',
+						text: '确认',
 						type: 'red',
 						plain: false
 					}
 				],
-				
+				eid:'',
 				nodata: false,
 				addressList: [],
 				actions: [{
@@ -144,6 +144,7 @@
 			handleClick: async function(e) {
 				let index = e.index;
 				var _this = this;
+				var id = _this.eid;
 				if (index === 0) {
 					// this.tui.toast('你点击了取消按钮');
 				} else {
@@ -157,6 +158,8 @@
 			// 地址操作
 			handlerButton: async function(e, id) {
 				var _this = this;
+				var that = this;
+				_this.eid = id;
 				// 点击删除
 				if (e.index === 0) {
 					that.modal=true;

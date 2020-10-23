@@ -19,12 +19,12 @@
 				<tui-card v-if="isSuccess" class="tui-card" :image="bottomList.img[0].img" :title="bottomList.img[0].title" :tag="bottomList.img[0].tag"
 				 @click="popup">
 					<template v-slot:footer>
-						<view class="tui-default">
+						<view class="tui-default" style="font-size: 24rpx; padding: 20rpx;">
 							<view>
 								价格:￥{{bottomList.g_price}}
 							</view>
 							<view>
-								交易量:{{bottomList.g_salevol}}
+								交易量:{{bottomList.g_salevol}}份
 							</view>
 							<view>
 								交易金额:￥{{(bottomList.totalpay).toFixed(2)}}
@@ -79,13 +79,15 @@
 										<template v-slot:footer>
 											<view class="tui-default">
 												<view>
-													价格:￥{{item.g_price}}
+													价格：￥{{item.g_price}}
 												</view>
 												<view>
-													交易量:{{item.g_salevol}}
+													交易量：{{item.g_salevol}}份
 												</view>
+											</view>
+											<view class="tui-default">
 												<view>
-													交易金额:￥{{item.totalpay}}
+													交易金额：￥{{item.totalpay}}
 												</view>
 											</view>
 										</template>
@@ -669,7 +671,7 @@
 	}
 
 	.tui-default {
-		padding: 20rpx;
+		padding: 6rpx 20rpx;
 		color: #999;
 		font-size: 26rpx;
 		display: flex;

@@ -123,10 +123,11 @@ Vue.prototype.sendRequest= function(param){
 			    },
 			    fail: (e) => {
 			        console.log("网络请求fail:" + JSON.stringify(e));
-			        uni.showModal({
-			            content:"" + e
+			        uni.showToast({
+			        	title: '网络请求出错',
+			        	icon:"none",
+			            duration: 2000
 			        });
-			        
 			        typeof param.fail == "function" && param.fail(e.data);
 			    },
 			    complete: (e) => {

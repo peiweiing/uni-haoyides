@@ -493,7 +493,7 @@
 		box-sizing: border-box;
 	}
 	.tui-button-primary{
-		background-color: #9E2036;
+		background-color: #9E2036!important;
 	}
 	.tui-button-hover{
 		background-color: #bd2541!important;

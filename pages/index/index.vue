@@ -178,6 +178,11 @@
 				},
 				fail:function(e){
 					console.log("index_1  fail:" + JSON.stringify(e));
+			       uni.showToast({
+			       	title: '网络请求出错',
+			       	icon:"none",
+			           duration: 2000
+			       });
 				}
 			});
 			// that.sendRequest({
