@@ -1,8 +1,8 @@
 <script>
 // 域名
-	// const hostname= "http://api.xianhuo.club/api/"
+	const hostname= "http://api.xianhuo.club/api/"
 	 // const hostname= "http://api.gdyingshi.cn/api/"
-	const hostname= "http://api.lovehou.com/api/"
+	// const hostname= "http://api.lovehou.com/api/"
 // 版本更新
 	const getversion = hostname+"getversion";
 // 账号登录
@@ -171,11 +171,13 @@ export default {
 		payorder,pforderinfo,pfpayorder,entrustOrderInfo,entrustPayOrder,
 		getlunbo,getRechargeInfo,createRecharge,historyRecharge,getOldRecharge,closeRecharge,
 		shareimg,proceedsdetail,showsharedata,showsharecount,isRetailerLevel,
-		
+		install (Vue, pluginOptions={}){
+			Vue.$gc=Vue.prototype.$gc={};
+		},
 	onLaunch: function() {
 			let that = this;
 			// 获取应用版本
-			let current_ver = 165;
+			let current_ver = 170;
 			// plus.runtime.getProperty(plus.runtime.appid, function(inf) {
 			// 	console.log(inf.version);
 			// });
