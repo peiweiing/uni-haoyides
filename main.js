@@ -87,9 +87,14 @@ Vue.prototype.sendRequest= function(param){
 			    success: res => {
 			        console.log("网络请求success:" , res);
 			        if (res.statusCode && res.statusCode != 200) {//api错误
-			            uni.showModal({
-			                content:"" + res.msg
-			            });
+			            // uni.showModal({
+			            //     content:"" + res.msg
+			            // });
+						uni.showToast({
+							title: res.msg,
+							icon:"none",
+						    duration: 2000
+						});
 			            return;
 			        }
 					var result = res.data;
@@ -113,9 +118,14 @@ Vue.prototype.sendRequest= function(param){
 			               
 			            }
 						else{
-							uni.showModal({
-								showCancel:false,
-								content:"" + result.msg
+							// uni.showModal({
+							// 	showCancel:false,
+							// 	content:"" + result.msg
+							// });
+							uni.showToast({
+								title: result.msg,
+								icon:"none",
+							    duration: 2000
 							});
 							return;
 						}
@@ -124,7 +134,7 @@ Vue.prototype.sendRequest= function(param){
 			    fail: (e) => {
 			        console.log("网络请求fail:" + JSON.stringify(e));
 			        uni.showToast({
-			        	title: '网络请求出错',
+			        	title: '网络请求出错,请重新加载',
 			        	icon:"none",
 			            duration: 2000
 			        });

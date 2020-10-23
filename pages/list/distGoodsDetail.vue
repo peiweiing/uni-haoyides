@@ -193,12 +193,12 @@ import App from '../../App.vue'
 				modal: false,
 				button: [
 					{
-						text: '取消订单',
+						text: '取消',
 						type: 'red',
 						plain: true //是否空心
 					},
 					{
-						text: '去确认',
+						text: '确认',
 						type: 'red',
 						plain: false
 					}
@@ -373,8 +373,8 @@ import App from '../../App.vue'
 						console.log(res.data);
 						that.user = res.data
 						if(that.user!=1){
-							this.modal = true;
-							this.content = '请先实名认证';
+							that.modal = true;
+							that.content = '请先实名认证';
 							// uni.showModal({
 							// 	title: '提示',
 							// 	content: '请先实名认证',

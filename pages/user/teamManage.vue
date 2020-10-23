@@ -84,6 +84,7 @@
 		},
 		onLoad: async function() {
 			const showsharecount_res = await this.showsharecount(1);
+			console.log(showsharecount_res);
 			if (showsharecount_res.status === 200 && showsharecount_res.data.length !== 0 && !!showsharecount_res.data) {
 				if (showsharecount_res.data.level_1.length === 0 && showsharecount_res.data.level_2.length === 0) { this.nodata_1 = true; this.nodata_2 = true; this.showToast(3, '暂无内容!'); return; };
 				if (showsharecount_res.data.level_1.length === 0) { this.nodata_1 = true; } else { this.oneLevel = showsharecount_res.data.level_1; };

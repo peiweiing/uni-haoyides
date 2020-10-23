@@ -78,7 +78,7 @@
 				     <view class="tui-title">买入数量：</view>
 						<view class="valnum FX">
 							<button class='F-xy' type="primary" @click="valnumes">-</button>
-							<input class="t-center" type="text" v-model="valnums" @input="inputChanges"/>
+							<input class="t-center" type="number" v-model="valnums" @input="inputChanges"/>
 							<button class='F-xy' type="primary" @click="valnumas">+</button>
 						</view>
 				    </view>

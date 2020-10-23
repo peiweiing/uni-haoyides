@@ -253,7 +253,7 @@
 					});
 				}else if(that.payChoose==1){
 					that.sendRequest({
-						url: App.payorder,
+						url: App.pfpayorder,
 						method: 'POST',
 						data: {"g_id":that.eid,'pay_method':1},
 						success: (res) => {

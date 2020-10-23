@@ -112,6 +112,7 @@
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
 		<tui-modal :show="modal" @click="handleClick" @cancel="hide" title="提示" :content="content" :button="button"></tui-modal>
+		<tui-modal :show="modals" @click="handleClicks" @cancel="hide" title="提示" :content="contents" :button="buttons"></tui-modal>
 	</view>
 </template>
 
@@ -131,6 +132,20 @@
 					},
 					{
 						text: '去确认',
+						type: 'red',
+						plain: false
+					}
+				],
+				contents:'',
+				modals: false,
+				buttons: [
+					{
+						text: '取消',
+						type: 'red',
+						plain: true //是否空心
+					},
+					{
+						text: '确认',
 						type: 'red',
 						plain: false
 					}
@@ -300,6 +315,20 @@
 				}
 				this.modal = false;
 			},
+			handleClicks(e) {
+				let index = e.index;
+				let that = this;
+				if (index === 0) {
+					// this.tui.toast('你点击了取消按钮');
+					
+				} else {
+					// this.tui.toast('你点击了确定按钮');
+					uni.navigateTo({
+						url: '../user/realName',
+					})
+				}
+				this.modals = false;
+			},
 			onrecharges(){
 				let that =this;
 				let data ={payChoose:that.payChoose,money:that.total};
@@ -310,20 +339,23 @@
 							console.log(res.data);
 							that.user = res.data
 							if(that.user!=1){
-								uni.showModal({
-									title: '提示',
-									content: '请先实名认证',
-									success: function (res) {
-										if (res.confirm) {
-											uni.navigateTo({
-												url: '../user/realName',
-											})
-											console.log('用户点击确定');
-										} else if (res.cancel) {
-											console.log('用户点击取消');
-										}
-									},
-								});
+								
+								that.modals=true;
+								that.contents='请先实名认证'
+								// uni.showModal({
+								// 	title: '提示',
+								// 	content: '请先实名认证',
+								// 	success: function (res) {
+								// 		if (res.confirm) {
+								// 			uni.navigateTo({
+								// 				url: '../user/realName',
+								// 			})
+								// 			console.log('用户点击确定');
+								// 		} else if (res.cancel) {
+								// 			console.log('用户点击取消');
+								// 		}
+								// 	},
+								// });
 							}else{
 								if(that.total!=''&&that.conTotal!=''&&that.total==that.conTotal){
 									

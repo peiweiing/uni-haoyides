@@ -151,7 +151,7 @@
 							<view class="tui-title">买入数量：</view>
 							<view class="valnum FX">
 								<button class='F-xy' type="primary" @click="valnumes">-</button>
-								<input class="t-center" type="text" v-model="valnums" @input="inputChanges" />
+								<input class="t-center" type="number" v-model="valnums" @input="inputChanges" />
 								<button class='F-xy' type="primary" @click="valnumas">+</button>
 							</view>
 						</view>
@@ -425,7 +425,7 @@
 				let checkRes = form.validation(formData, rules);
 				if (!checkRes) {
 					if (Number(this.price) <= Number(this.bottomList.g_maxprice) && Number(this.price) >= Number(this.bottomList.g_minprice)) {
-						this.isConfirm = true
+						this.isConfirm = true;
 					} else {
 						this.isConfirm = false
 						this.showToast(3, "请输入正确的价格区间");
@@ -471,9 +471,10 @@
 						key: "user",
 						success: function(res) {
 							that.user = res.data
-							if (that.user != 1) {
-								this.modal = false;
-								this.content = "请先实名认证";
+						if (that.user != 1) {
+								console.log(that.user);
+								that.modal = true;
+								that.content = "请先实名认证";
 								// uni.showModal({
 								//  title: '提示',
 								//  content: '请先实名认证',
@@ -572,8 +573,8 @@
 						success: function(res) {
 							that.user = res.data
 							if (that.user != 1) {
-								this.modal = true;
-								this.content = '请先实名认证';
+								that.modal = true;
+								that.content = '请先实名认证';
 								// uni.showModal({
 								// 	title: '提示',
 								// 	content: '请先实名认证',

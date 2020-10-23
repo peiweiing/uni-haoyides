@@ -233,8 +233,14 @@
 			formSubmit(e){
 				console.log(e);
 				var that = this;
-				that.disabled=true;
+				
 				if(that.payChoose==0){
+					
+					if(that.disabled){
+						return;
+					}else{
+					 	that.disabled=true;
+					}
 					that.sendRequest({
 						url: App.entrusBuy,
 						method: 'POST',
@@ -251,13 +257,14 @@
 							},800)
 						},
 						complete: ()=> {
+							
 							console.log('执行了')
 							that.disabled=false;
 						},
 					});
 				}else if(that.payChoose==1){
 					that.sendRequest({
-						url: App.payorder,
+						url: App.entrustPayOrder,
 						method: 'POST',
 						data: {"g_id":that.eid,'pay_method':1},
 						success: (res) => {

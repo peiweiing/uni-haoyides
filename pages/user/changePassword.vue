@@ -5,9 +5,9 @@
 			<scroll-view scroll-y class="content">
 					<view class="content_1">
 						<view class="tips">
-							温馨提示：密码为8~20位数字和字母组合，
+							温馨提示：密码不得少于6位，
 							为了您的资金安全，
-							禁止使用全数字、全字母或连续性字符作为密码。
+							不要使用过于简单的数字或字母组合或连续性字符作为密码。
 						</view>
 						<view class="submit">
 							<tui-list-cell :hover="false">
@@ -65,6 +65,8 @@
 			</view>
 		</form>
 		
+		<!--toast提示-->
+		<tui-toast ref="toast"></tui-toast>
 		<tui-modal :show="modal" @click="handleClick" @cancel="hide" title="提示" :content="content" :button="button"></tui-modal>
 	</view>
 </template>
@@ -97,19 +99,53 @@
 		},
 		methods: {
 			// 信息反馈
-			showToast: function(data) { uni.showToast({ title: data, icon: "none" }) },
-			
+			showToast: function(type, msg, msg2) {
+				let params = {
+					title: msg,
+					imgUrl: "../../static/img/toast/check-circle.png",
+					icon: true,
+					duration: 1500
+				};
+				switch (type) {
+					case 1:
+						params.title = msg;
+						params.imgUrl = "../../static/img/toast/check-circle.png";
+						break;
+					case 2:
+						params.title = msg;
+						params.imgUrl = "../../static/img/toast/fail-circle.png";
+						break;
+					case 3:
+						params.title = msg;
+						params.imgUrl = "../../static/img/toast/info-circle.png";
+						break;
+					case 4:
+						params.title = msg;
+						params.icon = false;
+						break;
+					case 5:
+						params.title = msg;
+						params.content = msg2;
+						break;
+					default:
+						break;
+				}
+				this.$refs.toast.show(params);
+			},
 			handleClick: async function(e) {
+				var _this = this;
 				let index = e.index;
 				const pwd_body = {
-					oldpwd: this.oldpwd,
-					changepwd: this.changepwd,
-					confirmpwd: this.confirmpwd
+					oldpwd: _this.oldpwd,
+					changepwd: _this.changepwd,
+					confirmpwd: _this.confirmpwd
 				};
 				if (index === 0) {
-					this.tui.toast('你点击了取消按钮');
+					// _this.tui.toast('你点击了取消按钮');
+					_this.modal = false;
 				} else {
-					this.tui.toast('你点击了确定按钮');
+					// _this.tui.toast('你点击了确定按钮');
+					_this.modal = false;
 					// 数据上传并反馈
 					const updatepwd_res = await _this.updatepwd(pwd_body);
 					console.log("确认修改密码:", updatepwd_res);
@@ -118,17 +154,16 @@
 						_this.oldpwd = "";
 						_this.changepwd = "";
 						_this.confirmpwd = "";
-						_this.showToast("修改密码成功！即将返回个人中心...");
-						setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 3000);
+						_this.showToast(1, "修改成功 即将返回");
+						setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 1500);
 					} else {
 						// 输入框清空并返回
 						_this.oldpwd = "";
 						_this.changepwd = "";
 						_this.confirmpwd = "";
-						_this.showToast("修改密码失败!请重试...");
+						_this.showToast(2, "系统繁忙 请重试");
 					};
 				}
-				this.modal = false;
 			},
 				// 表单提交
 			formSubmit: function(e) {
@@ -136,22 +171,26 @@
 				let rules = [
 					{
 						name: "pwd",
-						rule: ["required", "isEnAndNo"],
-						msg: ["请输入新密码!", "新密码为8~20位数字和字母组合!"]
+						rule: ["required"],
+						msg: ["请输入新密码"]
 					},
 					{
 						name: "pwd2",
-						rule: ["required", "isEnAndNo"],
-						msg: ["请输入确认密码!", "新密码为8~20位数字和字母组合!"]
+						rule: ["required"],
+						msg: ["请输入确认密码"]
 					}
 				];
 				//进行表单检查
 				let formData = e.detail.value;
 				let checkRes = form.validation(formData, rules);
 				// 判断当前密码是否有输入
-				if (!!!this.oldpwd) { this.showToast("请输入当前密码!"); return };
+				if (this.oldpwd === '') { this.showToast(3, "请输入当前密码"); return };
 				// 判断修改是否符合数字规则
-				if (checkRes) { this.showToast(checkRes); return };
+				if (checkRes) { this.showToast(3, checkRes); return };
+				// 判断修改是否符合数字规则
+				if (this.changepwd.length < 6) { this.showToast(3, '新密码不得少于6位'); return };
+				// 判断修改是否符合数字规则
+				if (this.changepwd !== this.confirmpwd) { this.showToast(3, '两次密码不一致'); return };
 				// 上传参数
 				const pwd_body = {
 					oldpwd: this.oldpwd,
@@ -161,8 +200,8 @@
 				var _this = this;
 				// 确认提示
 				
-				this.modal = false;
-				this.content = "确认修改密码?";
+				_this.modal = true;
+				_this.content = "确认修改密码?";
 				// uni.showModal({
 				//     title: '提示',
 				//     content: '确认修改密码？',

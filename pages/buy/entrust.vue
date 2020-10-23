@@ -23,8 +23,13 @@
 				<view class="entrusbuylist_center" style="flex: 1;">
 					<view class="entrusbuylist_right_title">{{item.g_title}}</view>
 					<view class="entrusbuylist_right_price">
-						<text>委托价:￥{{Number(item.ut_price).toFixed(2)}}</text>
+						<text>委托价:￥{{item.ut_price}}</text>
 						<text>委托:{{item.ut_num}}份</text>
+						<!-- <text>成交:{{item.ut_dealnum}}份</text> -->
+					</view>
+					<view class="entrusbuylist_right_price">
+						<!-- <text>委托价:￥{{item.ut_price}}</text>
+						<text>委托:{{item.ut_num}}份</text> -->
 						<text>成交:{{item.ut_dealnum}}份</text>
 					</view>
 				</view>
@@ -58,6 +63,11 @@
 					<view class="entrusbuylist_right_price">
 						<text>委托价:￥{{item.ut_price}}</text>
 						<text>委托:{{item.ut_num}}份</text>
+						<!-- <text>成交:{{item.ut_dealnum}}份</text> -->
+					</view>
+					<view class="entrusbuylist_right_price">
+						<!-- <text>委托价:￥{{item.ut_price}}</text>
+						<text>委托:{{item.ut_num}}份</text> -->
 						<text>成交:{{item.ut_dealnum}}份</text>
 					</view>
 				</view>

@@ -150,7 +150,7 @@
 							<view class="tui-title">卖出数量：</view>
 							<view class="valnum FX">
 								<button class='F-xy' type="primary" @click="valnumes">-</button>
-								<input class="t-center" type="text" v-model="valnums" @input="inputChanges" />
+								<input class="t-center" type="number" v-model="valnums" @input="inputChanges" />
 								<button class='F-xy' type="primary" @click="valnumas">+</button>
 							</view>
 						</view>
@@ -578,11 +578,24 @@
 										// that.details=res.data.data;
 										that.bottomPopup = false;
 										that.showToast(1, res.msg);
-										setTimeout(function() {
-											uni.redirectTo({
-												url: './consignmentSale'
-											})
-										}, 1500)
+										
+										that.sendRequest({
+											url: App.getEntrusSellList,
+											method: 'POST',
+											success: (res) => {
+												if (res.data.length) {
+													that.debool = true;
+												} else {
+													that.debool = false;
+												}
+												console.log(res);
+												that.detail = res.data;
+											},
+											fail: (err) => {
+												that.debool = false;
+											}
+										});
+										
 									}
 								});
 							}
