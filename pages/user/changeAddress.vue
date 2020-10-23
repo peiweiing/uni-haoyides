@@ -60,6 +60,7 @@
 		</view>
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
+		<tui-modal :show="modal" @click="handleClick" @cancel="hide" :title="title" :content="content" :button="button"></tui-modal>
 	</view>
 </template>
 
@@ -68,6 +69,22 @@
 	export default {
 		data() {
 			return {
+				title:'提示',
+				content:'',
+				modal: false,
+				button: [
+					{
+						text: '取消订单',
+						type: 'red',
+						plain: true //是否空心
+					},
+					{
+						text: '去确认',
+						type: 'red',
+						plain: false
+					}
+				],
+				
 				nodata: false,
 				addressList: [],
 				actions: [{
@@ -124,22 +141,37 @@
 				}
 				this.$refs.toast.show(params);
 			},
+			handleClick: async function(e) {
+				let index = e.index;
+				var _this = this;
+				if (index === 0) {
+					// this.tui.toast('你点击了取消按钮');
+				} else {
+					// this.tui.toast('你点击了确定按钮');
+					const delShippin_res =  await _this.delShippin(id);
+					_this.showToast(1, delShippin_res.msg);
+					setTimeout(() => { uni.redirectTo({ url: './changeAddress' }); }, 1500);
+				}
+				this.modal = false;
+			},
 			// 地址操作
 			handlerButton: async function(e, id) {
 				var _this = this;
 				// 点击删除
 				if (e.index === 0) {
-					uni.showModal({
-					    title: '提示',
-					    content: '确认删除此收货地址?',
-					    success: async function (res) {
-					        if (res.confirm) {
-								const delShippin_res = await _this.delShippin(id);
-								_this.showToast(1, delShippin_res.msg);
-								setTimeout(() => { uni.redirectTo({ url: './changeAddress' }); }, 1500);
-					        };
-					    }
-					});
+					that.modal=true;
+					that.content="确认删除此收货地址?"
+					// uni.showModal({
+					//     title: '提示',
+					//     content: '确认删除此收货地址?',
+					//     success: async function (res) {
+					//         if (res.confirm) {
+					// 			const delShippin_res = await _this.delShippin(id);
+					// 			_this.showToast(1, delShippin_res.msg);
+					// 			setTimeout(() => { uni.redirectTo({ url: './changeAddress' }); }, 1500);
+					//         };
+					//     }
+					// });
 					return;
 				};
 				// 点击修改

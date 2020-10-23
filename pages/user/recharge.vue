@@ -111,6 +111,7 @@
 		</form>
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
+		<tui-modal :show="modal" @click="handleClick" @cancel="hide" title="提示" :content="content" :button="button"></tui-modal>
 	</view>
 </template>
 
@@ -120,6 +121,20 @@
 	export default {
 		data() {
 			return {
+				content:'',
+				modal: false,
+				button: [
+					{
+						text: '取消订单',
+						type: 'red',
+						plain: true //是否空心
+					},
+					{
+						text: '去确认',
+						type: 'red',
+						plain: false
+					}
+				],
 				balance: "", // 当前账户余额信息
 				payChoose: 1, // 支付方式
 				total: "" , // 充值金额
@@ -127,7 +142,8 @@
 				orderInfo: "", // 订单信息
 				payment_res_1: "", // resultStatus结果码(9000)
 				payment_res_2: "", // code结果码(10000)
-				tokens:''
+				tokens:'',
+				ok:'',
 			}
 		},
 		onLoad: async function() {
@@ -139,71 +155,75 @@
 				this.showToast(2, "获取信息失败!请重试...");
 			};
 			
+				
 			that.sendRequest({
 				url :App.historyRecharge,
 				// url :App.closeRecharge,
 				method:'POST',
 				success : function(ok){
 					console.log("data",ok.data)
+					that.ok = ok;
 					if(ok.data.code==200){
-						uni.showModal({
-							title: '提示',
-							content: '您有待确认充值订单',
-							confirmText: '去确认',
-							cancelText:'关闭订单',
-							success: function (res) {
-								if (res.confirm) {
-									console.log('用户点击确定');
+						that.modal=true;
+						that.content='您有待确认充值订单'
+						// uni.showModal({
+						// 	title: '提示',
+						// 	content: '您有待确认充值订单',
+						// 	confirmText: '去确认',
+						// 	cancelText:'关闭订单',
+						// 	success: function (res) {
+						// 		if (res.confirm) {
+						// 			console.log('用户点击确定');
 									
-									uni.getStorage({
-										key: 'token',
-										success: function (tokens) {
-											that.tokens=tokens.data;
-											console.log(that.tokens);
-											uni.request({
-												url: App.getOldRecharge,
-												method: 'POST',
-												header: {'Authorization':that.tokens},
-												data:{"id":ok.data.recharge_confirminfo.id},
-												success: (res) => {
-													console.log('确认后请求',res)
-													let data = res.data.data;
-													let datas = encodeURIComponent(JSON.stringify(data))
-													uni.reLaunch({
-														url:"recharges?data="+ datas,
-														success : function(nav){
-															that.total = ""; // 输入金额输入框清零
-															that.conTotal = ""; // 确认金额输入框清零
-														}
-													})
-												},
-											});
-										},
-									})
-									console.log('--456789--');
-								} else if (res.cancel) {
-									console.log('用户点击取消');
+						// 			uni.getStorage({
+						// 				key: 'token',
+						// 				success: function (tokens) {
+						// 					that.tokens=tokens.data;
+						// 					console.log(that.tokens);
+						// 					uni.request({
+						// 						url: App.getOldRecharge,
+						// 						method: 'POST',
+						// 						header: {'Authorization':that.tokens},
+						// 						data:{"id":ok.data.recharge_confirminfo.id},
+						// 						success: (res) => {
+						// 							console.log('确认后请求',res)
+						// 							let data = res.data.data;
+						// 							let datas = encodeURIComponent(JSON.stringify(data))
+						// 							uni.reLaunch({
+						// 								url:"recharges?data="+ datas,
+						// 								success : function(nav){
+						// 									that.total = ""; // 输入金额输入框清零
+						// 									that.conTotal = ""; // 确认金额输入框清零
+						// 								}
+						// 							})
+						// 						},
+						// 					});
+						// 				},
+						// 			})
+						// 			console.log('--456789--');
+						// 		} else if (res.cancel) {
+						// 			console.log('用户点击取消');
 									
-									uni.getStorage({
-										key: 'token',
-										success: function (tokens) {
-											that.tokens=tokens.data;
-											console.log(that.tokens);
-											uni.request({
-												url: App.closeRecharge,
-												method: 'POST',
-												header: {'Authorization':that.tokens},
-												data:{"id":ok.data.recharge_confirminfo.id},
-												success: (res) => {
-													console.log('取消后请求',res)
-												},
-											});
-										},
-									})
-									console.log('--123456--');
-								}
-							}
-						});
+						// 			uni.getStorage({
+						// 				key: 'token',
+						// 				success: function (tokens) {
+						// 					that.tokens=tokens.data;
+						// 					console.log(that.tokens);
+						// 					uni.request({
+						// 						url: App.closeRecharge,
+						// 						method: 'POST',
+						// 						header: {'Authorization':that.tokens},
+						// 						data:{"id":ok.data.recharge_confirminfo.id},
+						// 						success: (res) => {
+						// 							console.log('取消后请求',res)
+						// 						},
+						// 					});
+						// 				},
+						// 			})
+						// 			console.log('--123456--');
+						// 		}
+						// 	}
+						// });
 						
 						
 					}
@@ -228,6 +248,57 @@
 					default: break;
 				}
 				this.$refs.toast.show(params)
+			},
+			handleClick(e) {
+				let index = e.index;
+				let that = this;
+				if (index === 0) {
+					// this.tui.toast('你点击了取消按钮');
+					uni.getStorage({
+						key: 'token',
+						success: function (tokens) {
+							that.tokens=tokens.data;
+							console.log(that.tokens);
+							uni.request({
+								url: App.closeRecharge,
+								method: 'POST',
+								header: {'Authorization':that.tokens},
+								data:{"id":that.ok.data.recharge_confirminfo.id},
+								success: (res) => {
+									console.log('取消后请求',res)
+								},
+							});
+						},
+					})
+				} else {
+					// this.tui.toast('你点击了确定按钮');
+					uni.getStorage({
+						key: 'token',
+						success: function (tokens) {
+							that.tokens=tokens.data;
+							console.log(that.tokens);
+							uni.request({
+								url: App.getOldRecharge,
+								method: 'POST',
+								header: {'Authorization':that.tokens},
+								data:{"id":that.ok.data.recharge_confirminfo.id},
+								success: (res) => {
+									console.log('确认后请求',res)
+									let data = res.data.data;
+									let datas = encodeURIComponent(JSON.stringify(data))
+									uni.reLaunch({
+										url:"recharges?data="+ datas,
+										success : function(nav){
+											that.total = ""; // 输入金额输入框清零
+											that.conTotal = ""; // 确认金额输入框清零
+										}
+									})
+								},
+							});
+						},
+					})
+				}
+				this.modal = false;
 			},
 			onrecharges(){
 				let that =this;

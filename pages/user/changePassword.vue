@@ -64,6 +64,8 @@
 				确 认 修 改</button>
 			</view>
 		</form>
+		
+		<tui-modal :show="modal" @click="handleClick" @cancel="hide" title="提示" :content="content" :button="button"></tui-modal>
 	</view>
 </template>
 
@@ -75,13 +77,60 @@
 			return {
 				oldpwd: "",
 				changepwd: "",
-				confirmpwd: ""
+				confirmpwd: "",
+				content:'提示',
+				modal: false,
+				button: [
+					{
+						text: '取消',
+						type: 'red',
+						plain: true //是否空心
+					},
+					{
+						text: '确认',
+						type: 'red',
+						plain: false
+					}
+				],
+				
 			}
 		},
 		methods: {
 			// 信息反馈
 			showToast: function(data) { uni.showToast({ title: data, icon: "none" }) },
-			// 表单提交
+			
+			handleClick: async function(e) {
+				let index = e.index;
+				const pwd_body = {
+					oldpwd: this.oldpwd,
+					changepwd: this.changepwd,
+					confirmpwd: this.confirmpwd
+				};
+				if (index === 0) {
+					this.tui.toast('你点击了取消按钮');
+				} else {
+					this.tui.toast('你点击了确定按钮');
+					// 数据上传并反馈
+					const updatepwd_res = await _this.updatepwd(pwd_body);
+					console.log("确认修改密码:", updatepwd_res);
+					if (updatepwd_res.status === 200) {
+						// 输入框清空并返回
+						_this.oldpwd = "";
+						_this.changepwd = "";
+						_this.confirmpwd = "";
+						_this.showToast("修改密码成功！即将返回个人中心...");
+						setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 3000);
+					} else {
+						// 输入框清空并返回
+						_this.oldpwd = "";
+						_this.changepwd = "";
+						_this.confirmpwd = "";
+						_this.showToast("修改密码失败!请重试...");
+					};
+				}
+				this.modal = false;
+			},
+				// 表单提交
 			formSubmit: function(e) {
 				//表单规则
 				let rules = [
@@ -111,31 +160,35 @@
 				};
 				var _this = this;
 				// 确认提示
-				uni.showModal({
-				    title: '提示',
-				    content: '确认修改密码？',
-				    success: async function (res) {
-				        if (res.confirm) {
-							// 数据上传并反馈
-							const updatepwd_res = await _this.updatepwd(pwd_body);
-							console.log("确认修改密码:", updatepwd_res);
-							if (updatepwd_res.status === 200) {
-								// 输入框清空并返回
-								_this.oldpwd = "";
-								_this.changepwd = "";
-								_this.confirmpwd = "";
-								_this.showToast("修改密码成功！即将返回个人中心...");
-								setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 3000);
-							} else {
-								// 输入框清空并返回
-								_this.oldpwd = "";
-								_this.changepwd = "";
-								_this.confirmpwd = "";
-								_this.showToast("修改密码失败!请重试...");
-							};
-				        }
-				    }
-				});
+				
+				this.modal = false;
+				this.content = "确认修改密码?";
+				// uni.showModal({
+				//     title: '提示',
+				//     content: '确认修改密码？',
+				//     success: async function (res) {
+				//         if (res.confirm) {
+				// 			// 数据上传并反馈
+				// 			const updatepwd_res = await _this.updatepwd(pwd_body);
+				// 			console.log("确认修改密码:", updatepwd_res);
+				// 			if (updatepwd_res.status === 200) {
+				// 				// 输入框清空并返回
+				// 				_this.oldpwd = "";
+				// 				_this.changepwd = "";
+				// 				_this.confirmpwd = "";
+				// 				_this.showToast("修改密码成功！即将返回个人中心...");
+				// 				setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 3000);
+				// 			} else {
+				// 				// 输入框清空并返回
+				// 				_this.oldpwd = "";
+				// 				_this.changepwd = "";
+				// 				_this.confirmpwd = "";
+				// 				_this.showToast("修改密码失败!请重试...");
+				// 			};
+				//         }
+				//     }
+				// });
+				
 			},
 			// 确认修改
 			updatepwd: async function(data) {

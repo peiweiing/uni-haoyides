@@ -154,6 +154,7 @@
 		</view>
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
+		<tui-modal :show="modal" @click="handleClick" @cancel="hide" :title="title" :content="content" :button="button"></tui-modal>
 	</view>
 </template>
 
@@ -162,6 +163,21 @@
 	export default {
 		data() {
 			return {
+				title:'提示',
+				content:'',
+				modal: false,
+				button: [
+					{
+						text: '取消订单',
+						type: 'red',
+						plain: true //是否空心
+					},
+					{
+						text: '去确认',
+						type: 'red',
+						plain: false
+					}
+				],
 				navbar: [
 					{name: "当日零售量"},
 					{name: "当日批发量"},
@@ -345,11 +361,13 @@
 					success: function (res) {
 						that.user = res.data
 						if(that.user!=1){
-							uni.showModal({
-								title: '提示',
-								content: '请先实名认证',
-								success: res => { if (res.confirm) { uni.navigateTo({ url: '../user/realName' }) } }
-							});
+							this.modal = true;
+							this.content = '请先实名认证';
+							// uni.showModal({
+							// 	title: '提示',
+							// 	content: '请先实名认证',
+							// 	success: res => { if (res.confirm) { uni.navigateTo({ url: '../user/realName' }) } }
+							// });
 						}else{
 							that.sendRequest({
 								method: "POST",
@@ -377,6 +395,16 @@
 						}
 					},
 				});
+			},
+			handleClick(e) {
+				let index = e.index;
+				if (index === 0) {
+					// this.tui.toast('你点击了取消按钮');
+				} else {
+					// this.tui.toast('你点击了确定按钮');
+					uni.navigateTo({ url: '../user/realName' })
+				}
+				this.modal = false;
 			},
 			deliveryScheduleDetails: function(type) {
 				var that =this;

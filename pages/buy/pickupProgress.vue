@@ -129,6 +129,7 @@
 		</scroll-view>
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
+		<tui-modal :show="modal" @click="handleClick" @cancel="hide" :title="title" :content="content" :button="button"></tui-modal>
 	</view>
 </template>
 
@@ -137,6 +138,21 @@
 	export default {
 		data() {
 			return {
+				title:'提示',
+				content:'',
+				modal: false,
+				button: [
+					{
+						text: '取消订单',
+						type: 'red',
+						plain: true //是否空心
+					},
+					{
+						text: '去确认',
+						type: 'red',
+						plain: false
+					}
+				],
 				navbar: [
 					{name: "我的库存"},
 					{name: "提货进度"}
@@ -243,21 +259,36 @@
 					}
 				});
 			},
+			handleClick(e) {
+				let index = e.index;
+				if (index === 0) {
+					// this.tui.toast('你点击了取消按钮');
+				} else {
+					uni.navigateTo({
+						url: '../user/changeAddress'
+					});
+					// this.tui.toast('你点击了确定按钮');
+				}
+				this.modal = false;
+			},
 			clickButton: async function(id) {
 				const pickupBefore_res = await this.pickupBefore();
 				// console.log(pickupBefore_res);
 				if (pickupBefore_res.data[0].u_addr === 0) {
-					uni.showModal({
-					    title: '没有设置默认收货地址',
-					    content: '是否前往设置默认收货地址?',
-					    success: function (res) {
-					        if (res.confirm) {
-					            uni.navigateTo({
-					            	url: '../user/changeAddress'
-					            });
-					        }
-					    }
-					});
+					this.modal = false;
+					this.title = '没有设置默认收货地址';
+					this.content = '是否前往设置默认收货地址?';
+					// uni.showModal({
+					//     title: '没有设置默认收货地址',
+					//     content: '是否前往设置默认收货地址?',
+					//     success: function (res) {
+					//         if (res.confirm) {
+					//             uni.navigateTo({
+					//             	url: '../user/changeAddress'
+					//             });
+					//         }
+					//     }
+					// });
 				} else {
 					uni.navigateTo({
 						url: "./deliveryScheduleDetails?id="+id

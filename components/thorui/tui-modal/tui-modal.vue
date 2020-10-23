@@ -292,7 +292,7 @@ export default {
 }
 
 .tui-red {
-	background: #e41f19;
+	background: #9E2036;
 	color: #fff;
 }
 
@@ -302,12 +302,12 @@ export default {
 }
 
 .tui-red-outline {
-	color: #e41f19;
+	color: #9E2036;
 	background: transparent;
 }
 
 .tui-red-outline::after {
-	border: 1px solid #e41f19;
+	border: 1px solid #9E2036;
 }
 
 .tui-warning {

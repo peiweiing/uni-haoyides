@@ -41,6 +41,10 @@
 					</view>
 				</tui-list-cell>
 			</view>
+			
+			<view class="forget" @click="forget">
+				忘记密码
+			</view>
 			<!-- <view class="tui-cell-text">
 				<view class="tui-color-primary" hover-class="tui-opcity" :hover-stay-time="150" @tap="href(1)">忘记密码？</view>
 				<view hover-class="tui-opcity" :hover-stay-time="150">
@@ -525,7 +529,9 @@ export default {
 		showOtherLogin() {
 			//打开后 不再关闭
 			this.popupShow = true;
-		}
+		},
+		// 忘记密码
+		forget: function() { uni.navigateTo({ url: './forget' }) }
 	}
 };
 </script>
@@ -695,5 +701,12 @@ export default {
 			font-size: 28rpx;
 			line-height: 36rpx;
 		}
+	.forget{
+		padding-top: 20rpx;
+		padding-right: 60rpx;
+		text-align: right;
+		font-size: 32rpx;
+		color: #007AFF;
+	}
 </style>
 

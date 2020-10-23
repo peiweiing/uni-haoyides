@@ -122,6 +122,15 @@
           "style" : {
           	"navigationBarTitleText": "修改密码"
           }
+        },
+		{
+            "path" : "pages/login/forget",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "找回密码",
+                "enablePullDownRefresh": false
+            }
+            
         }
         ,{
             "path" : "pages/user/capital",

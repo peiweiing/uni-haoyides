@@ -1,8 +1,8 @@
 <script>
 // 域名
-	const hostname= "http://api.xianhuo.club/api/"
+	// const hostname= "http://api.xianhuo.club/api/"
 	 // const hostname= "http://api.gdyingshi.cn/api/"
-	// const hostname= "http://api.lovehou.com/api/"
+	const hostname= "http://api.lovehou.com/api/"
 // 版本更新
 	const getversion = hostname+"getversion";
 // 账号登录
@@ -153,10 +153,12 @@
 	const showsharecount = hostname+"showsharecount";
 //获取分销商
 	const isRetailerLevel = hostname+"user/isRetailerLevel";
+//忘记密码
+	const forgetpwd = hostname+"forgetpwd";
 export default {
 		login,verifyCode,register,
 		// updatepwd,
-		getEntrusList,detail,newgoods,
+		getEntrusList,detail,newgoods,forgetpwd,
 		entrusBuy,getEntrusBuyList,entrusBuyList,
 		getEntrusSellList,checkEntrusCanSell,listsellBuy,mygetEntrusList,
 		entrustlst,entrustlstsell,entrustpurchase,consignmentSale,
@@ -183,6 +185,7 @@ export default {
 				method: 'POST',
 				success: (res) => {
 					if(current_ver<res.data.data.current_ver){
+						
 						uni.showModal({
 							showCancel:false,
 							title: '检测到新的版本，立即更新',
@@ -384,6 +387,9 @@ export default {
 		.min-height{min-height:calc(100vh)}.min-width{min-width: calc(100vw);}
 		
 	
+		.uni-scroll-view-content{
+			padding-bottom: 40rpx;
+		}
 		/* 定位 */
 		.pon{position:static!important;}
 		.por{position:relative!important;}

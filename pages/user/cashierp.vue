@@ -244,7 +244,7 @@
 							that.showToast(1, res.msg);
 							setTimeout(function(){
 								uni.navigateBack({delta:1});
-							},500)
+							},800)
 						},
 						complete: ()=> {
 							console.log('执行了')
@@ -306,7 +306,7 @@
 										that.showToast(5, payinfo, '');
 										setTimeout(function(){
 											uni.navigateBack({delta:1});
-										},500)
+										},800)
 									} else {
 										that.showToast(2, "系统出错!请稍后再试...");
 									}
@@ -373,13 +373,13 @@
 			changePay: function(data) {
 				if(data==0){
 					this.payChoose=0;
-					this.disabled=true;
+					this.disabled=false;
 				}else if(data==1){
 					this.payChoose=1;
-					this.disabled=true;
+					this.disabled=false;
 				}else if(data==2){
 					this.payChoose=2;
-					this.disabled=true;	
+					this.disabled=false;	
 				}
 			},
 			// 获取用户数据信息
@@ -440,10 +440,13 @@
 		background-color: #EEE;
 	}
 	.container {
-		padding: 0 40rpx;
+		padding: 0 40rpx 40rpx;
 		width: 100%;
 		height: 100%;
 		box-sizing: border-box;
+	}
+	.uni-scroll-view-content{
+		padding-bottom: 40rpx;
 	}
 	.info{
 		border-radius: 20rpx;
@@ -489,7 +492,7 @@
 		background-color: #9E2036;
 	}
 	.tui-button-hover{
-		background-color: #bd2541;
+		background-color: #bd2541!important;
 	}
 	.payment_cho{
 		padding-right: 20rpx;

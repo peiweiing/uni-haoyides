@@ -86,10 +86,10 @@
 					<view class="yesterday_detail" style="width: 50%;justify-content: space-around;">
 						<view class="FY-c FX-c">
 							<text class="yesterday_text">昨日收益</text>
-							<text class="yesterday_text yesterday_text_center">+0.00</text>
+							<text class="yesterday_text yesterday_text_center">+{{userInfo.commission}}</text>
 						</view>
 						<view class="FY-c FX-c">
-							<text class="yesterday_text" @click="cashier()">分销收益明细</text>
+							<text class="yesterday_text" @click="onimg()">分销收益明细</text>
 							<tui-list-cell class="yesterday_detail" :arrow="true" style="width: 10%;">	
 							</tui-list-cell>
 						</view>
@@ -187,6 +187,7 @@
 						data.u_nickname ? that.userInfo.u_nickname = data.u_nickname : ''
 						data.u_acc ? that.userInfo.u_acc = data.u_acc : ''
 						data.total_acc ? that.userInfo.total_acc = data.total_acc : ''
+						data.commission ? that.userInfo.commission = data.commission : ''
 						that.userInfo.total_inv = data.total_inv
 					} else {
 						this.showToast(res.msg)
@@ -222,11 +223,6 @@
 				console.log("dianji");
 				this.property=true;
 				this.propertys=true;
-			},
-			cashier(){
-				// uni.navigateTo({
-				// 	 url: "./cashier" 
-				// });
 			},
 			// 信息反馈
 			showToast: function(data) { uni.showToast({ title: data, icon: "none", mask: true }) },

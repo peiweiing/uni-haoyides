@@ -542,16 +542,25 @@
 				const statistics_res = await this.statistics(data);
 				if (statistics_res.status === 200 && statistics_res.data.length !== 0 && statistics_res.data) {
 					if (statistics_res.data.trade_count.time.length !== 0) {
-						this.num.categories = statistics_res.data.trade_count.time;
-						this.num.series[0].data = statistics_res.data.trade_count.totalamount;
+					      this.num.categories = statistics_res.data.trade_count.time;
+					      this.num.series[0].data = statistics_res.data.trade_count.totalamount;
+					} else {
+					      this.num.categories = ["无交易记录"];
+					      this.num.series[0].data = [0];
 					};
 					if (statistics_res.data.pf_count.time.length !== 0) {
-						this.pifa.categories = statistics_res.data.pf_count.time;
-						this.pifa.series[0].data = statistics_res.data.pf_count.totalamount;
+					      this.pifa.categories = statistics_res.data.pf_count.time;
+					      this.pifa.series[0].data = statistics_res.data.pf_count.totalamount;
+					} else {
+					      this.pifa.categories = ["无交易记录"];
+					      this.pifa.series[0].data = [0];
 					};
 					if (statistics_res.data.trade_money.time.length !== 0) {
-						this.amount.categories = statistics_res.data.trade_money.time;
-						this.amount.series[0].data = statistics_res.data.trade_money.totalamount;
+					      this.amount.categories = statistics_res.data.trade_money.time;
+					      this.amount.series[0].data = statistics_res.data.trade_money.totalamount;
+					} else {
+					      this.amount.categories = ["无交易记录"];
+					      this.amount.series[0].data = [0];
 					};
 				} else {
 					this.showToast(2, statistics_res.msg);

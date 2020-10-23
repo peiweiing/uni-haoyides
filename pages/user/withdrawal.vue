@@ -1,60 +1,40 @@
 <template>
 	<!-- 提现 -->
 	<view class="withdrawal">
-		<form @submit="formSubmit">
 		<!-- tab标签 -->
 		<view class="tabs">
-			<tui-tabs 
-			:tabs="navbar"
-			:currentTab="currentTab>1?0:currentTab"
-			@change="changeTab"
-			itemWidth="50%"
-			></tui-tabs>
+			<tui-tabs  :tabs="navbar" :sliderWidth="150" :currentTab="currentTab>1?0:currentTab" @change="changeTab" itemWidth="50%"></tui-tabs>
 		</view>
 		<!-- 提现申请 -->
-		<scroll-view scroll-y v-if="currentTab==0" class="apply">
+		<scroll-view scroll-y v-if="currentTab==0" class="apply" @touchstart="touchstart" @touchend="touchend">
 			<view>
-				<view style="height: 80rpx;"></view>
+				<view style="height: 40rpx;"></view>
+				<view class="info">
+					<tui-list-cell :hover="false">
+						<view class="tui-line-cell">
+							<view class="tui-title">支付宝账户：</view>
+							<input placeholder-class="tui-phcolor" class="tui-input" :placeholder="ua_alipayacc === '' ? '请填写支付宝账户' : ''" maxlength="50" type="text" v-model="ua_alipayacc"/>
+						</view>
+					</tui-list-cell> 
+				</view>
+				<view style="height: 40rpx;"></view>
 				<view class="info">
 					<tui-list-cell :hover="false">
 						<view class="tui-line-cell">
 							<view class="tui-title">当前账户余额：</view>
-							<input
-							placeholder-class="tui-phcolor"
-							disabled
-							class="tui-input"
-							:placeholder="`￥${balance}`"
-							maxlength="50"
-							type="digit"
-							 />
+							<input placeholder-class="tui-phcolor" disabled class="tui-input" maxlength="50" type="text" v-model="balance"/>
 						</view>
 					</tui-list-cell> 
 					<tui-list-cell :hover="false">
 						<view class="tui-line-cell">
 							<view class="tui-title">提现金额：</view>
-							<input
-							placeholder-class="tui-phcolor"
-							class="tui-input"
-							name="amount"
-							placeholder="请输入提现金额"
-							maxlength="50"
-							type="text"
-							v-model="withmoney"
-							/>
+							<input placeholder-class="tui-phcolor" class="tui-input" name="amount" placeholder="请输入提现金额" maxlength="50" type="text" v-model="withmoney"/>
 						</view>
 					</tui-list-cell>
 					<tui-list-cell :hover="false">
 						<view class="tui-line-cell">
 							<view class="tui-title">确认提现金额：</view>
-							<input
-							placeholder-class="tui-phcolor"
-							class="tui-input"
-							name="amount2"
-							placeholder="请输入确认提现金额"
-							maxlength="50"
-							type="text"
-							v-model="confirm_money"
-							/>
+							<input placeholder-class="tui-phcolor" class="tui-input" name="amount2" placeholder="请输入确认提现金额" maxlength="50" type="text" v-model="confirm_money"/>
 						</view>
 					</tui-list-cell>
 				</view>
@@ -84,48 +64,44 @@
 						<text class="info_2_font">成功提现</text>
 					</view>
 				</view>
-				<!-- <view class="info_3">
-					预计到账时间2个工作日内
-				</view> -->
 			</view>
 		</scroll-view>
 		<!-- 提现进度 -->
-		<scroll-view scroll-y v-if="currentTab==1" class="progress">
+		<scroll-view scroll-y v-if="currentTab==1" class="progress" @touchstart="touchstart" @touchend="touchend">
 			<view style="height: 80rpx;"></view>
 			<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
-				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>暂无内容
 			</view>
 			<view v-if="!nodata">
-				<view class="progressList" v-for="item in progressList">
-					<view class="progressList_left">
-						<view class="left_top">提现金额</view>
-						<view class="left_bottom">￥{{Number(item.ra_amount).toFixed(2)}}</view>
+				<view class="progressList" v-for="(item, index) in progressList" :key="index">
+					<view class="progressList_top">
+						<view class="progressList_left">
+							<view class="left_top">提现金额</view>
+							<view class="left_bottom">{{Number(item.ra_amount).toFixed(2)}}</view>
+						</view>
+						<view class="progressList_center">
+							<view class="left_top">打款金额</view>
+							<view class="left_bottom">{{Number(item.ra_final_amount).toFixed(2)}}元</view>
+						</view>
+						<view class="progressList_right">
+							<view class="left_top">手续费</view>
+							<view class="left_bottom">{{Number(item.ra_service).toFixed(2)}}元</view>
+						</view>
 					</view>
-					<view class="progressList_center">
-						<view>提现时间</view>
-						<view>{{getTime(item.ra_datetime)}} {{getTime2(item.ra_datetime)}}</view>
-					</view>
-					<view class="progressList_right">
-						<view>提现状态</view>
-						<view class="left_bottom">{{item.ra_progress + '...'}}</view>
+					<view class="progressList_bottom">
+						<view>
+							{{getTime(item.ra_datetime)}}
+						</view>
+						<view style="color: #9E2036; font-weight: bold;">
+							{{item.ra_progress}}
+						</view>
 					</view>
 				</view>
 			</view>
 		</scroll-view>
 		<view class="confirm_box" v-if="con_btn">
-			<button
-			class="tui-button-primary"
-			hover-class="tui-button-hover"
-			formType="submit"
-			type="primary"
-			>
-				确 认 提 现
-			</button>
+			<button class="tui-button-primary" hover-class="tui-button-hover" @click="submit" type="primary">确 认 提 现</button>
 		</view>
-		</form>
-		<!--toast提示-->
-		<tui-toast ref="toast"></tui-toast>
 	</view>
 </template>
 
@@ -135,17 +111,17 @@
 	export default {
 		data() {
 			return {
-				navbar: [
-					{name: "提现申请"},
-					{name: "提现进度"}
-				],
+				navbar: [{name: "提现申请"}, {name: "提现进度"}],
 				currentTab: 0,
 				nodata: false, // 暂无内容
-				balance: "00.00", // 当前账户余额
+				ua_alipayacc: '', // 支付宝账户
+				balance: "￥00.00", // 当前账户余额
 				withmoney: "", // 提现金额
 				confirm_money: "", // 确认提现金额
 				progressList: [], // 提现记录
-				con_btn: true // 确认按钮控制
+				con_btn: true, // 确认按钮控制
+				// 监听用户滑动操作
+				startData: { clientX: 0, clientY: 0 }
 			}
 		},
 		computed:{
@@ -176,75 +152,70 @@
 		onLoad: async function() {
 			const account_res = await this.account();
 			if (account_res.status === 200 && account_res.data.length !== 0 && account_res.data) {
-				this.balance = account_res.data[0].bal_trades;
+				this.balance = '￥' + account_res.data[0].bal_trades;
+				if (account_res.data[0].ua_alipayacc) {
+					this.ua_alipayacc = account_res.data[0].ua_alipayacc;
+				};
 			} else {
-				this.showToast(2, "获取信息失败!请重试...");
+				this.showToast('系统繁忙 请重试');
 			};
 		},
 		methods: {
 			// 信息反馈
-			// showToast: function(data) { uni.showToast({ title: data, icon: "none" }) },
-			// 信息反馈
-			showToast: function(type, msg, msg2) {
-				let params = { title: msg, imgUrl: "../../static/img/toast/check-circle.png", icon: true };
-				switch (type) {
-					case 2: params.title = msg; params.imgUrl = "../../static/img/toast/fail-circle.png"; break;
-					case 3: params.title = msg; params.imgUrl = "../../static/img/toast/info-circle.png"; break;
-					case 4: params.title = msg; params.icon = false; break;
-					case 5: params.title = msg; params.content = msg2; break;
-					default: break;
-				}
-				this.$refs.toast.show(params)
-			},
+			showToast: function(msg) { uni.showToast({ title: msg, icon: "none" }) },
 			// tab切换
-			changeTab: async function(e){
+			changeTab: function(e){
 				this.currentTab = e.index;
-				if (e.index === 1) {
-					this.con_btn = false;
-					const withdrawallist_res = await this.withdrawallist();
-					if (withdrawallist_res.status === 200 && withdrawallist_res.data.length !== 0 && withdrawallist_res.data) {
-						this.progressList = withdrawallist_res.data;
-						this.nodata = false;
-					} else {
-						this.nodata = true;
-					};
-				} else {
-					this.con_btn = true;
-				};
+				if (e.index === 1) { this.con_btn = false; this.withdrawallistAjax(); } else { this.con_btn = true; };
 			},
-			// 表单提交
-			formSubmit: async function(e) {
-				//表单规则
-				let rules = [
-					{
-						name: "amount",
-						rule: ["required", "isAmount"],
-						msg: ["请输入提现金额!", "请输入正确的金额，允许保留两位小数!"]
-					}, 
-					{
-						name: "amount2",
-						rule: ["required", "isSame:amount"],
-						msg: ["请输入确认提现金额!", "两次输入的金额不一致!"]
-					}
-				];
-				//进行表单检查
-				let formData = e.detail.value;
-				let checkRes = form.validation(formData, rules);
-				// 判断提现金额是否符合数字规则
-				if (checkRes) { this.showToast(3, checkRes); return };
-				// 判断提现金额是否小于等于零
-				if (this.withmoney <= 0) { this.showToast(3, "提现金额必须大于零!"); return };
+			// 确认提现
+			submit: async function() {
+				// 是否填写支付宝账户
+				if (!this.ua_alipayacc) { this.showToast('请填写支付宝账户'); return; };
+				// 是否填写提现金额
+				if (this.withmoney === '') { this.showToast('请填写提现金额'); return; };
+				// 提现金额是否填写正确
+				if (isNaN(this.withmoney)) { this.showToast('提现金额必须为合法数字'); return; };
+				// 提现金额是否小于等于零
+				if (this.withmoney <= 0) { this.showToast('提现金额不得小于零'); return; };
+				// 提现金额是否多于两位小数
+				let str = this.withmoney + '';
+				const index = str.indexOf('.');
+				if (index !== -1) {
+					let str2 = str.substr(index+1, str.length -1);
+					if (str2.length >2) { this.showToast('只能保留两位小数'); return; };
+				};
+				// 确认提现金额是否填写
+				if (this.confirm_money === '') { this.showToast('请填写确认提现金额'); return; };
+				// 判断提现金额是否相等
+				if (this.withmoney !== this.confirm_money) { this.showToast('两次提现金额不相等'); return; };
 				// 提交参数
-				const withmoney = { withmoney: this.withmoney };
+				const withmoney = { withmoney: this.withmoney, ua_alipayacc: this.ua_alipayacc };
 				// 确认提现
 				const withdrawaladd_res = await this.withdrawaladd(withmoney);
 				// 信息反馈
-				// console.log(withdrawaladd_res);
 				if (withdrawaladd_res.status === 200) {
-					this.showToast(5, withdrawaladd_res.msg, '即将返回个人中心...');
-					setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 2500);
+					this.showToast(withdrawaladd_res.msg + ' 即将返回');
+					setTimeout(() => { uni.switchTab({ url: "./userCenter" }) }, 1500);
 				} else {
-					this.showToast(2, "提现失败!请重试...");
+					this.showToast('系统繁忙 请重试');
+				};
+			},
+			// 触摸监听起始
+			touchstart: function(e) {
+				this.startData.clientX = e.changedTouches[0].clientX;
+				this.startData.clientY = e.changedTouches[0].clientY;
+			},
+			// 触摸监听结束
+			touchend: function(e) {
+				const subX = e.changedTouches[0].clientX - this.startData.clientX;
+				const subY = e.changedTouches[0].clientY - this.startData.clientY;
+				if (subX > 50) {
+					console.log('向左切换');
+					if (this.currentTab > 0) { this.currentTab = this.currentTab - 1; this.con_btn = true; };
+				} else if (subX < -50) {
+					console.log('向右切换');
+					if (this.currentTab < 1) { this.currentTab = this.currentTab + 1; this.con_btn = false; this.withdrawallistAjax(); };
 				};
 			},
 			// 获取用户数据信息
@@ -269,6 +240,16 @@
 						fail: err => { reject(err) }
 					})
 				})
+			},
+			// 加载用户提现记录
+			withdrawallistAjax: async function() {
+				const withdrawallist_res = await this.withdrawallist();
+				if (withdrawallist_res.status === 200 && withdrawallist_res.data.length !== 0 && withdrawallist_res.data) {
+					this.progressList = withdrawallist_res.data;
+					this.nodata = false;
+				} else {
+					this.nodata = true;
+				};
 			},
 			// 获取获取提现记录
 			withdrawallist: async function() {
@@ -363,13 +344,6 @@
 	.info_2_font{
 		font-size: 28rpx;
 	}
-	.info_3{
-		margin-top: 40rpx;
-		width: 100%;
-		text-align: center;
-		color: #999999;
-		font-size: 28rpx;
-	}
 	.confirm_box{
 		position: absolute;
 		bottom: 80rpx;
@@ -382,12 +356,24 @@
 	.progressList{
 		padding: 10rpx 40rpx;
 		width: 100%;
-		height: 160rpx;
 		background-color: #FFF;
 		border-radius: 20rpx;
 		margin: 10rpx 0;
+		box-sizing: border-box;
+	}
+	.progressList_top{
 		display: flex;
 		box-sizing: border-box;
+		padding-bottom: 10rpx;
+		border-bottom: 2rpx solid #EEE;
+		
+	}
+	.progressList_bottom{
+		padding-top: 10rpx;
+		display: flex;
+		justify-content: space-between;
+		font-size: 30rpx;
+		color: #999;
 	}
 	.progressList_left, .progressList_right, .progressList_center{
 		height: 100%;

@@ -187,31 +187,35 @@
 				console.log(a)
 				var that = this;
 				var datas ={"g_id":a,"num":that.valnums};
-				this.sendRequest({
-					url :App.pforderinfo,
-					method:'POST',
-					data:datas,
-					success : function(res){
-						console.log(res);
-						if(res.status==200){
-							that.bottomPopup = false;
-							// uni.showToast({
-							// 	icon: 'none',
-							// 	title: res.msg
-							// });
-							uni.navigateTo({
-								// url: '../user/cashier'+res.data
-								url: '../user/cashierp?gid=' + a + '&num=' + that.valnums
-							});
-						}else{
-							that.showToast(1, res.msg);
+				if(that.valnums<1){
+					uni.showToast({title: '请正确选择买入数量',duration: 2000,icon:'none'});
+				}else{
+					this.sendRequest({
+						url :App.pforderinfo,
+						method:'POST',
+						data:datas,
+						success : function(res){
+							console.log(res);
+							if(res.status==200){
+								that.bottomPopup = false;
+								// uni.showToast({
+								// 	icon: 'none',
+								// 	title: res.msg
+								// });
+								uni.navigateTo({
+									// url: '../user/cashier'+res.data
+									url: '../user/cashierp?gid=' + a + '&num=' + that.valnums
+								});
+							}else{
+								that.showToast(1, res.msg);
+							}
+						},
+						fail:function(e){
+							that.isShow=false;
+							console.log("getchannel  fail:" + JSON.stringify(e));
 						}
-					},
-					fail:function(e){
-						that.isShow=false;
-						console.log("getchannel  fail:" + JSON.stringify(e));
-					}
-				});
+					});
+				}
 			},
 			inputChanges(e){
 				console.log(e)

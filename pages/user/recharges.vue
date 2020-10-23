@@ -75,6 +75,7 @@
 		<!-- </form> -->
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
+		<tui-modal :show="modal3" @click="handleClick3" @cancel="hide3" :content="content" :button="button3"></tui-modal>
 	</view>
 </template>
 
@@ -84,6 +85,7 @@
 	export default {
 		data() {
 			return {
+				modal3: false,
 				banner:'',pid:'',
 				payChoose: 1, // 支付方式
 				total: "" , // 充值金额
@@ -91,6 +93,13 @@
 				orderInfo: "", // 订单信息
 				types:'',
 				disabled:false,
+				content:'',
+				button3: [
+					{
+						text: '确定',
+						type: 'red'
+					}
+				],
 			}
 		},
 		// onShow() {
@@ -142,6 +151,16 @@
 		// },
 		methods: {
 			
+			handleClick3(e) {
+				let index = e.index;
+				if (index === 0) {
+					uni.reLaunch({
+						url: './userCenter',
+					})
+					// this.tui.toast('你点击了确定按钮');
+				}
+				this.modal3 = false;
+			},
 			show() {
 				this.tui.toast("click~")
 			},
@@ -210,19 +229,22 @@
 					success : function(res){
 						console.log("我已付款",res);
 						if(res.status=='200'){
-							uni.showModal({
-								showCancel:false,
-								title: '提示',
-								content: '充值正在核实中，预计十分钟左右到账!',
-								success: function (res) {
-									if (res.confirm) {
-										uni.reLaunch({
-											url: './userCenter',
-										})
-										console.log('用户点击确定');
-									}
-								},
-							});
+							// that.handleClick3();
+							that.modal3=true;
+							that.content="充值正在核实中，预计十分钟左右到账!"
+							// uni.showModal({
+							// 	showCancel:false,
+							// 	title: '提示',
+							// 	content: '充值正在核实中，预计十分钟左右到账!',
+							// 	success: function (res) {
+							// 		if (res.confirm) {
+							// 			uni.reLaunch({
+							// 				url: './userCenter',
+							// 			})
+							// 			console.log('用户点击确定');
+							// 		}
+							// 	},
+							// });
 							// that.disabled=false;
 						}
 				

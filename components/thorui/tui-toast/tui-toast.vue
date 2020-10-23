@@ -77,7 +77,8 @@
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-		padding: 60rpx 20rpx 54rpx 20rpx;
+		/* padding: 60rpx 20rpx 54rpx 20rpx; */
+		padding: 50rpx 0rpx 50rpx 0rpx !important; /* 修改 */
 		box-sizing: border-box;
 	}
 
@@ -86,7 +87,7 @@
 		padding-bottom: 50rpx !important;
 	}
 	.tui-unicon-padding {
-		padding: 24rpx 40rpx !important;
+		padding: 24rpx 0rpx !important;
 		word-break: break-all;
 	}
 
@@ -97,14 +98,17 @@
 
 
 	.tui-toast-img {
-		width: 120rpx;
-		height: 120rpx;
+		/* width: 120rpx; */
+		width: 100rpx; /* 修改 */
+		/* height: 120rpx; */
+		height: 100rpx; /* 修改 */
 		display: block;
 		margin-bottom: 28rpx;
 	}
 
 	.tui-toast-text {
-		font-size: 30rpx;
+		/* font-size: 30rpx; */
+		font-size: 32rpx; /* 修改 */
 		line-height: 30rpx;
 		font-weight: 400;
 		color: #fff;
@@ -116,6 +120,7 @@
 	}
 	.tui-content-ptop {
 		padding-top: 10rpx;
-		font-size: 26rpx !important;
+		/* font-size: 26rpx !important; */
+		font-size: 32rpx !important; /* 修改 */
 	}
 </style>
