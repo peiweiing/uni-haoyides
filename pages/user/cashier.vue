@@ -232,8 +232,14 @@
 			formSubmit(e){
 				console.log(e);
 				var that = this;
-				that.disabled=true;
+				// that.disabled=true;
 				if(that.payChoose==0){
+					
+					if(that.disabled){
+						return;
+					}else{
+					 	that.disabled=true;
+					}
 					that.sendRequest({
 						url: App.spotpay,
 						method: 'POST',

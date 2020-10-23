@@ -187,7 +187,9 @@
 				console.log(a)
 				var that = this;
 				var datas ={"g_id":a,"num":that.valnums};
-				if(that.valnums<1){
+				
+				// if(that.valnums<1){
+				if (that.valnums < 1||that.valnums>that.productLists.g_pfnum) {
 					uni.showToast({title: '请正确选择买入数量',duration: 2000,icon:'none'});
 				}else{
 					this.sendRequest({

@@ -565,7 +565,8 @@
 					"entry_num": that.valnums
 				};
 				console.log(that.valnums)
-				if (that.valnums < 1) {
+				
+				if (that.valnums < 1||that.valnums>that.details.stock_num) {
 					that.showToast(2, "请正确选择买入数量");
 				} else {
 					uni.getStorage({
