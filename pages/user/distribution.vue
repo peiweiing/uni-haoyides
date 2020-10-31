@@ -53,13 +53,15 @@
 			</view>
 		</view>
 		<!-- 背景蒙版 -->
-		<view class="share" v-if="isShare" @click="isShare = false"></view>
-		<!-- 分享弹出 -->
-		<view class="share_box" v-if="isShare">
-			<image :src="imageUrl" mode="widthFix"></image>
-			<!-- 分享按钮 -->
-			<view class="share_btn">
-				<tui-button class="share_btn_1" shape="circle" type="white" @click="share">点击立即分享</tui-button>
+		<view class="share" v-if="isShare" @click="mengban">
+			<!-- 分享弹出 -->
+			<view class="share_box">
+				<view class="share_image">
+					<image :src="imageUrl" mode="widthFix"></image>
+				</view>
+				<view class="share_btn" @click="share('图片')">点 击 分 享 二 维 码</view>
+				<scroll-view scroll-x class="share_url">{{shareUrl}}</scroll-view>
+				<view class="share_btn" @click="share('链接')">点 击 分 享 链 接</view>
 			</view>
 		</view>
 		<!--toast提示-->
@@ -74,6 +76,7 @@
 		data() {
 			return {
 				isShare: false,
+				shareUrl: '',
 				imageUrl: '',
 				imageLocal: '',
 				info: {
@@ -91,51 +94,68 @@
 			if (showsharedata_res.status === 200 && showsharedata_res.data.length !== 0 && !!showsharedata_res.data) {
 				this.info = showsharedata_res.data;
 			} else {
-				 this.showToast(3, '系统出错了!请重试!');
+				 this.showToast(6, '网络繁忙 请重试', '分销中心数据拉取失败');
 			};
 		},
 		methods: {
 			// 信息反馈
 			showToast: function(type, msg, msg2) {
-				let params = { title: msg, imgUrl: "../../static/img/toast/check-circle.png", icon: true };
+				let params = { title: msg, content: '', imgUrl: '', icon: true };
 				switch (type) {
 					case 1: params.title = msg; params.imgUrl = "../../static/img/toast/check-circle.png"; break;
 					case 2: params.title = msg; params.imgUrl = "../../static/img/toast/fail-circle.png"; break;
 					case 3: params.title = msg; params.imgUrl = "../../static/img/toast/info-circle.png"; break;
 					case 4: params.title = msg; params.icon = false; break;
-					case 5: params.title = msg; params.content = msg2; break;
+					case 5: params.title = msg; params.content = msg2; params.imgUrl = "../../static/img/toast/check-circle.png"; break;
+					case 6: params.title = msg; params.content = msg2; params.imgUrl = "../../static/img/toast/fail-circle.png"; break;
+					case 7: params.title = msg; params.content = msg2; params.imgUrl = "../../static/img/toast/info-circle.png"; break;
 					default: break;
 				}
 				this.$refs.toast.show(params)
 			},
-			// 发起分享
-			readyShare: async function() {
-				this.isShare = true;
-				var _this = this;
-				if (_this.imageUrl === '') {
-					const shareimg_res = await _this.shareimg();
-					if (shareimg_res.status === 200 && !!shareimg_res.data) {
-						_this.imageUrl = shareimg_res.data.image;
-						uni.downloadFile({
-							url: _this.imageUrl,
-							success: (res) => { _this.imageLocal = res.tempFilePath; },
-							fail: (err) => { _this.showToast(2, '系统出错了!请重试!'); }
-						});
-					} else { _this.showToast(2, '系统出错了!请重试!'); };
-				};
-			},
-			// 分享
-			share: function() {
-				uni.shareWithSystem({
-					type: 'image',
-					summary: '分享',
-					imageUrl: this.imageLocal,
-					success: () => { this.showToast(1, '分享成功!'); },
-					fail: () => { this.showToast(2, '抱歉!分享失败!'); }
-				});
-			},
 			// 跳转页面
 			nav: function(url) { uni.navigateTo({ url }); },
+			// 背景蒙版
+			mengban: function() { this.isShare = false; },
+			// 发起分享
+			readyShare: function() {
+				this.isShare = true;
+				if (this.imageUrl === '') { this.shareimgAjax(); };
+			},
+			// 拉取手机分享
+			share: function(num) {
+				this.isShare = false;
+				if (num === '图片') {
+					uni.shareWithSystem({
+						type: 'image',
+						summary: '分享二维码',
+						imageUrl: this.imageLocal,
+						success: () => {},
+						fail: () => {}
+					});
+				} else if (num === '链接') {
+					uni.shareWithSystem({
+						summary: this.shareUrl,
+						success: () => {},
+						fail: () => {}
+					});
+				};
+			},
+			// 加载分享图片
+			shareimgAjax: async function() {
+				const shareimg_res = await this.shareimg();
+				if (shareimg_res.status === 200 && !!shareimg_res.data) {
+					this.shareUrl = shareimg_res.data.reg_url;
+					this.imageUrl = shareimg_res.data.image;
+					uni.downloadFile({
+						url: this.imageUrl,
+						success: res => { this.imageLocal = res.tempFilePath; },
+						fail: err => { this.showToast(6, '二维码保存失败', '请重试'); }
+					});
+				} else {
+					this.showToast(6, '二维码获取失败', '请重试');
+				};
+			},
 			// 获取分享图片
 			shareimg: async function() {
 				return await new Promise((resolve, reject) => {
@@ -147,13 +167,12 @@
 					})
 				})
 			},
-			// 获取分销中心
-			showsharedata: async function(type) {
+			// 获取分销中心数据
+			showsharedata: async function() {
 				return await new Promise((resolve, reject) => {
 					this.sendRequest({
 						method: "POST",
 						url: App.showsharedata,
-						data: { type },
 						success: res => { resolve(res) },
 						fail: err => { reject(err) }
 					})
@@ -267,36 +286,57 @@
 			}
 		}
 	}
+	
+	
+	
+	// 分享蒙版
 	.share{
+		z-index: 999;
 		position: fixed;
 		top: 0;
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: #000;
-		opacity: 0.3;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 	.share_box{
-		z-index: 999;
-		position: fixed;
 		width: 500rpx;
-		top: 48%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		box-sizing: border-box;
-		border-radius: 20rpx;
-		background-color: #FFF;
-		box-shadow: 0rpx 0rpx 20rpx #EEE;
-		font-size: 0;
-		image{
-			width: 100%;
+		.share_image{
+			box-sizing: border-box;
 			border-radius: 20rpx;
+			box-shadow: 0rpx 0rpx 20rpx #EEE;
+			font-size: 0;
+			overflow: hidden;
+			image{
+				width: 100%;
+			}
 		}
-	}
-	.share_btn{
-		position: absolute;
-		bottom: -120rpx;
-		left: 50rpx;
-		right: 50rpx;
+		.share_url{
+			padding: 0 20rpx;
+			height: 80rpx;
+			line-height: 80rpx;
+			box-sizing: border-box;
+			border-radius: 20rpx;
+			font-size: 32rpx;
+			color: #999;
+			white-space:nowrap;
+			box-shadow: 0rpx 0rpx 20rpx #EEE;
+			background-color: #FFF;
+		}
+		.share_btn{
+			margin: 40rpx 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 80rpx;
+			box-sizing: border-box;
+			border-radius: 40rpx;
+			font-size: 32rpx;
+			background-color: #FFF;
+			box-shadow: 0rpx 0rpx 20rpx #EEE;
+		}
 	}
 </style>

@@ -120,7 +120,7 @@ export default {
 		return {};
 	},
 	methods: {
-		handleClick(e) {
+		handleClick(e,dj) {
 			if (!this.show) return;
 			const dataset = e.currentTarget.dataset;
 			this.$emit('click', {

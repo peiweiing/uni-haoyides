@@ -158,7 +158,7 @@
 					<tui-list-cell :hover="false">
 						<view class="tui-line-cell">
 							<view class="tui-title">合计：</view>
-							<text>{{heji}}.00元</text>
+							<text>{{(+heji).toFixed(2)}}元</text>
 						</view>
 					</tui-list-cell>
 					<view class="FX-sb w100" style="margin-top: 5%;">
@@ -608,7 +608,7 @@
 			inputChanges: function(e) {
 				console.log(e)
 				var that = this;
-				that.valnums = e.detail.value
+				that.valnums = e.detail.value;
 				console.log(e.detail.value)
 			},
 			valnumes: function() {

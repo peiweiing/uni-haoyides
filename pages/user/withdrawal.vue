@@ -10,12 +10,54 @@
 			<view>
 				<view style="height: 40rpx;"></view>
 				<view class="info">
-					<tui-list-cell :hover="false">
+					<tui-list-cell :hover="false" @click="changePay(0)">
 						<view class="tui-line-cell">
-							<view class="tui-title">支付宝账户：</view>
-							<input placeholder-class="tui-phcolor" class="tui-input" :placeholder="ua_alipayacc === '' ? '请填写支付宝账户' : ''" maxlength="50" type="text" v-model="ua_alipayacc"/>
+							<view class="tui-title" :class="payChoose==0?'FY-c FX-sb':''">
+								<tui-icon
+								name="check"
+								:size="20"
+								color="#00AAEE"
+								v-if="payChoose==0"></tui-icon>
+								<text style="color: #9E2036;font-weight: bold;">支付宝账户：</text>
+								</view>
+							<input placeholder-class="tui-phcolor" class="tui-input" :disabled="payChoose==1" :placeholder="ua_alipayacc === '' ? '请填写支付宝账户' : ''" maxlength="50" type="text" v-model="ua_alipayacc"/>
 						</view>
 					</tui-list-cell> 
+					<tui-list-cell :hover="false">
+						<view class="tui-line-cell">
+							<view class="tui-title">
+								支付宝姓名：
+								</view>
+							<input placeholder-class="tui-phcolor" class="tui-input" :disabled="payChoose==1" placeholder="请填写支付宝姓名" maxlength="50" type="text" v-model="ua_alipay_name"/>
+						</view>
+					</tui-list-cell> 
+				</view>
+				<view class="info" style="margin-top: 10rpx;">
+					<tui-list-cell :hover="false" @click="changePay(1)">
+						<view class="tui-line-cell">
+							<view class="tui-title" :class="payChoose==1?'FY-c FX-sb':''">
+								<tui-icon
+								name="check"
+								:size="20"
+								color="#80D640"
+								v-if="payChoose==1"></tui-icon>
+								<text style="color: #9E2036;font-weight: bold;">银行名称：</text>
+							</view>
+							<input placeholder-class="tui-phcolor" class="tui-input" :disabled="payChoose==0" placeholder="请填写银行名称" maxlength="50" type="text" v-model="ua_bankname"/>
+						</view>
+					</tui-list-cell>
+					<tui-list-cell :hover="false">
+						<view class="tui-line-cell">
+							<view class="tui-title">银行卡号：</view>
+							<input placeholder-class="tui-phcolor" class="tui-input" :disabled="payChoose==0" placeholder="请填写银行卡号" maxlength="50" type="number" v-model="ua_cardnum"/>
+						</view>
+					</tui-list-cell>
+					<tui-list-cell :hover="false">
+						<view class="tui-line-cell">
+							<view class="tui-title">收款人：</view>
+							<input placeholder-class="tui-phcolor" class="tui-input" :disabled="payChoose==0" placeholder="请填写收款人" maxlength="50" type="text" v-model="ua_payee"/>
+						</view>
+					</tui-list-cell>
 				</view>
 				<view style="height: 40rpx;"></view>
 				<view class="info">
@@ -111,10 +153,16 @@
 	export default {
 		data() {
 			return {
+				payChoose:0,
 				navbar: [{name: "提现申请"}, {name: "提现进度"}],
 				currentTab: 0,
 				nodata: false, // 暂无内容
 				ua_alipayacc: '', // 支付宝账户
+				ua_alipay_name: '', // 支付宝姓名
+				ua_bankname:'',
+				ua_cardnum:'',
+				ua_payee:'',
+				ua_acc_type:1,
 				balance: "￥00.00", // 当前账户余额
 				withmoney: "", // 提现金额
 				confirm_money: "", // 确认提现金额
@@ -156,11 +204,26 @@
 				if (account_res.data[0].ua_alipayacc) {
 					this.ua_alipayacc = account_res.data[0].ua_alipayacc;
 				};
+				this.ua_alipay_name = account_res.data[0].ua_alipay_name;
+				this.ua_bankname = account_res.data[0].ua_bankname;
+				this.ua_cardnum = account_res.data[0].ua_cardnum;
+				this.ua_payee = account_res.data[0].ua_payee;
 			} else {
 				this.showToast('系统繁忙 请重试');
 			};
 		},
 		methods: {
+			changePay: function(data) {
+				if(data==0){
+					this.payChoose=0;
+					this.ua_acc_type=1;
+					// this.ua_bankname='';this.ua_cardnum='';this.ua_payee='';
+				}else if(data==1){
+					this.payChoose=1;
+					this.ua_acc_type=2;
+					// this.ua_alipayacc='';
+				}
+			},
 			// 信息反馈
 			showToast: function(msg) { uni.showToast({ title: msg, icon: "none" }) },
 			// tab切换
@@ -170,10 +233,26 @@
 			},
 			// 确认提现
 			submit: async function() {
+				let that =this;
 				// 是否填写支付宝账户
-				if (!this.ua_alipayacc) { this.showToast('请填写支付宝账户'); return; };
+				// if (!this.ua_alipayacc) { this.showToast('请填写支付宝账户'); return; };
+				if (!this.ua_alipayacc&&!this.ua_bankname) { this.showToast('请填写提现账户'); return; };
+				// if (this.payChoose==0&&!this.ua_alipay_name||!this.ua_alipayacc) { this.showToast('请完善支付宝账户信息'); return; };
+				// if (this.payChoose==0&&!this.ua_bankname||!this.ua_cardnum||!this.ua_payee) { this.showToast('请完善银行账户信息'); return; };
+				if(this.payChoose==0){
+					if(!this.ua_alipay_name||!this.ua_alipayacc){
+						 that.showToast('请完善选中账户信息');
+						 return;
+					}
+				}else{
+					console.log(1)
+					if(!this.ua_bankname||!this.ua_cardnum||!this.ua_payee){
+						 that.showToast('请完善选中账户信息');
+						 return;
+					}
+				}
 				// 是否填写提现金额
-				if (this.withmoney === '') { this.showToast('请填写提现金额'); return; };
+				if (this.withmoney === '') { this.showToast('请提现金额'); return; };
 				// 提现金额是否填写正确
 				if (isNaN(this.withmoney)) { this.showToast('提现金额必须为合法数字'); return; };
 				// 提现金额是否小于等于零
@@ -190,7 +269,7 @@
 				// 判断提现金额是否相等
 				if (this.withmoney !== this.confirm_money) { this.showToast('两次提现金额不相等'); return; };
 				// 提交参数
-				const withmoney = { withmoney: this.withmoney, ua_alipayacc: this.ua_alipayacc };
+				const withmoney={withmoney:this.withmoney,ua_alipayacc:this.ua_alipayacc,ua_alipay_name:this.ua_alipay_name,ua_bankname:this.ua_bankname,ua_cardnum:this.ua_cardnum,ua_payee:this.ua_payee,ua_acc_type:this.ua_acc_type};
 				// 确认提现
 				const withdrawaladd_res = await this.withdrawaladd(withmoney);
 				// 信息反馈
@@ -305,7 +384,7 @@
 		align-items: center;
 	}
 	.tui-title {
-		width: 240rpx;
+		width: 260rpx;
 		text-align: right;
 		font-size: 32rpx;
 		min-width: 120rpx;
@@ -346,7 +425,7 @@
 	}
 	.confirm_box{
 		position: absolute;
-		bottom: 80rpx;
+		bottom: 0;
 		left: 40rpx;
 		right: 40rpx;
 	}

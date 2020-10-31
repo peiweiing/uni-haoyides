@@ -152,6 +152,7 @@
 				isShow:true,
 				isShows:true,
 				current: 0,
+				clientid:'',
 				banner: [],
 				newsList: [
 					"致力发展负责任的人工智能 中国发布八大治理原则",
@@ -164,9 +165,14 @@
 		},
 		onShow() {
 			var that =this;
+			// 获取CID
+			   //#ifdef APP-PLUS
+			   that.clientid = plus.push.getClientInfo().clientid;
+			   //#endif
 			that.sendRequest({
 				url :App.index_1,
 				method:'POST',
+				data:{clientid:that.clientid},
 				success : function(res){
 					that.banner = [];
 					for (let i = 0; i < res.data.lunbolist.length; i++) {

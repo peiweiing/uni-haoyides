@@ -85,7 +85,8 @@
 					</view>
 					<view class="yesterday_detail" style="width: 50%;justify-content: space-around;">
 						<view class="FY-c FX-c">
-							<text class="yesterday_text">昨日收益</text>
+							<!-- <text class="yesterday_text">昨日收益</text> -->
+							<text class="yesterday_text" @click="navigateTo('./activity')">昨日收益</text>
 							<text class="yesterday_text yesterday_text_center">+{{userInfo.commission}}</text>
 						</view>
 						<view class="FY-c FX-c">

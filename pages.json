@@ -221,6 +221,18 @@
           	"navigationBarTitleText": "历史交易"
           }
         }
+        ,{
+            "path" : "pages/user/activity",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "活动大厅",
+                "enablePullDownRefresh": false,
+                "app-plus": {
+                    "titleNView": false
+                }
+            }
+            
+        }
     ],
 	"easycom": {
 		"autoscan": true,

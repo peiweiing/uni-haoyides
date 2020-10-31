@@ -1,8 +1,8 @@
 <script>
 // 域名
-	const hostname= "http://api.xianhuo.club/api/"
+	// const hostname= "http://api.xianhuo.club/api/"
 	 // const hostname= "http://api.gdyingshi.cn/api/"
-	// const hostname= "http://api.lovehou.com/api/"
+	const hostname= "http://api.lovehou.com/api/"
 // 版本更新
 	const getversion = hostname+"getversion";
 // 账号登录
@@ -177,11 +177,12 @@ export default {
 	onLaunch: function() {
 			let that = this;
 			// 获取应用版本
-			let current_ver = 170;
+			let current_ver = 173;
 			// plus.runtime.getProperty(plus.runtime.appid, function(inf) {
 			// 	console.log(inf.version);
 			// });
 			// current_ver = (inf.version).split('.').join('');
+			  
 			uni.request({
 				url: getversion,
 				method: 'POST',
@@ -198,8 +199,15 @@ export default {
 										title: '后台更新中...',
 										mask: true
 									});
+									// 判断运行环境
+									let urls = "";
+									switch(uni.getSystemInfoSync().platform){
+										case 'android': urls=res.data.data.apk_url; break;
+										case 'ios': urls=res.data.data.ios_url; break;
+										default:  break;
+									};
 									uni.downloadFile({
-										url: res.data.data.apk_url,
+										url: urls,
 										success: (downloadResult) => {
 											console.log("downloadResult:", downloadResult)
 											if (downloadResult.statusCode === 200) {
@@ -218,6 +226,7 @@ export default {
 											}
 										}
 									});
+									
 									// plus.runtime.openURL(res.data.data.apk_url)
 									// that.tui.href(res.data.data.apk_url)
 									console.log('用户点击确定');

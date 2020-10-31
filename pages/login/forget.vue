@@ -1,5 +1,5 @@
 <template>
-	<view>
+	<view class="forget">
 		<!-- 手机号 -->
 		<view class="input">
 			<view class="icon">
@@ -22,7 +22,7 @@
 			<view class="ma" :hover-class="yanzhengma ? 'ma-active' : ''" hover-start-time="0" hover-stay-time="100" @click="getCaptcha">
 				<view v-if="yanzhengma">获取验证码</view>
 				<view v-if="!yanzhengma">
-					<tui-countdown :time="60" :hours="false" :minutes="false" :size="28" :height="50" scale :isColon="false" borderColor="transparent" color="#9E2036"></tui-countdown>
+					<tui-countdown :time="60" :hours="false" :minutes="false" :size="28" :height="50" scale :isColon="false" borderColor="transparent" color="#E33F38"></tui-countdown>
 				</view>
 			</view>
 		</view>
@@ -32,7 +32,7 @@
 				<image src="../../static/register_mima.png" mode="widthFix"></image>
 			</view>
 			<view>
-				<input type="number" v-model="pass" placeholder="请输入密码"/>
+				<input type="password" v-model="pass" placeholder="请输入密码"/>
 			</view>
 		</view>
 		<!-- 确认密码 -->
@@ -41,7 +41,7 @@
 				<image src="../../static/register_mima.png" mode="widthFix"></image>
 			</view>
 			<view>
-				<input type="number" v-model="pass2" placeholder="请再次输入密码"/>
+				<input type="password" v-model="pass2" placeholder="请再次输入密码"/>
 			</view>
 		</view>
 		<!-- 确认修改 -->
@@ -138,12 +138,13 @@
 </script>
 
 <style lang="scss" scoped>
-	page{
-		position: absolute;
+	.forget{
+		position: fixed;
 		top: 0;
 		bottom: 0;
-		width: 100%;
-		padding: 120rpx 60rpx 0;
+		left: 0;
+		right: 0;
+		padding: 208rpx 60rpx 0;
 		box-sizing: border-box;
 		background-color: #FFF;
 	}
@@ -180,31 +181,28 @@
 			justify-content: center;
 			font-size: 28rpx;
 			line-height: 58rpx;
+			font-weight: bold;
 			box-sizing: border-box;
-			border: 2rpx solid #9E2036;
+			border: 2rpx solid #E33F38;
 			border-radius: 10rpx;
-			color: #9E2036;
+			color: #E33F38;
 			background-color: #FFF;
 		}
 		.ma-active{
 			color: #FFF;
-			background-color: #9E2036;
+			background-color: #E33F38;
 		}
 	}
 	.confirm_box{
-		position: fixed;
-		bottom: 100rpx;
-		left: 60rpx;
-		right: 60rpx;
+		margin-top: 400rpx;
 		height: 80rpx;
 		line-height: 80rpx;
 		font-size: 32rpx;
-		font-weight: bold;
 		text-align: center;
 		color: #FFF;
 		box-sizing: border-box;
-		border: 2rpx solid #9E2036;
+		border: 2rpx solid #E33F38;
 		border-radius: 40rpx;
-		background-color: #9E2036;
+		background-color: #E33F38;
 	}
 </style>
