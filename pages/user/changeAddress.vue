@@ -2,7 +2,7 @@
 	<view class="area">
 		<view class="FY FY-c FX-c" v-if="nodata" style="font-size: 16px;height: calc(80vh);">
 			<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-			暂无内容
+			<text style="color: #999; font-weight: bold;">暂无内容</text>
 		</view>
 		<scroll-view scroll-y class="tui-address" v-if="!!!nodata">
 			<tui-swipe-action
@@ -47,7 +47,7 @@
 				</template>
 			</tui-swipe-action>
 		</scroll-view>
-		<view class="confirm_box">
+		<view class="confirm_box" v-if="isButton">
 			<button
 			class="tui-button-primary"
 			hover-class="tui-button-hover"
@@ -86,6 +86,7 @@
 				],
 				eid:'',
 				nodata: false,
+				isButton: true,
 				addressList: [],
 				actions: [{
 						name: '删除',
@@ -123,8 +124,10 @@
 			if (getAddressList_res.status === 200 && getAddressList_res.data.length !== 0 && getAddressList_res.data) {
 				this.addressList = getAddressList_res.data;
 				this.nodata = false;
+				this.isButton = false;
 			} else {
 				this.nodata = true;
+				this.isButton = true;
 			};
 		},
 		methods: {
@@ -300,7 +303,7 @@
 		box-sizing: border-box;
 	}
 	.tui-button-primary{
-		background-color: #9E2036;
+		background-color: #E33F38;
 	}
 	.address-detail{
 		width: 275*2rpx;

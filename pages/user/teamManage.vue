@@ -1,65 +1,42 @@
 <template>
 	<view  class="team">
+		<view class="bgColor"></view>
 		<!-- tab标签 -->
 		<view class="tabs">
 			<tui-tabs class="pickuplist_tabs" :tabs="navbar" :sliderWidth="150" :currentTab="currentTab>1?0:currentTab" @change="changeTab" itemWidth="50%"></tui-tabs>
 		</view>
 		<!-- 一级伙伴 -->
-		<scroll-view scroll-y v-if="currentTab==0" class="one">
-			<view class="FY FY-c FX-c" v-if="nodata_1" style="font-size: 16px;height: calc(80vh);">
+		<view  v-if="currentTab==0" class="one">
+			<view class="FY FY-c FX-c" v-if="nodata_1" style="font-size: 16px;height: calc(90vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<text style="color: #999; font-weight: bold;">暂无内容</text>
 			</view>
 			<view class="one_list" v-if="!!!nodata_1">
 				<view class="one_list_1" v-for="(item, index) in oneLevel" :key="index">
-					<view class="one_list_11" style="font-size: 38rpx;">{{item[0].u_name}}</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].entry}}</view>
-						<view>现货买入</view>
-					</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].seller}}</view>
-						<view>卖出</view>
-					</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].pickup}}</view>
-						<view>提货</view>
-					</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].pfentry}}</view>
-						<view>批发买入</view>
+					<view class="one_list_1_top">{{nameHide(item.u_name)}}</view>
+					<view class="one_list_1_bottom">
+						<view class="mobile">手机号码：{{item.u_acc}}</view>
+						<view class="time">{{getTime(item.dl_bindtime)}}&nbsp;加入</view>
 					</view>
 				</view>
 			</view>
-		</scroll-view>
+		</view>
 		<!-- 二级伙伴 -->
-		<scroll-view scroll-y v-if="currentTab==1" class="one">
-			<view class="FY FY-c FX-c" v-if="nodata_2" style="font-size: 16px;height: calc(80vh);">
+		<view  v-if="currentTab==1" class="one">
+			<view class="FY FY-c FX-c" v-if="nodata_2" style="font-size: 16px;height: calc(90vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<text style="color: #999; font-weight: bold;">暂无内容</text>
 			</view>
-			<view class="one_list" v-if="!!!nodata_2">
-				<view class="one_list_1" v-for="(item, index) in twoLevel" :key="index">
-					<view class="one_list_11" style="font-size: 36rpx;">{{item[0].u_name}}</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].entry}}</view>
-						<view>现货买入</view>
-					</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].seller}}</view>
-						<view>卖出</view>
-					</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].pickup}}</view>
-						<view>提货</view>
-					</view>
-					<view class="one_list_11">
-						<view class="one_list_11_num">{{item[0].pfentry}}</view>
-						<view>批发买入</view>
+			<view class="one_list" v-if="!!!nodata_1">
+				<view class="one_list_1" v-for="(item, index) in oneLevel" :key="index">
+					<view class="one_list_1_top">{{nameHide(item.u_name)}}</view>
+					<view class="one_list_1_bottom">
+						<view class="mobile">手机号码：{{item.entry}}</view>
+						<view class="time">{{getTime(item.dl_bindtime)}}&nbsp;加入</view>
 					</view>
 				</view>
 			</view>
-		</scroll-view>
+		</view>
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
 	</view>
@@ -83,17 +60,57 @@
 			}
 		},
 		onLoad: async function() {
-			const showsharecount_res = await this.showsharecount(1);
+			const showsharecount_res = await this.showsharecount();
 			console.log(showsharecount_res);
-			if (showsharecount_res.status === 200 && showsharecount_res.data.length !== 0 && !!showsharecount_res.data) {
-				if (showsharecount_res.data.level_1.length === 0 && showsharecount_res.data.level_2.length === 0) { this.nodata_1 = true; this.nodata_2 = true; this.showToast(3, '暂无内容!'); return; };
-				if (showsharecount_res.data.level_1.length === 0) { this.nodata_1 = true; } else { this.oneLevel = showsharecount_res.data.level_1; };
-				if (showsharecount_res.data.level_2.length === 0) { this.nodata_2 = true; } else { this.twoLevel = showsharecount_res.data.level_2; };
+			if (showsharecount_res.status === 200 && showsharecount_res.data.level_1_list.length !== 0) {
+				this.oneLevel = showsharecount_res.data.level_1_list;
 			} else {
 				this.nodata_1 = true;
-				this.nodata_2 = true;
-				this.showToast(3, '暂无内容!');
 			};
+			if (showsharecount_res.status === 200 && showsharecount_res.data.level_2_list.length !== 0) {
+				this.twoLevel = showsharecount_res.data.level_2_list;
+			} else {
+				this.nodata_2 = true;
+			};
+		},
+		computed:{
+			// 获取时间(年月日)
+			getTime() {
+				return function(data) {
+					let year = new Date(data * 1000).getFullYear();
+					let month = new Date(data * 1000).getMonth()+1;
+					let date = new Date(data * 1000).getDate();
+					if (month < 10) { month = "0" + month; }	
+					if (date < 10) { date = "0" + date; }
+					return year + "-" + month + "-" + date;
+				}
+			},
+			// 获取时间(时分秒)
+			getTime2() {
+				return function(data) {
+					let hour = new Date(data * 1000).getHours();
+					let minute = new Date(data * 1000).getMinutes();
+					let second = new Date(data * 1000).getSeconds();
+					if (hour < 10) { hour = "0" + hour; }
+					if (minute < 10) { minute = "0" + minute; }
+					if (second < 10) { second = "0" + second; }
+					return hour + ":" + minute + ":" + second;
+				}
+			},
+			// 姓名保护
+			nameHide() {
+				return function(data) {
+					if (data == null) { return; };
+					if (data.length === 2) {
+						let fristName = data.substr(0,1);
+						return fristName + '*';
+					} else {
+						let fristName = data.substr(0,1);
+						let lastName = data.substr(1,1);
+						return fristName + '*' + lastName;
+					};
+				}
+			}
 		},
 		methods: {
 			// 信息反馈
@@ -112,6 +129,7 @@
 			// tab切换
 			changeTab: async function(e){
 				this.currentTab = e.index;
+				console.log(e);
 			},
 			// 获取团队管理
 			showsharecount: async function(type) {
@@ -130,17 +148,27 @@
 </script>
 
 <style lang="scss" scoped>
+	  .bgColor{
+	    z-index: -1;
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	    bottom: 0;
+	    background: #EEE;
+	  }
 	.team{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 100%;
-		background-color: #EEE;
 		box-sizing: border-box;
 	}
 	.tabs{
-		position: absolute;
+		position: fixed;
+		top: 44px;
+		// #ifdef APP-PLUS
 		top: 0;
+		// #endif
+		// #ifdef  MP
+		top: 0;
+		// #endif
 		left: 0;
 		right: 0;
 		overflow: hidden;
@@ -159,22 +187,26 @@
 		.one_list_1{
 			padding: 20rpx;
 			display: flex;
-			justify-content: space-around;
+			flex-direction: column;
 			background-color: #FFF;
-			font-size: 28rpx;
-			color: #666;
 			border-radius: 20rpx;
 			margin-bottom: 10rpx;
-			.one_list_11{
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
+			.one_list_1_top{
+				padding-left: 20rpx;
+				font-size: 32rpx;
+				font-weight: bold;
+				line-height: 64rpx;
+				color: #333;
 				box-sizing: border-box;
-				.one_list_11_num{
-					font-size: 46rpx;
-					color: #E3372B;
+				border-bottom: 2rpx solid #EEE;
+			}
+			.one_list_1_bottom{
+				padding-top: 10rpx;
+				display: flex;
+				font-size: 28rpx;
+				color: #999;
+				.mobile{
+					flex: 1;
 				}
 			}
 		}

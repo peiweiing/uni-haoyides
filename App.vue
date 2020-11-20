@@ -1,6 +1,6 @@
 <script>
 // 域名
-	// const hostname= "http://api.xianhuo.club/api/"
+	// const hostname= "https://api.xianhuo.club/api/"
 	 // const hostname= "http://api.gdyingshi.cn/api/"
 	const hostname= "http://api.lovehou.com/api/"
 // 版本更新
@@ -175,60 +175,60 @@ export default {
 			Vue.$gc=Vue.prototype.$gc={};
 		},
 	onLaunch: function() {
-			let that = this;
+			var that = this;
 			// 获取应用版本
-			let current_ver = 173;
+			var current_ver = 176;
 			// plus.runtime.getProperty(plus.runtime.appid, function(inf) {
 			// 	console.log(inf.version);
 			// });
 			// current_ver = (inf.version).split('.').join('');
-			  
+			var environment = '';
+			var resourceUrl = '';
+			// 判断运行环境
+			switch(uni.getSystemInfoSync().platform){
+				case 'android': environment = 'Android'; break;
+				case 'ios': environment = 'iOS'; break;
+				default: environment = '开发者工具'; break;
+			};
 			uni.request({
 				url: getversion,
 				method: 'POST',
 				success: (res) => {
 					if(current_ver<res.data.data.current_ver){
-						
 						uni.showModal({
 							showCancel:false,
 							title: '检测到新的版本，立即更新',
 							content: res.data.data.update_note,
 							success: function (ok) {
 								if (ok.confirm) {
-									uni.showLoading({
-										title: '后台更新中...',
-										mask: true
-									});
-									// 判断运行环境
-									let urls = "";
-									switch(uni.getSystemInfoSync().platform){
-										case 'android': urls=res.data.data.apk_url; break;
-										case 'ios': urls=res.data.data.ios_url; break;
-										default:  break;
-									};
-									uni.downloadFile({
-										url: urls,
-										success: (downloadResult) => {
-											console.log("downloadResult:", downloadResult)
-											if (downloadResult.statusCode === 200) {
-												plus.runtime.install(downloadResult.tempFilePath, {
-													force: true
-												}, 
-												function() {
-													uni.hideLoading()
-													plus.nativeUI.toast('更新成功');
-													plus.runtime.restart();
-												}, 
-												function(e) {
-													uni.hideLoading()
-													plus.nativeUI.toast('更新失败');
-												});
+									if (environment === 'Android') {
+										uni.showLoading({ title: '后台更新中...', mask: true });
+										uni.downloadFile({
+										  url: res.data.data.apk_url,
+											success: (downloadResult) => {
+												if (downloadResult.statusCode === 200) {
+													plus.runtime.install(downloadResult.tempFilePath,
+													{
+														force: true
+													},
+													function() {
+														uni.hideLoading()
+														plus.nativeUI.toast('更新成功');
+														plus.runtime.restart();
+													},
+													function(e) {
+														uni.hideLoading()
+														plus.nativeUI.toast('更新失败');
+													});
+												}
 											}
-										}
-									});
-									
-									// plus.runtime.openURL(res.data.data.apk_url)
-									// that.tui.href(res.data.data.apk_url)
+										});
+									} else if (environment === 'iOS') {
+										plus.nativeUI.toast('下载更新中...');
+										plus.runtime.openURL('itms-services://?action=download-manifest&url=' + res.data.data.ios_url);
+									};
+									// plus.runtime.openURL(res.data.data.apk_url);
+									// that.tui.href(res.data.data.apk_url);
 									console.log('用户点击确定');
 									console.log(res.data.data.apk_url);
 								} else if (ok.cancel) {

@@ -17,15 +17,7 @@
 					
 				</view>
 				<view class="FX-c FY-c">
-					<tui-button
-					class="tui-bor"
-					type="white"
-					:plain="true"
-					width="160rpx"
-					height="60rpx"
-					:size="28"
-					@click="navigateTo('./realName')"
-					>
+					<tui-button class="tui-bor" type="white" :plain="true" width="160rpx" height="60rpx" :size="28" @click="navigateTo('./realName')">
 					实名认证
 					</tui-button>
 					<view class="" style="color: #fff; margin-left: -20rpx; font-size: 16px;line-height: 16px;">
@@ -61,12 +53,12 @@
 						{{userInfo.g_lockinv}}
 					</view>
 				</view>
-				<view class="tui-order-item">
+				<!-- <view class="tui-order-item">
 					<view class="tui-order-text">商品值</view>
 					<view class="tui-icon-box">
 						{{userInfo.ua_goodsvalue}}
 					</view>
-				</view>
+				</view> -->
 			</view>
 		</view>
 		<view class="tui-content-box">
@@ -83,21 +75,25 @@
 					<view class="tui-xian">
 						
 					</view>
-					<view class="yesterday_detail" style="width: 50%;justify-content: space-around;">
-						<view class="FY-c FX-c">
-							<!-- <text class="yesterday_text">昨日收益</text> -->
-							<text class="yesterday_text" @click="navigateTo('./activity')">昨日收益</text>
-							<text class="yesterday_text yesterday_text_center">+{{userInfo.commission}}</text>
-						</view>
-						<view class="FY-c FX-c">
-							<text class="yesterday_text" @click="onimg()">分销收益明细</text>
-							<tui-list-cell class="yesterday_detail" :arrow="true" style="width: 10%;">	
-							</tui-list-cell>
+					<view class="balance" style="width: 50%;">
+						<view class="balance_text">商品值
+							<text class="balance_textNum" v-if="propertys">{{userInfo.ua_goodsvalue}}</text>
+							<text class="balance_textNum" v-else>*****</text>
 						</view>
 					</view>
+					<!-- <view class="yesterday_detail" style="width: 50%;justify-content: space-around;"> -->
+						<!-- <view class="FY-c FX-c"> -->
+							<!-- <text class="yesterday_text">昨日收益</text> -->
+							<!-- <text class="yesterday_text" style="margin-right: 10rpx; font-size: 32rpx;">商品值:</text> -->
+							<!-- <text class="yesterday_text yesterday_text_center">{{userInfo.ua_goodsvalue}}</text> -->
+						<!-- </view> -->
+						<!-- <view class="FY-c FX-c"> -->
+							<!-- <text class="yesterday_text" @click="onimg2" style="color: #E33F38; font-size: 32rpx;">官方活动<text style="margin-left: 16rpx; font-size: 36rpx;">></text></text> -->
+						<!-- </view> -->
+					<!-- </view> -->
 				</view>
 				
-				<tui-list-cell class="balance" style="width: 100%;padding: 0 10% 4%;">
+				<tui-list-cell class="balance" style="width: 100%;padding: 0 2% 4%;">
 					<tui-button class="baone" shape="circle" width="180rpx" height="66rpx" :size="38" @click="navigateTo('./recharge')">充值</tui-button>
 					<tui-button class="batwo" shape="circle" width="180rpx" height="66rpx" :size="38" @click="navigateTo('./withdrawal')">提现</tui-button>
 				</tui-list-cell>
@@ -109,7 +105,7 @@
 						<view class="tui-grid-icon">
 							<tui-icon :name="item.name" :size="item.size" :color="item.color"></tui-icon>
 						</view>
-						<text class="tui-grid-label">{{item.title}}</text>
+						<text class="tui-grid-label" style="color: #9E2036">{{item.title}}</text>
 					</view>
 				</view>
 			</tui-grid>
@@ -157,8 +153,8 @@
 					total_acc: 0
 				},
 				dataList: [
-					{name: "feedback",title: "资金流水",color: "#9E2036",size: 30,url:"./capital"},
-					{name: "nodata",title: "积分流水",color: "#9E2036",size: 30,url:"./integral"}
+					{name: "feedback",title: "资金流水明细",color: "#9E2036",size: 30,url:"./capital"},
+					{name: "nodata",title: "培养奖励明细",color: "#9E2036",size: 30,url:"./integral"}
 				],
 				banner: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'],
 				current: 0,
@@ -198,7 +194,7 @@
 			})
 		},
 		methods: {
-			onimg(){
+			onimg: function() {
 				var _this = this;
 				_this.sendRequest({
 					method: "POST",
@@ -215,6 +211,9 @@
 						_this.showToast(err.msg + "操作失败！请重试...");
 					}
 				});
+			},
+			onimg2: function() {
+				uni.navigateTo({ url: './activity' });
 			},
 			proper(){
 				console.log("dianji")
@@ -295,7 +294,7 @@
 	.tui-mybg-box {
 		width: 100%;
 		height: 560rpx;
-		// background-color: #9E2036;    
+		// background-color: #E33F38;    
 		background: url(/static/img/bgcimg.png) no-repeat;
 		background-size: 100% 100%;
 	}
@@ -390,6 +389,7 @@
 		height: 100%;
 		flex: 1;
 		display: flex;
+		justify-content: center;
 		align-items: baseline;
 	}
 	.tui-order-text {
@@ -438,7 +438,7 @@
 		background-color: #07C160 !important;
 	}
 	.red_button{
-		background-color: #9E2036 !important;
+		background-color: #E33F38 !important;
 	}
 	.center_swiper{
 		width: 100%;
@@ -452,12 +452,14 @@
 		font-size: 30rpx;
 		color: #999;
 		display: flex;
+		align-items: center;
 		flex-direction: column;
 	}
 	.balance_textNum{
+		text-align: center;
 		font-size: 48rpx;
 		font-weight: bold;
-		color: #9D2137;
+		color: #E33F38;
 		width: 80%;
 		overflow-x: auto;
 	}
@@ -471,7 +473,7 @@
 	}
 	.yesterday_text_center{
 		font-size: 32rpx;
-		color: #9D2137;
+		color: #E33F38;
 	}
 	.tui-title {
 		padding: 50rpx 30rpx 30rpx 30rpx;

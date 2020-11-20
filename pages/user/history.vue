@@ -1,14 +1,15 @@
 <template>
 	<view  class="team">
+		<view class="bgColor"></view>
 		<!-- tab标签 -->
 		<view class="tabs">
 			<tui-tabs class="pickuplist_tabs" :tabs="navbar" :sliderWidth="150" :currentTab="currentTab>1?0:currentTab" @change="changeTab" itemWidth="50%"></tui-tabs>
 		</view>
 		<!-- 一级伙伴 -->
-		<scroll-view scroll-y v-if="currentTab==0" class="one">
+		<view  v-if="currentTab==0" class="one">
 			<view class="FY FY-c FX-c" v-if="nodata_1" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<text style="color: #999; font-weight: bold;">暂无内容</text>
 			</view>
 			<view class="one_list" v-if="!!!nodata_1">
 				<view class="one_list_1" v-for="(item, index) in oneLevel" :key="index">
@@ -31,12 +32,12 @@
 					</view>
 				</view>
 			</view>
-		</scroll-view>
+		</view>
 		<!-- 二级伙伴 -->
-		<scroll-view scroll-y v-if="currentTab==1" class="one">
+		<view  v-if="currentTab==1" class="one">
 			<view class="FY FY-c FX-c" v-if="nodata_2" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<text style="color: #999; font-weight: bold;">暂无内容</text>
 			</view>
 			<view class="one_list" v-if="!!!nodata_2">
 				<view class="one_list_1" v-for="(item, index) in twoLevel" :key="index">
@@ -59,7 +60,7 @@
 					</view>
 				</view>
 			</view>
-		</scroll-view>
+		</view>
 		<!--toast提示-->
 		<tui-toast ref="toast"></tui-toast>
 	</view>
@@ -128,17 +129,27 @@
 </script>
 
 <style lang="scss" scoped>
+	  .bgColor{
+	    z-index: -1;
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    right: 0;
+	    bottom: 0;
+	    background: #EEE;
+	  }
 	.team{
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		width: 100%;
-		background-color: #EEE;
 		box-sizing: border-box;
 	}
 	.tabs{
-		position: absolute;
+		position: fixed;
+		top: 44px;
+		// #ifdef APP-PLUS
 		top: 0;
+		// #endif
+		// #ifdef  MP
+		top: 0;
+		// #endif
 		left: 0;
 		right: 0;
 		overflow: hidden;

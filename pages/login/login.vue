@@ -1,8 +1,8 @@
 <template>
 	<view class="container">
 		<view class="loginImg FX-c por">
-			<view class="logo FX-c FY-fe poa">
-				<image class="img" src="../../static/img/logo.png" mode=""></image>
+			<view class="logo FX-c FY-fe poa" style="border-radius: 20rpx; overflow: hidden;">
+				<image class="img" src="../../static/redfish.png" mode=""></image>
 			</view>
 		</view>
 		<!-- <tui-tabs :tabs="navbar" :currentTab="currentTab>1?0:currentTab" @change="change" itemWidth="50%"></tui-tabs> -->
@@ -10,7 +10,7 @@
 			<view class="tui-view-input">
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
-						<tui-icon name="mobile" color="#9E2036" :size="20"></tui-icon>
+						<tui-icon name="mobile" color="#E33F38" :size="20"></tui-icon>
 						<input
 							:adjust-position="false"
 							v-model="mobile"
@@ -26,7 +26,7 @@
 				</tui-list-cell>
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
-						<tui-icon name="pwd" color="#9E2036" :size="20"></tui-icon>
+						<tui-icon name="pwd" color="#E33F38" :size="20"></tui-icon>
 						<input
 							:adjust-position="false"
 							v-model="password"
@@ -53,21 +53,20 @@
 				</view>
 			</view> -->
 			<view class="tui-btn-box"><tui-button style="margin-top: 50rpx;" type="bronze" :disabledGray="true" :disabled="disabled" shape="circle" @click="onlogin">登录</tui-button></view>
-			
 		</view>
 		
 		<view class="tui-form" v-if="currentTab==1">
 			<view class="tui-view-input">
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
-						<tui-icon name="mobile" color="#9E2036" :size="20"></tui-icon>
+						<tui-icon name="mobile" color="#E33F38" :size="20"></tui-icon>
 						<input v-model="mobiles" placeholder="请输入手机号" :disabled="butbool==true" :mobiles="true" placeholder-class="tui-phcolor" type="number" maxlength="11" @input="inputMobiles" />
 						<view class="tui-icon-close" v-show="mobiles" @tap="clearInput(1)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
 					</view>
 				</tui-list-cell>
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="tui-cell-input">
-						<tui-icon name="shield" color="#9E2036" :size="20"></tui-icon>
+						<tui-icon name="shield" color="#E33F38" :size="20"></tui-icon>
 						<input v-model="code" placeholder="请输入验证码" placeholder-class="tui-phcolor" type="text" maxlength="6" @input="inputCodes" />
 						
 						<!-- <button v-if="butbool==true" type="primary">{{word}}</button> -->
@@ -81,12 +80,12 @@
 				<tui-list-cell :hover="false" :lineLeft="false" backgroundColor="transparent">
 					<view class="FX">
 						<view class="tui-cell-input">
-							<tui-icon name="pwd" color="#9E2036" :size="20"></tui-icon>
+							<tui-icon name="pwd" color="#E33F38" :size="20"></tui-icon>
 							<input v-model="passwords" placeholder="请输入密码" :passwords="true" placeholder-class="tui-phcolor" type="password" maxlength="40" @blur="inputPwds" />
 							<view class="tui-icon-close" v-show="passwords" @tap="clearInput(2)"><tui-icon name="close-fill" :size="16" color="#bfbfbf"></tui-icon></view>
 						</view>
 						<view class="tui-cell-input">
-							<tui-icon name="pwd" color="#9E2036" :size="20"></tui-icon>
+							<tui-icon name="pwd" color="#E33F38" :size="20"></tui-icon>
 							<input v-model="passwordss" placeholder="请确认密码" :passwordss="true" placeholder-class="tui-phcolor" type="password" maxlength="40" @blur="inputPwdss" />
 							<view class="tui-icon-close" v-show="passwordss"><tui-icon :size="16" color="#bfbfbf"></tui-icon></view>
 						</view>
@@ -192,7 +191,7 @@ import { mapMutations } from 'vuex';
 export default {
 	computed: {
 		disabled: function() {
-			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
+			let regs = /^[1][0-9]{10}$/;
 			let bool = true;
 			if (this.mobile && regs.test(this.mobile) && this.password) {
 				bool = false;
@@ -200,7 +199,7 @@ export default {
 			return bool;
 		},
 		disableds: function() {
-			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
+			let regs = /^[1][0-9]{10}$/;
 			let bool = true;
 			if (this.mobiles && regs.test(this.mobiles) && this.code && this.passwords && this.passwordss && this.check==true) {
 				bool = false;
@@ -243,7 +242,7 @@ export default {
 		setTimeout(() => {
 			this.logout();
 		}, 0);
-		console.log(this.check)
+		console.log(this.check);
 	},
 	methods: {	
 		...mapMutations(['login', 'logout']),
@@ -264,7 +263,7 @@ export default {
 			this.tap3 = true;this.tap1 = false;this.tap2 = false;
 		},
 		inputMobile: function(e) {
-			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
+			let regs = /^[1][0-9]{10}$/;
 			console.log(this.mobile)
 			if(!this.mobile){
 				// this.boola=false;    
@@ -289,7 +288,7 @@ export default {
 			this.password = e.detail.value;
 		},
 		inputMobiles: function(e) {
-			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
+			let regs = /^[1][0-9]{10}$/;
 			console.log(this.mobiles);
 			this.butbool=false;this.btnSendText="获取验证码";
 			
@@ -347,7 +346,7 @@ export default {
 			this.password = e.detail.value;
 		},messages(){
 			console.log('点击了')
-			let regs = /^[1][3,4,5,7,8][0-9]{9}$/;
+			let regs = /^[1][0-9]{10}$/;
 			var that = this;
 			if(that.mobiles!=''&&regs.test(that.mobiles)){
 				console.log('执行')
@@ -439,7 +438,7 @@ export default {
 		},
 		onlogin(){
 			var that =this;
-			var login ={'account':this.mobile,'password':this.password,"type":1}
+			var login ={'account':that.mobile,'password':that.password,"type":1 };
 			uni.request({
 				url:App.login,method: 'POST',data: login,
 				success: (res)=>{
@@ -665,7 +664,7 @@ export default {
 		// line-height: 1.4rem;
 		border-radius: 10rpx;
 		color: #FFFFFF;
-		background-color:#9E2036;
+		background-color:#E33F38;
 	}
 	.subs{
 		font-size: 28rpx;

@@ -6,11 +6,11 @@
 			 itemWidth="50%"></tui-tabs>
 		</view>
 		<!-- 委托买入 -->
-		<scroll-view scroll-y v-if="currentTab==0" class="left_entrust">
+		<scroll-view scroll-y v-if="currentTab==1" class="left_entrust">
 			<view style="height: 80rpx;"></view>
 			<view class="FY FY-c FX-c" v-if="isError" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<text style="color: #999; font-weight: bold;">暂无内容</text>
 			</view>
 			<view class="container">
 				<view class="title_2" v-if="isSuccess">
@@ -108,7 +108,7 @@
 			</view>
 		</scroll-view>
 		<!-- 摘牌买入 -->
-		<scroll-view scroll-y="true" v-if="currentTab==1" class="right_delisting">
+		<scroll-view scroll-y="true" v-if="currentTab==0" class="right_delisting">
 			<view style="height: 90rpx;"></view>
 			<view class="zhaipai_content" v-for="(v,i) in detail" v-if="debool==true">
 				<buylist :imgUrl="v.g_pic" :code="v.g_code" :title="v.g_title" :price="v.ut_price" :num="v.stock_num" g_price="买入价:￥"
@@ -116,7 +116,7 @@
 			</view>
 			<view class="FY FY-c FX-c" v-if="debool==false" style="font-size: 16px;height: calc(80vh);">
 				<tui-icon name="nodata" :size="60" color="#999"></tui-icon>
-				暂无内容
+				<text style="color: #999; font-weight: bold;">暂无内容</text>
 			</view>
 
 			<!--底部抽屉-->
@@ -200,10 +200,10 @@
 					}
 				],
 				navbar: [{
-						name: "委托买入"
+						name: "摘牌买入"
 					},
 					{
-						name: "摘牌买入"
+						name: "委托买入"
 					}
 				],
 				currentTab: 0,
